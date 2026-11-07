@@ -108,10 +108,10 @@ Coordinates data sources and leases for the feed widget:
 - **`next()` / `previous()`**: Navigates forward or backward by one item.
 - **`add(PlayerDataSource dataSource, {String? id})`**: Adds a media source to the end of the feed.
 - **`addAll(List<PlayerDataSource> sources, {List<String>? ids})`**: Appends multiple media sources to the feed for pagination.
-- **`insert(int index, PlayerDataSource dataSource, {String? id})`**: Inserts a single media source at `index`.
-- **`insertAll(int index, List<PlayerDataSource> sources, {List<String>? ids})`**: Inserts multiple media sources at `index`.
+- **`insert({required int index, required PlayerDataSource dataSource, String? id})`**: Inserts a single media source at `index`.
+- **`insertAll({required int index, required List<PlayerDataSource> sources, List<String>? ids})`**: Inserts multiple media sources at `index`.
 - **`removeAt(int index)`**: Removes the media source at `index` and updates active leases.
-- **`replace(int index, PlayerDataSource dataSource, {String? id})`**: Replaces the media source at `index`.
+- **`replace({required int index, required PlayerDataSource dataSource, String? id})`**: Replaces the media source at `index`.
 - **`replaceAll(List<PlayerDataSource> dataSources, {List<String>? ids, int initialIndex = 0})`**: Replaces all sources in the feed, resets to `initialIndex`, and rebinds.
 - **`retry([int? index])`**: Retries loading and binding a failed feed item (defaults to the active index).
 - **`leaseNotifier(int index)`**: Returns a `ValueNotifier<PlayerPoolLease?>` for a specific index to observe lease bindings.

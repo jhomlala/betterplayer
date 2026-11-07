@@ -594,13 +594,11 @@ class BetterPlayerWebPlayer {
 
   String? _base64ToHex(String source) {
     try {
-      final normalized = base64.normalize(source);
+      final normalized = base64.normalize(
+        source.replaceAll('-', '+').replaceAll('_', '/'),
+      );
       final bytes = base64.decode(normalized);
-      final hex = bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
-      if (hex.length < 32 && hex.length >= 24) {
-        return hex.padLeft(32, '0');
-      }
-      return hex;
+      return bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
     } on Object catch (_) {
       return null;
     }

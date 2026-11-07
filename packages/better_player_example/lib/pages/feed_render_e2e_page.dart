@@ -57,7 +57,7 @@ class _FeedRenderE2EPageState extends State<FeedRenderE2EPage> {
   void _onFeedChanged() {
     _cleanupFeedListeners();
     final index = _feedController.currentIndex;
-    final notifier = _feedController.getLeaseNotifier(index);
+    final notifier = _feedController.leaseNotifier(index);
 
     void bindController(BetterPlayerController controller) {
       if (!mounted) return;

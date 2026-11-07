@@ -12,7 +12,6 @@ class BetterPlayerFeedController extends ChangeNotifier {
     required List<PlayerDataSource> dataSources,
     BetterPlayerPool? pool,
     PlayerPoolConfiguration? poolConfiguration,
-    PlayerFeedConfiguration? feedConfiguration,
     PageController? pageController,
     String Function(int index)? idGetter,
     bool? autoPlay,
@@ -25,7 +24,7 @@ class BetterPlayerFeedController extends ChangeNotifier {
        _ownsPool = pool == null,
        _pageController = pageController ?? PageController(),
        _ownsPageController = pageController == null,
-       _autoPlay = autoPlay ?? feedConfiguration?.autoPlay ?? true {
+       _autoPlay = autoPlay ?? true {
     final effectiveIdGetter = idGetter ?? ((index) => 'item_$index');
     final seenIds = <String>{};
     for (var i = 0; i < dataSources.length; i++) {
@@ -165,10 +164,6 @@ class BetterPlayerFeedController extends ChangeNotifier {
     }
     throw RangeError.index(index, _entries, 'index');
   }
-
-  /// Legacy alias for [leaseNotifier].
-  ValueNotifier<PlayerPoolLease?> getLeaseNotifier(int index) =>
-      leaseNotifier(index);
 
   /// Jumps to the feed item at [index], updating playback and scrolling the view.
   void jumpTo(int index) {
@@ -390,30 +385,26 @@ class BetterPlayerFeedController extends ChangeNotifier {
     List<PlayerDataSource> sources, {
     List<String>? ids,
   }) {
-    insertAll(_entries.length, sources, ids: ids);
-  }
-
-  /// Legacy alias for [addAll].
-  void appendDataSources(
-    List<PlayerDataSource> newSources, {
-    List<String>? ids,
-  }) {
-    addAll(newSources, ids: ids);
+    insertAll(index: _entries.length, sources: sources, ids: ids);
   }
 
   /// Inserts a single [dataSource] at [index].
-  void insert(
-    int index,
-    PlayerDataSource dataSource, {
+  void insert({
+    required int index,
+    required PlayerDataSource dataSource,
     String? id,
   }) {
-    insertAll(index, [dataSource], ids: id != null ? [id] : null);
+    insertAll(
+      index: index,
+      sources: [dataSource],
+      ids: id != null ? [id] : null,
+    );
   }
 
   /// Inserts [sources] at [index] with optional custom [ids].
-  void insertAll(
-    int index,
-    List<PlayerDataSource> sources, {
+  void insertAll({
+    required int index,
+    required List<PlayerDataSource> sources,
     List<String>? ids,
   }) {
     if (_isDisposed || sources.isEmpty) {
@@ -467,15 +458,6 @@ class BetterPlayerFeedController extends ChangeNotifier {
       idGetter: (i) => _entries[i].id,
     );
     notifyListeners();
-  }
-
-  /// Legacy alias for [insertAll].
-  void insertDataSources({
-    required int index,
-    required List<PlayerDataSource> dataSources,
-    List<String>? ids,
-  }) {
-    insertAll(index, dataSources, ids: ids);
   }
 
   /// Removes the data source at [index].
@@ -534,14 +516,7 @@ class BetterPlayerFeedController extends ChangeNotifier {
   }
 
   /// Replaces the data source at [index] with [dataSource].
-  Future<void> replace(
-    int index,
-    PlayerDataSource dataSource, {
-    String? id,
-  }) => replaceAt(index: index, dataSource: dataSource, id: id);
-
-  /// Replaces the data source at [index] with [dataSource].
-  Future<void> replaceAt({
+  Future<void> replace({
     required int index,
     required PlayerDataSource dataSource,
     String? id,

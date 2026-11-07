@@ -90,11 +90,11 @@ void main() {
       );
 
       await feedController.onIndexChanged(0);
-      final lease0 = feedController.getLeaseNotifier(0).value;
+      final lease0 = feedController.leaseNotifier(0).value;
       expect(lease0, isNotNull);
 
       await feedController.onIndexChanged(1);
-      final lease1 = feedController.getLeaseNotifier(1).value;
+      final lease1 = feedController.leaseNotifier(1).value;
       expect(lease1, isNotNull);
       expect(lease0!.controller.isPlaying(), false);
 
@@ -114,14 +114,14 @@ void main() {
       );
 
       await feedController.onIndexChanged(0);
-      final lease = feedController.getLeaseNotifier(0).value;
+      final lease = feedController.leaseNotifier(0).value;
       expect(lease, isNotNull);
       expect(lease!.hasError, isTrue);
 
       feedController.dispose();
     });
 
-    test('appendDataSources increases data source count and notifiers', () {
+    test('addAll increases data source count and notifiers', () {
       final feedController = BetterPlayerFeedController(
         dataSources: [
           PlayerDataSource.network('https://example.com/1.mp4'),
@@ -131,13 +131,13 @@ void main() {
 
       expect(feedController.dataSources.length, 1);
 
-      feedController.appendDataSources([
+      feedController.addAll([
         PlayerDataSource.network('https://example.com/2.mp4'),
         PlayerDataSource.network('https://example.com/3.mp4'),
       ]);
 
       expect(feedController.dataSources.length, 3);
-      expect(feedController.getLeaseNotifier(2), isNotNull);
+      expect(feedController.leaseNotifier(2), isNotNull);
 
       feedController.dispose();
     });
@@ -152,7 +152,7 @@ void main() {
       );
 
       await feedController.onIndexChanged(0);
-      final lease = feedController.getLeaseNotifier(0).value;
+      final lease = feedController.leaseNotifier(0).value;
       expect(lease?.itemId, 'custom_video_0');
 
       feedController.dispose();
@@ -177,16 +177,16 @@ void main() {
         );
 
         await feedController.onIndexChanged(0);
-        expect(feedController.getLeaseNotifier(0).value, isNotNull);
+        expect(feedController.leaseNotifier(0).value, isNotNull);
 
         await feedController.onIndexChanged(1);
-        expect(feedController.getLeaseNotifier(0).value, isNotNull);
-        expect(feedController.getLeaseNotifier(1).value, isNotNull);
+        expect(feedController.leaseNotifier(0).value, isNotNull);
+        expect(feedController.leaseNotifier(1).value, isNotNull);
 
         await feedController.onIndexChanged(2);
-        expect(feedController.getLeaseNotifier(0).value, isNull);
-        expect(feedController.getLeaseNotifier(1).value, isNotNull);
-        expect(feedController.getLeaseNotifier(2).value, isNotNull);
+        expect(feedController.leaseNotifier(0).value, isNull);
+        expect(feedController.leaseNotifier(1).value, isNotNull);
+        expect(feedController.leaseNotifier(2).value, isNotNull);
 
         feedController.dispose();
       },
@@ -216,7 +216,7 @@ void main() {
     );
 
     test(
-      'insertDataSources shifts currentIndex when inserted at or before current',
+      'insertAll shifts currentIndex when inserted at or before current',
       () async {
         final feedController = BetterPlayerFeedController(
           dataSources: [
@@ -230,9 +230,9 @@ void main() {
         expect(feedController.currentIndex, 1);
         final activeEntryId = feedController.entries[1].id;
 
-        feedController.insertDataSources(
+        feedController.insertAll(
           index: 0,
-          dataSources: [
+          sources: [
             PlayerDataSource.network('https://example.com/new_0.mp4'),
           ],
         );
@@ -297,7 +297,7 @@ void main() {
       feedController.dispose();
     });
 
-    test('replaceAt updates data source and keeps entry id', () async {
+    test('replace updates data source and keeps entry id', () async {
       final feedController = BetterPlayerFeedController(
         dataSources: [
           PlayerDataSource.network('https://example.com/0.mp4'),
@@ -308,7 +308,7 @@ void main() {
       await feedController.onIndexChanged(0);
       final originalId = feedController.entries[0].id;
 
-      await feedController.replaceAt(
+      await feedController.replace(
         index: 0,
         dataSource: PlayerDataSource.network(
           'https://example.com/replaced.mp4',
@@ -375,9 +375,9 @@ void main() {
       );
 
       expect(
-        () => feedController.insertDataSources(
+        () => feedController.insertAll(
           index: 0,
-          dataSources: [
+          sources: [
             PlayerDataSource.network('https://example.com/dup.mp4'),
           ],
           ids: ['item_0'],
@@ -389,7 +389,7 @@ void main() {
     });
 
     testWidgets(
-      'Feed reacts to appendDataSources and mutations with PageView rebuild',
+      'Feed reacts to addAll and mutations with PageView rebuild',
       (tester) async {
         final feedController = BetterPlayerFeedController(
           dataSources: [
@@ -421,7 +421,7 @@ void main() {
         );
 
         // Append items and verify PageView updates
-        feedController.appendDataSources([
+        feedController.addAll([
           PlayerDataSource.network('https://example.com/2.mp4'),
         ]);
         await tester.pump();
@@ -776,26 +776,25 @@ void main() {
         expect(feedController.entries.length, 3);
 
         feedController.insert(
-          1,
-          PlayerDataSource.network('https://example.com/inserted.mp4'),
+          index: 1,
+          dataSource: PlayerDataSource.network(
+            'https://example.com/inserted.mp4',
+          ),
           id: 'item_inserted',
         );
         expect(feedController.entries.length, 4);
         expect(feedController.entries[1].id, 'item_inserted');
 
         await feedController.replace(
-          1,
-          PlayerDataSource.network('https://example.com/replaced.mp4'),
+          index: 1,
+          dataSource: PlayerDataSource.network(
+            'https://example.com/replaced.mp4',
+          ),
           id: 'item_replaced',
         );
         expect(feedController.entries[1].id, 'item_replaced');
 
-        // leaseNotifier works identically to getLeaseNotifier
         expect(feedController.leaseNotifier(0), isNotNull);
-        expect(
-          feedController.getLeaseNotifier(0),
-          feedController.leaseNotifier(0),
-        );
 
         // retry() with no args retries currentIndex
         await feedController.onIndexChanged(0);

@@ -278,6 +278,30 @@ void main() {
       );
     });
 
+    test('buildShakaConfig handles ClearKey DRM with base64url keys', () {
+      final dataSource = DataSource(
+        sourceType: DataSourceType.network,
+        uri: 'https://example.com/video.mp4',
+        drmConfiguration: const DrmConfiguration(
+          drmType: DrmType.clearKey,
+          clearKey:
+              '{"keys":[{"kty":"oct","kid":"3q2-796tvu_erb7v3q2-7w","k":"GGdTCRhnUwkYZ1MJGGdTCQ"}]}',
+        ),
+      );
+
+      final config = player.buildShakaConfig(dataSource)!;
+      expect(config, isNotNull);
+
+      final drm = config.getProperty('drm'.toJS)! as JSObject;
+      final clearKeys = drm.getProperty('clearKeys'.toJS)! as JSObject;
+      expect(
+        clearKeys
+            .getProperty('deadbeefdeadbeefdeadbeefdeadbeef'.toJS)
+            .dartify(),
+        '18675309186753091867530918675309',
+      );
+    });
+
     test('buildShakaConfig handles ClearKey DRM with license server', () {
       final dataSource = DataSource(
         sourceType: DataSourceType.network,
