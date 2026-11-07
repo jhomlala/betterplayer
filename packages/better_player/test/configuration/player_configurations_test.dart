@@ -20,6 +20,39 @@ void main() {
     test('DrmConfiguration default values', () {
       const config = DrmConfiguration();
       expect(config.drmType, null);
+      expect(config.token, null);
+      expect(config.licenseUrl, null);
+      expect(config.certificateUrl, null);
+      expect(config.headers, null);
+      expect(config.clearKey, null);
+      expect(config.drmSecurityLevel, null);
+    });
+
+    test('DrmConfiguration FairPlay values', () {
+      const config = DrmConfiguration(
+        drmType: DrmType.fairplay,
+        certificateUrl: 'https://fps.ezdrm.com/demo.cer',
+        licenseUrl: 'https://fps.ezdrm.com/api/licenses/',
+      );
+      expect(config.drmType, DrmType.fairplay);
+      expect(config.certificateUrl, 'https://fps.ezdrm.com/demo.cer');
+      expect(config.licenseUrl, 'https://fps.ezdrm.com/api/licenses/');
+    });
+
+    test('DrmConfiguration ClearKey and Token values', () {
+      const clearKeyConfig = DrmConfiguration(
+        drmType: DrmType.clearKey,
+        clearKey: '{"k":"v"}',
+      );
+      expect(clearKeyConfig.drmType, DrmType.clearKey);
+      expect(clearKeyConfig.clearKey, '{"k":"v"}');
+
+      const tokenConfig = DrmConfiguration(
+        drmType: DrmType.token,
+        token: 'Bearer abc',
+      );
+      expect(tokenConfig.drmType, DrmType.token);
+      expect(tokenConfig.token, 'Bearer abc');
     });
 
     test('NotificationConfiguration default values', () {

@@ -23,6 +23,50 @@ void main() {
       expect(source.bytes, [1, 2, 3]);
     });
 
+    test('PlayerDataSource with FairPlay DRM configuration', () {
+      final source = PlayerDataSource(
+        DataSourceType.network,
+        'https://example.com/fairplay.m3u8',
+        drmConfiguration: const DrmConfiguration(
+          drmType: DrmType.fairplay,
+          certificateUrl: 'https://fps.ezdrm.com/demo.cer',
+          licenseUrl: 'https://fps.ezdrm.com/api/licenses/',
+        ),
+      );
+      expect(source.drmConfiguration?.drmType, DrmType.fairplay);
+      expect(
+        source.drmConfiguration?.certificateUrl,
+        'https://fps.ezdrm.com/demo.cer',
+      );
+      expect(
+        source.drmConfiguration?.licenseUrl,
+        'https://fps.ezdrm.com/api/licenses/',
+      );
+    });
+
+    test('PlayerDataSource copyWith preserves drmConfiguration', () {
+      final source = PlayerDataSource(
+        DataSourceType.network,
+        'https://example.com/fairplay.m3u8',
+        drmConfiguration: const DrmConfiguration(
+          drmType: DrmType.fairplay,
+          certificateUrl: 'https://fps.ezdrm.com/demo.cer',
+          licenseUrl: 'https://fps.ezdrm.com/api/licenses/',
+        ),
+      );
+      final copied = source.copyWith(url: 'https://example.com/new.m3u8');
+      expect(copied.url, 'https://example.com/new.m3u8');
+      expect(copied.drmConfiguration?.drmType, DrmType.fairplay);
+      expect(
+        copied.drmConfiguration?.certificateUrl,
+        'https://fps.ezdrm.com/demo.cer',
+      );
+      expect(
+        copied.drmConfiguration?.licenseUrl,
+        'https://fps.ezdrm.com/api/licenses/',
+      );
+    });
+
     test('copyWith', () {
       final source = PlayerDataSource(
         DataSourceType.network,
