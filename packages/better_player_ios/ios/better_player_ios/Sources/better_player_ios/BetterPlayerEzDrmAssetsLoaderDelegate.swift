@@ -33,10 +33,13 @@ public class BetterPlayerEzDrmAssetsLoaderDelegate: NSObject, AVAssetResourceLoa
     private func extractAssetId(from url: URL) -> String {
         let urlString = url.absoluteString
 
-        // Preserve legacy EZDRM behavior for GUIDs (36 characters).
+        // Check if trailing 36 characters form a valid UUID (standard EZDRM GUID).
         if urlString.count >= 36 {
             let startIndex = urlString.index(urlString.endIndex, offsetBy: -36)
-            return String(urlString[startIndex...])
+            let candidate = String(urlString[startIndex...])
+            if UUID(uuidString: candidate) != nil {
+                return candidate
+            }
         }
 
         // Check path components without lowercasing host.
@@ -57,11 +60,13 @@ public class BetterPlayerEzDrmAssetsLoaderDelegate: NSObject, AVAssetResourceLoa
         let targetURL = licenseURL ?? defaultLicenseServerURL
         let isEzDrm = targetURL.host?.contains("ezdrm.com") ?? false
         if isEzDrm {
-            var baseString = targetURL.absoluteString
-            if !baseString.hasSuffix("/") {
-                baseString += "/"
+            if targetURL.query == nil && !targetURL.path.contains(assetId) {
+                var baseString = targetURL.absoluteString
+                if !baseString.hasSuffix("/") {
+                    baseString += "/"
+                }
+                return URL(string: "\(baseString)\(assetId)?customdata=\(assetId)")
             }
-            return URL(string: "\(baseString)\(assetId)?customdata=\(assetId)")
         }
         return targetURL
     }
@@ -82,8 +87,7 @@ public class BetterPlayerEzDrmAssetsLoaderDelegate: NSObject, AVAssetResourceLoa
         isFetchingCertificate = true
         certificateLock.unlock()
 
-        let completeAll: (Result<Data, Error>) -> Void = { [weak self] result in
-            guard let self = self else { return }
+        let completeAll: (Result<Data, Error>) -> Void = { [self] result in
             self.certificateLock.lock()
             let callbacks = self.pendingCertificateCompletions
             self.pendingCertificateCompletions.removeAll()
@@ -99,8 +103,7 @@ public class BetterPlayerEzDrmAssetsLoaderDelegate: NSObject, AVAssetResourceLoa
         }
 
         if certificateURL.isFileURL {
-            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-                guard let self = self else { return }
+            DispatchQueue.global(qos: .userInitiated).async { [self] in
                 do {
                     let data = try Data(contentsOf: self.certificateURL)
                     completeAll(.success(data))
