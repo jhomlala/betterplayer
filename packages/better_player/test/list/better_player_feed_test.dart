@@ -610,5 +610,105 @@ void main() {
       feedController.dispose();
       await subscription.cancel();
     });
+
+    test(
+      'playback controls play, pause, togglePlay, and activeController',
+      () async {
+        final feedController = BetterPlayerFeedController(
+          dataSources: [
+            PlayerDataSource.network('https://example.com/0.mp4'),
+            PlayerDataSource.network('https://example.com/1.mp4'),
+          ],
+          poolConfiguration: const PlayerPoolConfiguration(poolSize: 2),
+          autoPlay: false,
+        );
+
+        expect(feedController.activeController, isNull);
+        expect(feedController.isPlaying, isFalse);
+
+        await feedController.onIndexChanged(0);
+
+        expect(feedController.activeController, isNotNull);
+        expect(feedController.isPlaying, isFalse);
+
+        await feedController.play();
+        expect(feedController.isPlaying, isTrue);
+
+        await feedController.pause();
+        expect(feedController.isPlaying, isFalse);
+
+        await feedController.togglePlay();
+        expect(feedController.isPlaying, isTrue);
+
+        await feedController.togglePlay();
+        expect(feedController.isPlaying, isFalse);
+
+        feedController.autoPlay = true;
+        expect(feedController.autoPlay, isTrue);
+
+        feedController.dispose();
+      },
+    );
+
+    testWidgets(
+      'PlayerFeedConfiguration autoPlay wires to controller and syncs',
+      (tester) async {
+        final feedController = BetterPlayerFeedController(
+          dataSources: [
+            PlayerDataSource.network('https://example.com/0.mp4'),
+          ],
+          poolConfiguration: const PlayerPoolConfiguration(poolSize: 2),
+        );
+
+        expect(feedController.autoPlay, isTrue);
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: BetterPlayerFeed(
+                controller: feedController,
+                configuration: const PlayerFeedConfiguration(autoPlay: false),
+              ),
+            ),
+          ),
+        );
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 100));
+
+        expect(feedController.autoPlay, isFalse);
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: BetterPlayerFeed(
+                controller: feedController,
+              ),
+            ),
+          ),
+        );
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 100));
+
+        expect(feedController.autoPlay, isTrue);
+
+        feedController.dispose();
+      },
+    );
+
+    test('PlayerFeedConfiguration copyWith returns updated configuration', () {
+      const config = PlayerFeedConfiguration(
+        scrollDirection: Axis.horizontal,
+        autoPlay: false,
+      );
+
+      final updated = config.copyWith(
+        scrollDirection: Axis.vertical,
+        autoPlay: true,
+      );
+
+      expect(updated.scrollDirection, Axis.vertical);
+      expect(updated.autoPlay, isTrue);
+      expect(config.autoPlay, isFalse);
+    });
   });
 }

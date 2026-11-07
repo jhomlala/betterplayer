@@ -116,6 +116,7 @@ PlayerDataSource dataSource = PlayerDataSource(
   - **No Unwired or Placeholder Fields**: NEVER add unused or "future-proof" fields to models, configurations, or requests. Every public field or parameter MUST be wired end-to-end and covered by tests in the same change.
   - **Deterministic Persistent IDs**: NEVER use Dart's `Object.hashCode` or `String.hashCode` for persistent cache keys, file names, or native database IDs (Dart randomizes string hash codes per process run). Use the raw key/URL or a deterministic hash.
   - **No Em Dashes in Prose or Comments**: NEVER use Unicode em dashes (`—`) or double hyphens (`--`) in documentation, changelogs, PR/issue comments, or docstrings. Use a comma, colon, or parentheses instead.
+  - **No AI Slop / Over-Descriptive Names**: Name variables, parameters, and methods the way a pragmatically lazy, sharp human developer writes them: short, clear, and direct (e.g., `items`, `id`, `url`, `res`, `err`, `play()`, `pause()`, `index`). NEVER generate verbose, bloated pseudo-literary prose names (e.g., `comprehensiveMediaSourceCollectionContainer`, `executePlaybackStateTransitionMechanism`, `orchestrateSlotEvictionCycle`). If a 1-2 word name is unambiguous in context, use it.
 
 ## Testing
 - **Async Operations**: Always `await` asynchronous calls in tests (e.g., `setupDataSource`, `play`, `pause`, `seekTo`).

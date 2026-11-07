@@ -37,4 +37,30 @@ class PlayerFeedConfiguration {
 
   /// Whether the currently focused item should play automatically.
   final bool autoPlay;
+
+  /// Creates a copy of this configuration with given fields replaced.
+  PlayerFeedConfiguration copyWith({
+    Axis? scrollDirection,
+    Widget Function(
+      BuildContext context,
+      int index,
+      PlayerDataSource dataSource,
+    )?
+    placeholderBuilder,
+    Widget Function(
+      BuildContext context,
+      int index,
+      PlayerDataSource dataSource,
+      String? errorMessage,
+    )?
+    errorBuilder,
+    bool? autoPlay,
+  }) {
+    return PlayerFeedConfiguration(
+      scrollDirection: scrollDirection ?? this.scrollDirection,
+      placeholderBuilder: placeholderBuilder ?? this.placeholderBuilder,
+      errorBuilder: errorBuilder ?? this.errorBuilder,
+      autoPlay: autoPlay ?? this.autoPlay,
+    );
+  }
 }

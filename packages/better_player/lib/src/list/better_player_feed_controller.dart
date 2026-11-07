@@ -12,9 +12,10 @@ class BetterPlayerFeedController extends ChangeNotifier {
     required List<PlayerDataSource> dataSources,
     BetterPlayerPool? pool,
     PlayerPoolConfiguration? poolConfiguration,
+    PlayerFeedConfiguration? feedConfiguration,
     PageController? pageController,
     String Function(int index)? idGetter,
-    this.autoPlay = true,
+    bool? autoPlay,
   }) : _pool =
            pool ??
            BetterPlayerPool(
@@ -23,7 +24,8 @@ class BetterPlayerFeedController extends ChangeNotifier {
            ),
        _ownsPool = pool == null,
        _pageController = pageController ?? PageController(),
-       _ownsPageController = pageController == null {
+       _ownsPageController = pageController == null,
+       _autoPlay = autoPlay ?? feedConfiguration?.autoPlay ?? true {
     final effectiveIdGetter = idGetter ?? ((index) => 'item_$index');
     final seenIds = <String>{};
     for (var i = 0; i < dataSources.length; i++) {
@@ -73,8 +75,52 @@ class BetterPlayerFeedController extends ChangeNotifier {
   /// Current active index in the feed.
   int get currentIndex => _currentIndex;
 
+  bool _autoPlay;
+
   /// Whether active items should play automatically.
-  final bool autoPlay;
+  bool get autoPlay => _autoPlay;
+  set autoPlay(bool value) {
+    if (_autoPlay != value) {
+      _autoPlay = value;
+      notifyListeners();
+    }
+  }
+
+  /// The controller for the currently active feed item, or null if unallocated.
+  BetterPlayerController? get activeController {
+    if (_currentIndex >= 0 && _currentIndex < _entries.length) {
+      return _entries[_currentIndex].leaseNotifier.value?.controller;
+    }
+    return null;
+  }
+
+  /// Whether the currently active video is playing.
+  bool get isPlaying => activeController?.isPlaying() ?? false;
+
+  /// Plays the currently active video.
+  Future<void> play() async {
+    final controller = activeController;
+    if (controller != null) {
+      await controller.play();
+    }
+  }
+
+  /// Pauses the currently active video.
+  Future<void> pause() async {
+    final controller = activeController;
+    if (controller != null) {
+      await controller.pause();
+    }
+  }
+
+  /// Toggles play/pause for the currently active video.
+  Future<void> togglePlay() async {
+    if (isPlaying) {
+      await pause();
+    } else {
+      await play();
+    }
+  }
 
   /// Broadcast stream emitting performance and Quality of Experience (QoE) metrics.
   Stream<PlayerFeedItemMetrics> get metricsStream => _metricsController.stream;

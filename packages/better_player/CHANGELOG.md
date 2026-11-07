@@ -1,4 +1,6 @@
 ## Unreleased
+- Added: Playback controls on `BetterPlayerFeedController` (`play`, `pause`, `togglePlay`, `isPlaying`, `activeController`) and dynamic `autoPlay` property.
+- Fixed: Wired `PlayerFeedConfiguration.autoPlay` to feed playback and added `PlayerFeedConfiguration.copyWith`.
 - Fixed: BetterPlayerPool active index protection during slot eviction, failed lease slot reuse, and concurrent bind state tracking.
 - Updated: Removed unused onProgress parameter in PlayerEngineController.preCache.
 
