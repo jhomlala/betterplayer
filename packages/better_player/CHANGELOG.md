@@ -1,6 +1,9 @@
 ## Unreleased
 - Added: Playback controls on `BetterPlayerFeedController` (`play`, `pause`, `togglePlay`, `isPlaying`, `activeController`) and dynamic `autoPlay` property.
+- Added: Feed navigation helpers (`jumpTo`, `next`, `previous`) and standard collection methods (`add`, `addAll`, `insert`, `insertAll`, `replace`, positional `removeAt`, `retry` with default active index, `leaseNotifier`) on `BetterPlayerFeedController`.
 - Fixed: Wired `PlayerFeedConfiguration.autoPlay` to feed playback and added `PlayerFeedConfiguration.copyWith`.
+- Fixed: Resolved byte truncation bug in `BetterPlayerClearKeyUtils.generateKey` preserving leading zero bytes in 16-byte DRM keys.
+- Fixed: Decoded network subtitles as UTF-8 via response bytes to prevent Latin-1 encoding corruption, and guarded against HTTP error response bodies.
 - Fixed: BetterPlayerPool active index protection during slot eviction, failed lease slot reuse, and concurrent bind state tracking.
 - Updated: Removed unused onProgress parameter in PlayerEngineController.preCache.
 

@@ -266,7 +266,7 @@ void main() {
         final item2Id = feedController.entries[2].id;
 
         // Remove current item (index 1)
-        await feedController.removeAt(index: 1);
+        await feedController.removeAt(1);
 
         expect(feedController.dataSources.length, 2);
         expect(feedController.currentIndex, 1);
@@ -289,7 +289,7 @@ void main() {
       await feedController.onIndexChanged(1);
       expect(feedController.currentIndex, 1);
 
-      await feedController.removeAt(index: 1);
+      await feedController.removeAt(1);
 
       expect(feedController.dataSources.length, 1);
       expect(feedController.currentIndex, 0);
@@ -710,5 +710,100 @@ void main() {
       expect(updated.autoPlay, isTrue);
       expect(config.autoPlay, isFalse);
     });
+
+    test(
+      'feed navigation methods jumpTo, next, and previous navigate feed',
+      () async {
+        final feedController = BetterPlayerFeedController(
+          dataSources: [
+            PlayerDataSource.network('https://example.com/0.mp4'),
+            PlayerDataSource.network('https://example.com/1.mp4'),
+            PlayerDataSource.network('https://example.com/2.mp4'),
+          ],
+          poolConfiguration: const PlayerPoolConfiguration(poolSize: 4),
+          autoPlay: false,
+        );
+
+        expect(feedController.currentIndex, 0);
+
+        feedController.next();
+        expect(feedController.currentIndex, 1);
+
+        feedController.next();
+        expect(feedController.currentIndex, 2);
+
+        // Boundary check
+        feedController.next();
+        expect(feedController.currentIndex, 2);
+
+        feedController.previous();
+        expect(feedController.currentIndex, 1);
+
+        feedController.jumpTo(0);
+        expect(feedController.currentIndex, 0);
+
+        // Boundary check
+        feedController.jumpTo(99);
+        expect(feedController.currentIndex, 0);
+
+        feedController.dispose();
+      },
+    );
+
+    test(
+      'collection methods add, addAll, insert, insertAll, replace, and retry',
+      () async {
+        final feedController = BetterPlayerFeedController(
+          dataSources: [
+            PlayerDataSource.network('https://example.com/0.mp4'),
+          ],
+          poolConfiguration: const PlayerPoolConfiguration(poolSize: 4),
+          autoPlay: false,
+        );
+
+        expect(feedController.entries.length, 1);
+
+        feedController.add(
+          PlayerDataSource.network('https://example.com/1.mp4'),
+          id: 'item_custom_1',
+        );
+        expect(feedController.entries.length, 2);
+        expect(feedController.entries[1].id, 'item_custom_1');
+
+        feedController.addAll([
+          PlayerDataSource.network('https://example.com/2.mp4'),
+        ]);
+        expect(feedController.entries.length, 3);
+
+        feedController.insert(
+          1,
+          PlayerDataSource.network('https://example.com/inserted.mp4'),
+          id: 'item_inserted',
+        );
+        expect(feedController.entries.length, 4);
+        expect(feedController.entries[1].id, 'item_inserted');
+
+        await feedController.replace(
+          1,
+          PlayerDataSource.network('https://example.com/replaced.mp4'),
+          id: 'item_replaced',
+        );
+        expect(feedController.entries[1].id, 'item_replaced');
+
+        // leaseNotifier works identically to getLeaseNotifier
+        expect(feedController.leaseNotifier(0), isNotNull);
+        expect(
+          feedController.getLeaseNotifier(0),
+          feedController.leaseNotifier(0),
+        );
+
+        // retry() with no args retries currentIndex
+        await feedController.onIndexChanged(0);
+        await feedController.retry();
+        expect(feedController.activeController, isNotNull);
+
+        feedController.dispose();
+      },
+    );
   });
 }

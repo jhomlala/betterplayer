@@ -254,6 +254,62 @@ void main() {
       );
     });
 
+    test('buildShakaConfig handles ClearKey DRM with client keys', () {
+      final dataSource = DataSource(
+        sourceType: DataSourceType.network,
+        uri: 'https://example.com/video.mp4',
+        drmConfiguration: const DrmConfiguration(
+          drmType: DrmType.clearKey,
+          clearKey:
+              '{"keys":[{"kty":"oct","kid":"hqoP3gYuVXuYk9VnhNFmTQ","k":"OXZp0CNKkAmPmi5jmamjtg"}]}',
+        ),
+      );
+
+      final config = player.buildShakaConfig(dataSource)!;
+      expect(config, isNotNull);
+
+      final drm = config.getProperty('drm'.toJS)! as JSObject;
+      final clearKeys = drm.getProperty('clearKeys'.toJS)! as JSObject;
+      expect(
+        clearKeys
+            .getProperty('86aa0fde062e557b9893d56784d1664d'.toJS)
+            .dartify(),
+        '397669d0234a90098f9a2e6399a9a3b6',
+      );
+    });
+
+    test('buildShakaConfig handles ClearKey DRM with license server', () {
+      final dataSource = DataSource(
+        sourceType: DataSourceType.network,
+        uri: 'https://example.com/video.mp4',
+        drmConfiguration: const DrmConfiguration(
+          drmType: DrmType.clearKey,
+          licenseUrl: 'https://license.clearkey.com',
+          headers: {'Authorization': 'Bearer test_clearkey'},
+        ),
+      );
+
+      final config = player.buildShakaConfig(dataSource)!;
+      expect(config, isNotNull);
+
+      final drm = config.getProperty('drm'.toJS)! as JSObject;
+      final servers = drm.getProperty('servers'.toJS)! as JSObject;
+      expect(
+        servers.getProperty('org.w3.clearkey'.toJS).dartify(),
+        'https://license.clearkey.com',
+      );
+
+      final advanced = drm.getProperty('advanced'.toJS)! as JSObject;
+      final ckAdvanced =
+          advanced.getProperty('org.w3.clearkey'.toJS)! as JSObject;
+      final headers =
+          ckAdvanced.getProperty('licenseRequestHeaders'.toJS)! as JSObject;
+      expect(
+        headers.getProperty('Authorization'.toJS).dartify(),
+        'Bearer test_clearkey',
+      );
+    });
+
     test(
       'buildShakaConfig throws UnsupportedError for Android-specific DrmSecurityLevel',
       () {

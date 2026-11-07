@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
@@ -504,6 +505,7 @@ class BetterPlayerWebPlayer {
 
     final servers = <String, String>{};
     final advanced = <String, Object>{};
+    final clearKeys = <String, String>{};
 
     final securityLevel = _mapDrmSecurityLevel(drm.drmSecurityLevel);
 
@@ -529,7 +531,18 @@ class BetterPlayerWebPlayer {
           };
         }
       case DrmType.clearKey:
-      // ClearKey support could be added here parsing drm.clearKey JSON string
+        if (drm.licenseUrl != null) {
+          servers['org.w3.clearkey'] = drm.licenseUrl!;
+        }
+        if (drm.headers != null && drm.headers!.isNotEmpty) {
+          advanced['org.w3.clearkey'] = {
+            'licenseRequestHeaders': drm.headers!,
+          };
+        }
+        if (drm.clearKey != null) {
+          final parsed = _parseClearKeys(drm.clearKey!);
+          clearKeys.addAll(parsed);
+        }
       case DrmType.token:
         if (drm.licenseUrl != null) {
           servers['com.widevine.alpha'] = drm.licenseUrl!;
@@ -548,9 +561,49 @@ class BetterPlayerWebPlayer {
           'drm': {
             'servers': servers,
             'advanced': advanced,
+            if (clearKeys.isNotEmpty) 'clearKeys': clearKeys,
           },
         }.jsify()!
         as JSObject;
+  }
+
+  Map<String, String> _parseClearKeys(String raw) {
+    final result = <String, String>{};
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is Map) {
+        if (decoded.containsKey('keys') && decoded['keys'] is List) {
+          for (final item in decoded['keys'] as List) {
+            if (item is Map && item['kid'] != null && item['k'] != null) {
+              final kidHex = _base64ToHex(item['kid'].toString());
+              final kHex = _base64ToHex(item['k'].toString());
+              if (kidHex != null && kHex != null) {
+                result[kidHex] = kHex;
+              }
+            }
+          }
+        } else {
+          for (final entry in decoded.entries) {
+            result[entry.key.toString()] = entry.value.toString();
+          }
+        }
+      }
+    } on Object catch (_) {}
+    return result;
+  }
+
+  String? _base64ToHex(String source) {
+    try {
+      final normalized = base64.normalize(source);
+      final bytes = base64.decode(normalized);
+      final hex = bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+      if (hex.length < 32 && hex.length >= 24) {
+        return hex.padLeft(32, '0');
+      }
+      return hex;
+    } on Object catch (_) {
+      return null;
+    }
   }
 
   void _clearRequestFilter() {
