@@ -1,4 +1,4 @@
-## Unreleased
+## 1.1.0
 - Added: `getAudioTracks` implementation to query container and stream audio tracks from mpv `track-list`.
 - Updated: Increased playback speed ceiling from `4.0` to `10.0` in `setSpeed`.
 

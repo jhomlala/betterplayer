@@ -1,4 +1,4 @@
-## Unreleased
+## 1.13.0
 - Added: `getAudioTracks` implementation to query audible options on AVPlayer's current media asset.
 - Updated: Increased playback speed ceiling from `4.0` to `10.0` in `setSpeed`.
 

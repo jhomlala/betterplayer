@@ -39,7 +39,7 @@ dependencies:
   # better_player_plus: ^x.y.z
   
   # Add:
-  better_player: ^1.34.0
+  better_player: ^1.35.0
 ```
 
 Run `flutter pub get`.
