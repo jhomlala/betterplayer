@@ -30,6 +30,7 @@ class _ControlsConfigurationPageState extends State<ControlsConfigurationPage> {
       overflowModalColor: Colors.indigo,
       overflowModalTextColor: Colors.white,
       overflowMenuIconsColor: Colors.white,
+      playbackSpeeds: const [0.25, 0.5, 1.0, 1.5, 2.0, 3.0, 5.0, 10.0],
     );
 
     final betterPlayerConfiguration = PlayerConfiguration(
