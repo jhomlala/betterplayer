@@ -1,3 +1,3 @@
-## Unreleased
+## 1.0.0
 
-- Added initial experimental Tizen platform implementation (`better_player_tizen`) powered by Tizen Native Media Player API (`<player.h>`).
+* Added: Initial **EXPERIMENTAL** release of `better_player_tizen` for Tizen OS / Samsung Smart TVs using the native Tizen Multimedia `<player.h>` C API.

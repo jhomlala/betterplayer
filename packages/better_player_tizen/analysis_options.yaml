@@ -4,6 +4,7 @@ analyzer:
   exclude:
     - build/**
     - "**/*.g.dart"
+    - "lib/src/**/*.g.dart"
 
 linter:
   rules:
