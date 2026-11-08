@@ -37,7 +37,7 @@ class TizenPlayer {
   int64_t GetTextureId() const { return texture_id_; }
 
  private:
-  const uint8_t *CopyPixelBuffer(size_t width, size_t height);
+  const FlutterDesktopPixelBuffer *CopyPixelBuffer(size_t width, size_t height);
   void SetUpEventChannel(flutter::BinaryMessenger *messenger);
   void SendEvent(const flutter::EncodableMap &map);
 
@@ -49,6 +49,8 @@ class TizenPlayer {
 
   flutter::PluginRegistrar *plugin_registrar_ = nullptr;
   flutter::TextureRegistrar *texture_registrar_ = nullptr;
+  std::unique_ptr<flutter::TextureVariant> texture_variant_;
+  FlutterDesktopPixelBuffer desktop_pixel_buffer_{};
   int64_t texture_id_ = -1;
 
   player_h player_ = nullptr;

@@ -29,12 +29,12 @@ bool TizenPlayer::Initialize() {
   player_set_media_packet_video_frame_decoded_cb(
       player_, OnVideoFrameDecoded, this);
 
-  auto texture = std::make_unique<flutter::TextureVariant>(
+  texture_variant_ = std::make_unique<flutter::TextureVariant>(
       flutter::PixelBufferTexture([this](size_t width, size_t height) {
         return this->CopyPixelBuffer(width, height);
       }));
 
-  texture_id_ = texture_registrar_->RegisterTexture(std::move(texture));
+  texture_id_ = texture_registrar_->RegisterTexture(texture_variant_.get());
   SetUpEventChannel(plugin_registrar_->messenger());
   return true;
 }
@@ -73,12 +73,18 @@ void TizenPlayer::SendEvent(const flutter::EncodableMap &map) {
   }
 }
 
-const uint8_t *TizenPlayer::CopyPixelBuffer(size_t width, size_t height) {
+const FlutterDesktopPixelBuffer *TizenPlayer::CopyPixelBuffer(size_t width,
+                                                              size_t height) {
   std::lock_guard<std::mutex> lock(buffer_mutex_);
   if (pixel_buffer_.empty()) {
     return nullptr;
   }
-  return pixel_buffer_.data();
+  desktop_pixel_buffer_.buffer = pixel_buffer_.data();
+  desktop_pixel_buffer_.width = buffer_width_ > 0 ? buffer_width_ : width;
+  desktop_pixel_buffer_.height = buffer_height_ > 0 ? buffer_height_ : height;
+  desktop_pixel_buffer_.release_callback = nullptr;
+  desktop_pixel_buffer_.release_context = nullptr;
+  return &desktop_pixel_buffer_;
 }
 
 void TizenPlayer::OnVideoFrameDecoded(media_packet_h packet, void *data) {
@@ -270,6 +276,7 @@ void TizenPlayer::Dispose() {
     texture_registrar_->UnregisterTexture(texture_id_);
     texture_id_ = -1;
   }
+  texture_variant_.reset();
 
   if (event_channel_) {
     event_channel_->SetStreamHandler(nullptr);
