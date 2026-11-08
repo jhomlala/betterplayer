@@ -88,26 +88,44 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ENGINE_VER=$(cut -c1-8 "$FLUTTER_ROOT/bin/internal/engine.version")
-          echo "Engine revision: $ENGINE_VER"
+          ENGINE_VER=$(cut -c1-8 "$HOME/flutter-tizen/bin/internal/engine.version")
+          FULL_VER=$(cat "$HOME/flutter-tizen/bin/internal/engine.version")
+          echo "Flutter Tizen Engine revision: $ENGINE_VER ($FULL_VER)"
+          
+          # Initialize flutter-tizen to clone internal flutter repo
+          export PATH="$HOME/flutter-tizen/bin:$PATH"
+          flutter-tizen --version
+          
           RELEASE_JSON=$(curl -s -H "Authorization: Bearer $GH_TOKEN" "https://api.github.com/repos/flutter-tizen/flutter/releases/tags/$ENGINE_VER")
+          CACHE_DIRS=(
+            "$HOME/flutter-tizen/bin/cache"
+            "$HOME/flutter-tizen/flutter/bin/cache"
+          )
+          
           for pkg in tizen-arm-debug tizen-arm64-debug tizen-x86-debug; do
             URL=$(echo "$RELEASE_JSON" | jq -r ".assets[] | select(.name==\"$pkg.zip\") | .url")
             if [ -n "$URL" ] && [ "$URL" != "null" ]; then
               echo "Downloading $pkg via GitHub API..."
-              mkdir -p "$FLUTTER_ROOT/bin/cache/artifacts/engine/$pkg"
               curl -s -L \
                 -H "Authorization: Bearer $GH_TOKEN" \
                 -H "Accept: application/octet-stream" \
                 "$URL" -o "/tmp/$pkg.zip"
-              unzip -q -o "/tmp/$pkg.zip" -d "$FLUTTER_ROOT/bin/cache/artifacts/engine/$pkg"
-              chmod -R a+x "$FLUTTER_ROOT/bin/cache/artifacts/engine/$pkg"
+              for cdir in "${CACHE_DIRS[@]}"; do
+                target="$cdir/artifacts/engine/$pkg"
+                mkdir -p "$target"
+                unzip -q -o "/tmp/$pkg.zip" -d "$target"
+                chmod -R a+x "$target"
+              done
             fi
           done
-          mkdir -p "$FLUTTER_ROOT/bin/cache"
-          cp "$FLUTTER_ROOT/bin/internal/engine.version" "$FLUTTER_ROOT/bin/cache/tizen-engine.stamp"
+          
+          for cdir in "${CACHE_DIRS[@]}"; do
+            mkdir -p "$cdir"
+            echo "$FULL_VER" > "$cdir/tizen-engine.stamp"
+          done
+          
           echo "Tizen engine pre-cache complete:"
-          ls -la "$FLUTTER_ROOT/bin/cache/artifacts/engine"
+          ls -la "$HOME/flutter-tizen/flutter/bin/cache/artifacts/engine" || true
 
       - name: Fetch Workspace Dependencies
         run: flutter pub get
@@ -124,6 +142,7 @@ jobs:
         working-directory: packages/better_player_tizen/example
         run: |
           export PATH="$HOME/flutter-tizen/bin:$HOME/tizen-studio/tools/ide/bin:$PATH"
+          export FLUTTER_ROOT="$HOME/flutter-tizen/flutter"
           dbus-run-session -- bash -c "
             echo tizen | gnome-keyring-daemon --unlock &&
             for attempt in 1 2 3; do
