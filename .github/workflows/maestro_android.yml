@@ -49,7 +49,7 @@ jobs:
             ${{ runner.os }}-pub-
 
       - name: Cache Gradle
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: |
             ~/.gradle/caches
@@ -103,47 +103,58 @@ jobs:
             touch "$GRADLE_DIR/gradle-9.5.0-all.zip.ok"
           fi
 
-          # Route mavenCentral through direct mirror to prevent Sonatype redirecting to GitHub releases (504 timeout)
           mkdir -p "$HOME/.gradle/init.d"
           cat << 'EOF' > "$HOME/.gradle/init.d/mirror.init.gradle"
+          // Route Maven Central through Google's mirror. Central redirects some jars
+          // to GitHub release assets, which return 504 on CI.
+          def mirror = 'https://maven-central.storage-download.googleapis.com/maven2/'
+          def rewrite = { repo ->
+              if (repo instanceof MavenArtifactRepository) {
+                  def u = repo.url.toString()
+                  if (u.contains('repo.maven.apache.org') || u.contains('repo1.maven.org')) {
+                      println "mirror.init: ${u} -> ${mirror}"
+                      repo.url = uri(mirror)
+                  }
+              }
+          }
+          beforeSettings { settings ->
+              settings.pluginManagement.repositories.all(rewrite)
+          }
+          settingsEvaluated { settings ->
+              settings.pluginManagement.repositories.all(rewrite)
+              settings.dependencyResolutionManagement.repositories.all(rewrite)
+          }
           allprojects {
-              buildscript {
-                  repositories {
-                      all { repo ->
-                          if (repo instanceof MavenArtifactRepository) {
-                              if (repo.url.toString().contains("repo.maven.apache.org") || repo.url.toString().contains("repo1.maven.org")) {
-                                  repo.url = uri("https://maven.aliyun.com/repository/public")
-                              }
-                          }
-                      }
-                  }
-              }
-              repositories {
-                  all { repo ->
-                      if (repo instanceof MavenArtifactRepository) {
-                          if (repo.url.toString().contains("repo.maven.apache.org") || repo.url.toString().contains("repo1.maven.org")) {
-                              repo.url = uri("https://maven.aliyun.com/repository/public")
-                          }
-                      }
-                  }
-              }
+              buildscript.repositories.all(rewrite)
+              repositories.all(rewrite)
           }
           EOF
 
       - name: Build App
         run: |
+          cat "$HOME/.gradle/init.d/mirror.init.gradle" | head -5
           cd packages/better_player_example
-          for i in 1 2 3; do
+          for i in 1 2 3 4 5; do
             echo "Attempt $i: Building APK..."
             flutter build apk --debug --target lib/main_e2e.dart && break || {
-              if [ $i -eq 3 ]; then
-                echo "Build failed after 3 attempts."
+              if [ $i -eq 5 ]; then
+                echo "Build failed after 5 attempts."
                 exit 1
               fi
-              echo "Build failed. Retrying in 10s..."
-              sleep 10
+              echo "Build failed. Retrying in 60s..."
+              sleep 60
             }
           done
+
+      - name: Save Gradle cache
+        if: always()
+        continue-on-error: true
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
       - name: Run Maestro Tests
         uses: reactivecircus/android-emulator-runner@v2
