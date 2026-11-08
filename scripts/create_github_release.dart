@@ -14,6 +14,8 @@ const _packages = [
   ['better_player_ios', 'packages/better_player_ios'],
   ['better_player_macos', 'packages/better_player_macos'],
   ['better_player_windows', 'packages/better_player_windows'],
+  ['better_player_linux', 'packages/better_player_linux'],
+  ['better_player_tizen', 'packages/better_player_tizen'],
   ['better_player_web', 'packages/better_player_web'],
   ['better_player', 'packages/better_player'],
 ];
