@@ -88,6 +88,7 @@ jobs:
       - name: Pre-cache Tizen Engine and Embedder Artifacts
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FLUTTER_ROOT: /home/runner/flutter-tizen/flutter
         run: |
           ENG_VER=$(cut -c1-8 "$HOME/flutter-tizen/bin/internal/engine.version")
           FULL_ENG_VER=$(cat "$HOME/flutter-tizen/bin/internal/engine.version")
@@ -98,6 +99,7 @@ jobs:
           
           # Initialize flutter-tizen to clone internal flutter repo
           export PATH="$HOME/flutter-tizen/bin:$PATH"
+          export FLUTTER_ROOT="$HOME/flutter-tizen/flutter"
           flutter-tizen --version
           
           CACHE_DIRS=(
@@ -155,12 +157,15 @@ jobs:
             fi
           done
           
-          # 3. Create dummy dirs for all other getBinaryDirs paths to satisfy isUpToDateInner
-          DUMMY_DIRS=(
+          # 3. Create all required dirs for TizenEngineArtifacts and TizenEmbedderArtifacts
+          ALL_DIRS=(
+            "tizen-arm-debug"
             "tizen-arm-profile"
             "tizen-arm-release"
+            "tizen-arm64-debug"
             "tizen-arm64-profile"
             "tizen-arm64-release"
+            "tizen-x86-debug"
             "tizen-x64-debug"
             "tizen-x64-profile"
             "tizen-x64-release"
@@ -170,9 +175,20 @@ jobs:
             "tizen-arm64-release/linux-x64"
             "tizen-x64-profile/linux-x64"
             "tizen-x64-release/linux-x64"
+            "tizen-common"
+            "tizen-arm/6.0"
+            "tizen-arm/6.5"
+            "tizen-arm/11.0"
+            "tizen-arm64/6.0"
+            "tizen-arm64/6.5"
+            "tizen-arm64/11.0"
+            "tizen-x86/6.0"
+            "tizen-x86/6.5"
+            "tizen-x64/8.0"
+            "tizen-x64/11.0"
           )
           for cdir in "${CACHE_DIRS[@]}"; do
-            for d in "${DUMMY_DIRS[@]}"; do
+            for d in "${ALL_DIRS[@]}"; do
               mkdir -p "$cdir/artifacts/engine/$d"
             done
             # Write stamps
@@ -184,7 +200,6 @@ jobs:
           ls -la "$HOME/flutter-tizen/flutter/bin/cache/artifacts/engine"
           
           # Verify precache using flutter-tizen
-          export FLUTTER_ROOT="$HOME/flutter-tizen/flutter"
           flutter-tizen precache --tizen -v
 
       - name: Fetch Workspace Dependencies
