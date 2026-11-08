@@ -190,7 +190,13 @@ void BetterPlayerTizenPlugin::HandleMethodCall(
     double volume = 1.0;
     auto it = args->find(flutter::EncodableValue("volume"));
     if (it != args->end()) {
-      volume = it->second.DoubleValue();
+      if (std::holds_alternative<double>(it->second)) {
+        volume = std::get<double>(it->second);
+      } else if (std::holds_alternative<int32_t>(it->second)) {
+        volume = static_cast<double>(std::get<int32_t>(it->second));
+      } else if (std::holds_alternative<int64_t>(it->second)) {
+        volume = static_cast<double>(std::get<int64_t>(it->second));
+      }
     }
     player->SetVolume(volume);
     result->Success();
@@ -200,7 +206,13 @@ void BetterPlayerTizenPlugin::HandleMethodCall(
     double speed = 1.0;
     auto it = args->find(flutter::EncodableValue("speed"));
     if (it != args->end()) {
-      speed = it->second.DoubleValue();
+      if (std::holds_alternative<double>(it->second)) {
+        speed = std::get<double>(it->second);
+      } else if (std::holds_alternative<int32_t>(it->second)) {
+        speed = static_cast<double>(std::get<int32_t>(it->second));
+      } else if (std::holds_alternative<int64_t>(it->second)) {
+        speed = static_cast<double>(std::get<int64_t>(it->second));
+      }
     }
     player->SetPlaybackSpeed(speed);
     result->Success();
