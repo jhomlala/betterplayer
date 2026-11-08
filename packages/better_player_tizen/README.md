@@ -15,7 +15,7 @@ This package is an experimental federated plugin implementation. Include `better
 
 ```yaml
 dependencies:
-  better_player: ^1.35.0
+  better_player: ^1.36.0
   better_player_tizen: ^1.0.0
 ```
 

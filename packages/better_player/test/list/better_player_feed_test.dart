@@ -453,6 +453,7 @@ void main() {
 
         await tester.pumpWidget(
           MaterialApp(
+            theme: ThemeData(splashFactory: NoSplash.splashFactory),
             home: Scaffold(
               body: BetterPlayerFeed(
                 controller: feedController,
@@ -679,6 +680,7 @@ void main() {
 
         await tester.pumpWidget(
           MaterialApp(
+            theme: ThemeData(splashFactory: NoSplash.splashFactory),
             home: Scaffold(
               body: BetterPlayerFeed(
                 controller: feedController,

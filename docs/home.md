@@ -12,11 +12,11 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 # Better Player
 
-Better Player is the complete, production-grade video player for Flutter. It provides native OS performance, multi-platform support (Android, iOS, macOS, Windows, Linux, Web), and built-in commercial streaming features including HLS/DASH adaptive bitrate switching, Widevine and FairPlay DRM, offline caching, VAST/VMAP advertising, and short-form video feeds.
+Better Player is the complete, production-grade video player for Flutter. It provides native OS performance, multi-platform support (Android, iOS, macOS, Windows, Linux, Web, and experimental Tizen), and built-in commercial streaming features including HLS/DASH adaptive bitrate switching, Widevine and FairPlay DRM, offline caching, VAST/VMAP advertising, and short-form video feeds.
 
 ## Key Features
 
-Better Player provides a robust set of features designed for production-ready applications:
+Better Player provides a complete set of features designed for production applications:
 
 *   **Reliability**: Fixes for common bugs found in other players.
 *   **Advanced Configuration**: Granular control over player behavior and appearance.
@@ -34,6 +34,7 @@ Better Player provides a robust set of features designed for production-ready ap
 *   **Windows Support**: Desktop playback powered by libmpv and Direct3D 11 texture sharing.
 *   **Linux Support**: Desktop playback powered by libmpv and FlPixelBufferTexture.
 *   **Web Support**: Advanced web playback using Shaka Player for HLS, DASH, and DRM.
+*   **Tizen Support (Experimental)**: Native playback for Samsung Smart TVs and Tizen devices powered by the native Tizen Multimedia API (`<player.h>`).
 *   ... and much more! See the detailed [Platform Support](platform_support.md) matrix.
 
 ## Migration Guides
