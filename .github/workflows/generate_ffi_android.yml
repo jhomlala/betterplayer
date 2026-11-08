@@ -2,6 +2,9 @@ name: Generate Android FFI
 
 on:
   push:
+    branches:
+      - '**'
+      - '!master'
     paths:
       - 'packages/better_player_android/android/**'
       - 'packages/better_player_android/tool/**'
@@ -16,6 +19,7 @@ concurrency:
 
 jobs:
   generate-android-ffi:
+    if: github.ref != 'refs/heads/master' && startsWith(github.ref, 'refs/heads/')
     runs-on: ubuntu-latest
 
     steps:
