@@ -1,11 +1,12 @@
 ## Unreleased
+- [BREAKING_CHANGE] Updated: Streamlined `BetterPlayerFeedController` collection and lease methods. Replaced `insertDataSources` with `insertAll({required int index, required List<PlayerDataSource> sources, List<String>? ids})`, replaced `replaceAt` with `replace({required int index, required PlayerDataSource dataSource, String? id})`, replaced `getLeaseNotifier(index)` with `leaseNotifier(index)`, and required named parameters on `insert({required int index, required PlayerDataSource dataSource, String? id})`. Removed unused `feedConfiguration` constructor parameter.
+- [BREAKING_CHANGE] Updated: Removed unused `onProgress` parameter from `PlayerEngineController.preCache` (all pre-cache events flow through `preCacheProgressStream`).
 - Added: Playback controls on `BetterPlayerFeedController` (`play`, `pause`, `togglePlay`, `isPlaying`, `activeController`) and dynamic `autoPlay` property.
-- Added: Feed navigation helpers (`jumpTo`, `next`, `previous`) and standard collection methods (`add`, `addAll`, `insert`, `insertAll`, `replace`, positional `removeAt`, `retry` with default active index, `leaseNotifier`) on `BetterPlayerFeedController`.
+- Added: Feed navigation helpers (`jumpTo`, `next`, `previous`) and collection helpers (`add`, `addAll`, positional `removeAt`, `retry` with default active index) on `BetterPlayerFeedController`.
 - Fixed: Wired `PlayerFeedConfiguration.autoPlay` to feed playback and added `PlayerFeedConfiguration.copyWith`.
 - Fixed: Resolved byte truncation bug in `BetterPlayerClearKeyUtils.generateKey` preserving leading zero bytes in 16-byte DRM keys.
 - Fixed: Decoded network subtitles as UTF-8 via response bytes to prevent Latin-1 encoding corruption, and guarded against HTTP error response bodies.
 - Fixed: BetterPlayerPool active index protection during slot eviction, failed lease slot reuse, and concurrent bind state tracking.
-- Updated: Removed unused onProgress parameter in PlayerEngineController.preCache.
 
 ## 1.33.0
 - Added: Feed error handling with `PlayerFeedConfiguration.errorBuilder`, localized `PlayerFeedErrorView`, and `BetterPlayerFeedController.retry`.

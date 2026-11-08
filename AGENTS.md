@@ -91,6 +91,7 @@ PlayerDataSource dataSource = PlayerDataSource(
 - **Error Resolution**: If `flutter analyze` reports issues, they MUST be fixed immediately before concluding the task.
 - **PR Completeness**: Before considering a task or bug fix finished, ensure the work is ready to be merged. This includes:
   - Adding a relevant entry to `CHANGELOG.md` under the `## Unreleased` header. If the header does not exist, create it at the very top of the file (following the Changelog Guidelines).
+  - Explicitly documenting any changes to previously released APIs or behaviors under `## Unreleased` with the `[BREAKING_CHANGE]` label and migration guidance.
   - Ensuring all tests pass and `flutter analyze` is clean.
   - Providing clear verification steps and, for bugs, the reproduction data source.
 
@@ -117,6 +118,9 @@ PlayerDataSource dataSource = PlayerDataSource(
   - **Deterministic Persistent IDs**: NEVER use Dart's `Object.hashCode` or `String.hashCode` for persistent cache keys, file names, or native database IDs (Dart randomizes string hash codes per process run). Use the raw key/URL or a deterministic hash.
   - **No Em Dashes in Prose or Comments**: NEVER use Unicode em dashes (`—`) or double hyphens (`--`) in documentation, changelogs, PR/issue comments, or docstrings. Use a comma, colon, or parentheses instead.
   - **No AI Slop / Over-Descriptive Names**: Name variables, parameters, and methods the way a pragmatically lazy, sharp human developer writes them: short, clear, and direct (e.g., `items`, `id`, `url`, `res`, `err`, `play()`, `pause()`, `index`). NEVER generate verbose, bloated pseudo-literary prose names (e.g., `comprehensiveMediaSourceCollectionContainer`, `executePlaybackStateTransitionMechanism`, `orchestrateSlotEvictionCycle`). If a 1-2 word name is unambiguous in context, use it.
+  - **Breaking Changes to Released APIs**: Modifying, removing, or changing signatures of public APIs that were released in a previous version breaks existing users. When modifying previously released APIs:
+    - Strongly prefer maintaining backward compatibility where practical (e.g., keeping a deprecated alias if viable).
+    - If a breaking change is necessary (e.g., fixing architectural flaws or enforcing project-wide consistency), ALWAYS mark it with `[BREAKING_CHANGE]` in `CHANGELOG.md` under `## Unreleased` and provide clear migration instructions for developers upgrading from prior versions.
 
 ## Testing
 - **Async Operations**: Always `await` asynchronous calls in tests (e.g., `setupDataSource`, `play`, `pause`, `seekTo`).
@@ -179,6 +183,11 @@ PlayerDataSource dataSource = PlayerDataSource(
 - **Unreleased Section**: The `## Unreleased` header should ONLY be present when there are actual unreleased changes. If present, it MUST be at the very top of the changelog file, above all other version headers. Version headers MUST be ordered chronologically, with the most recent version at the top. If there are no unreleased changes, the `## Unreleased` header MUST NOT be present.
 - **Grouping**: Always group related or repetitive changes under a single concise entry in `## Unreleased` to avoid bloating.
 - **Labels**: Mark critical or API-breaking changes with the `[BREAKING_CHANGE]` label at the start of the line.
+- **Released APIs & Breaking Changes**: If you modify, rename, deprecate, or remove any public API, method signature (such as turning positional parameters into named parameters), constructor parameter, default value, or behavior that was **already released in an earlier version**, you MUST:
+  1. Add an entry under `## Unreleased` prefixed with `[BREAKING_CHANGE]`.
+  2. Clearly describe what previously released API or behavior changed.
+  3. Provide explicit migration guidance (for example: "Replace `insertDataSources(index, dataSources)` with `insertAll(index: index, sources: dataSources)`").
+  Never let modifications to previously released code land without documenting the breaking change and how to update code.
 - **Sections**: Use the following verbs to start entries:
   - `Added`: for new features.
   - `Updated`: for changes in existing functionality or dependencies.
