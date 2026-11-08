@@ -1,4 +1,4 @@
-## Unreleased
+## 1.6.0
 - Added: `getAudioTracks` implementation to query audio tracks from Shaka Player variant tracks and audio languages.
 
 ## 1.5.0

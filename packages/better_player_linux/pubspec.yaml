@@ -1,7 +1,7 @@
 name: better_player_linux
 resolution: workspace
 description: The Linux implementation of the better_player plugin, providing video playback using libmpv and FFI for Flutter desktop apps.
-version: 1.0.2
+version: 1.1.0
 homepage: https://github.com/jhomlala/betterplayer/tree/master/packages/better_player_linux
 documentation: https://jhomlala.github.io/betterplayer/
 topics:

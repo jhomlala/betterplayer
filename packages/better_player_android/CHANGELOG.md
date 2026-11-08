@@ -1,4 +1,4 @@
-## Unreleased
+## 1.13.0
 - Added: `getAudioTracks` implementation to query audio tracks from Media3 `trackSelector.currentMappedTrackInfo`.
 - Fixed: Improved `setAudioTrack` matching logic to resolve multi-audio tracks by index and language when container tracks lack explicit labels.
 
