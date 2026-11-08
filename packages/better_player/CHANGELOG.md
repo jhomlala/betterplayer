@@ -1,4 +1,4 @@
-## Unreleased
+## 1.34.0
 - [BREAKING_CHANGE] Updated: Streamlined `BetterPlayerFeedController` collection and lease methods. Replaced `insertDataSources` with `insertAll({required int index, required List<PlayerDataSource> sources, List<String>? ids})`, replaced `replaceAt` with `replace({required int index, required PlayerDataSource dataSource, String? id})`, replaced `getLeaseNotifier(index)` with `leaseNotifier(index)`, and required named parameters on `insert({required int index, required PlayerDataSource dataSource, String? id})`. Removed unused `feedConfiguration` constructor parameter.
 - [BREAKING_CHANGE] Updated: Removed unused `onProgress` parameter from `PlayerEngineController.preCache` (all pre-cache events flow through `preCacheProgressStream`).
 - Added: Playback controls on `BetterPlayerFeedController` (`play`, `pause`, `togglePlay`, `isPlaying`, `activeController`) and dynamic `autoPlay` property.
@@ -7,6 +7,7 @@
 - Fixed: Resolved byte truncation bug in `BetterPlayerClearKeyUtils.generateKey` preserving leading zero bytes in 16-byte DRM keys.
 - Fixed: Decoded network subtitles as UTF-8 via response bytes to prevent Latin-1 encoding corruption, and guarded against HTTP error response bodies.
 - Fixed: BetterPlayerPool active index protection during slot eviction, failed lease slot reuse, and concurrent bind state tracking.
+- Updated: Bumped federated sub-packages: etter_player_android to ^1.12.0, etter_player_ios to ^1.12.0, etter_player_macos to ^1.7.0, and etter_player_web to ^1.5.0.
 
 ## 1.33.0
 - Added: Feed error handling with `PlayerFeedConfiguration.errorBuilder`, localized `PlayerFeedErrorView`, and `BetterPlayerFeedController.retry`.

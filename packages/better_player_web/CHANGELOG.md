@@ -1,4 +1,4 @@
-## Unreleased
+## 1.5.0
 - Added: ClearKey DRM support on Web via Shaka Player `clearKeys` (supporting both standard and Base64Url JWKs and hex keys) and `servers['org.w3.clearkey']` (for license servers).
 
 ## 1.4.1
