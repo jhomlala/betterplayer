@@ -4,6 +4,7 @@
 #include <flutter/standard_method_codec.h>
 
 #include <algorithm>
+#include <cmath>
 #include <iostream>
 
 namespace better_player_tizen {
