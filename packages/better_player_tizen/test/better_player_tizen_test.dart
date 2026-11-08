@@ -38,12 +38,10 @@ void main() {
       when(() => mockPlayer.setVolume(any())).thenAnswer((_) async {});
       when(() => mockPlayer.setSpeed(any())).thenAnswer((_) async {});
       when(() => mockPlayer.seekTo(any())).thenAnswer((_) async {});
-      when(
-        () => mockPlayer.getPosition(),
-      ).thenAnswer((_) async => const Duration(seconds: 10));
-      when(
-        () => mockPlayer.setLooping(looping: any(named: 'looping')),
-      ).thenAnswer((_) async {});
+      when(() => mockPlayer.getPosition())
+          .thenAnswer((_) async => const Duration(seconds: 10));
+      when(() => mockPlayer.setLooping(looping: any(named: 'looping')))
+          .thenAnswer((_) async {});
       when(
         () => mockPlayer.setTrackParameters(
           width: any(named: 'width'),
@@ -65,17 +63,12 @@ void main() {
           );
 
       tizenPlatform = BetterPlayerTizen(
-        playerFactory: ({
-          required textureId,
-          bufferingConfiguration,
-        }) async =>
+        playerFactory: ({required textureId, bufferingConfiguration}) async =>
             mockPlayer,
       );
-      tizenPlatform.setupLogCallback(
-        ({required levelIndex, required message}) {
-          logEntries.add('[$levelIndex] $message');
-        },
-      );
+      tizenPlatform.setupLogCallback(({required levelIndex, required message}) {
+        logEntries.add('[$levelIndex] $message');
+      });
     });
 
     tearDown(() async {
@@ -131,7 +124,7 @@ void main() {
       await tizenPlatform.create();
       final dataSource = DataSource(
         sourceType: DataSourceType.network,
-        url: 'https://example.com/test.mp4',
+        uri: 'https://example.com/test.mp4',
       );
       await tizenPlatform.setDataSource(42, dataSource);
       verify(() => mockPlayer.setDataSource(dataSource)).called(1);
@@ -218,7 +211,7 @@ void main() {
     test('clearCache, preCache, stopPreCache complete safely', () async {
       await tizenPlatform.clearCache();
       await tizenPlatform.preCache(
-        DataSource(sourceType: DataSourceType.network, url: 'url'),
+        DataSource(sourceType: DataSourceType.network, uri: 'uri'),
         1024,
       );
       await tizenPlatform.stopPreCache('url', 'key');
@@ -263,7 +256,7 @@ void main() {
 
       final dataSource = DataSource(
         sourceType: DataSourceType.network,
-        url: 'https://example.com/stream.m3u8',
+        uri: 'https://example.com/stream.m3u8',
         headers: <String, String>{'Authorization': 'Bearer test'},
       );
       await controller.setDataSource(dataSource);

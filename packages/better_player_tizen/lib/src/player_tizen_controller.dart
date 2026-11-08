@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/widgets.dart';
 
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:better_player_tizen/src/player_tizen.dart';
@@ -13,9 +12,10 @@ class PlayerTizenController implements PlayerTizen {
     MethodChannel? channel,
     EventChannel? eventChannel,
     Stream<dynamic>? rawEventStream,
-  })  : _channel = channel ?? const MethodChannel('better_player_tizen'),
-        _eventChannel = eventChannel ??
-            EventChannel('better_player_tizen/video_events_$textureId') {
+  }) : _channel = channel ?? const MethodChannel('better_player_tizen'),
+       _eventChannel =
+           eventChannel ??
+           EventChannel('better_player_tizen/video_events_$textureId') {
     final stream = rawEventStream ?? _eventChannel.receiveBroadcastStream();
     _eventSubscription = stream.listen(_handleEvent, onError: _handleError);
   }
@@ -50,13 +50,14 @@ class PlayerTizenController implements PlayerTizen {
         _eventController.add(
           VideoEvent(
             eventType: VideoEventType.initialized,
+            key: '$textureId',
             duration: Duration(milliseconds: durationMs),
             size: Size(width, height),
           ),
         );
       case 'completed':
         _eventController.add(
-          VideoEvent(eventType: VideoEventType.completed),
+          VideoEvent(eventType: VideoEventType.completed, key: '$textureId'),
         );
       case 'bufferingUpdate':
         final rawBuffered = map['values'] as List<dynamic>? ?? <dynamic>[];
@@ -76,6 +77,7 @@ class PlayerTizenController implements PlayerTizen {
         _eventController.add(
           VideoEvent(
             eventType: VideoEventType.bufferingUpdate,
+            key: '$textureId',
             buffered: buffered,
           ),
         );
@@ -83,8 +85,8 @@ class PlayerTizenController implements PlayerTizen {
         final isPlaying = map['isPlaying'] as bool? ?? false;
         _eventController.add(
           VideoEvent(
-            eventType:
-                isPlaying ? VideoEventType.play : VideoEventType.pause,
+            eventType: isPlaying ? VideoEventType.play : VideoEventType.pause,
+            key: '$textureId',
           ),
         );
       default:
@@ -100,7 +102,7 @@ class PlayerTizenController implements PlayerTizen {
 
   @override
   Future<void> setDataSource(DataSource dataSource) async {
-    final uri = dataSource.url;
+    final uri = dataSource.uri;
     await _channel.invokeMethod<void>('setDataSource', <String, dynamic>{
       'textureId': textureId,
       'uri': uri,
