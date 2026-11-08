@@ -45,6 +45,7 @@ class BetterPlayerTizen extends BetterPlayerPlatform {
     return PlayerTizenController(textureId: textureId);
   }
 
+  /// Returns the player instance associated with [textureId].
   @visibleForTesting
   PlayerTizen? getPlayer(int? textureId) {
     if (textureId == null) {
@@ -53,6 +54,7 @@ class BetterPlayerTizen extends BetterPlayerPlatform {
     return _players[textureId];
   }
 
+  /// Registers a player instance for testing.
   @visibleForTesting
   void registerPlayer({
     required int textureId,

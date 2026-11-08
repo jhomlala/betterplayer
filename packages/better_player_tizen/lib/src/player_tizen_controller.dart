@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:ui';
+import 'package:flutter/widgets.dart';
 
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:better_player_tizen/src/player_tizen.dart';

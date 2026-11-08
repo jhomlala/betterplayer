@@ -1,4 +1,5 @@
 name: better_player_tizen_example
+resolution: workspace
 description: Demonstrates how to use the better_player_tizen plugin.
 publish_to: 'none'
 version: 1.0.0
