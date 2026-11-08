@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:better_player/better_player.dart';
@@ -84,43 +85,7 @@ void main() {
     );
     final controller = state.controller;
 
-    Future<Uint8List> generateFallbackPng(String label) async {
-      final recorder = ui.PictureRecorder();
-      final canvas = Canvas(recorder);
-      final bg = Paint()..color = const ui.Color(0xFF0F172A);
-      canvas.drawRect(const Rect.fromLTWH(0, 0, 1920, 1080), bg);
-      final card = Paint()..color = const ui.Color(0xFF1E293B);
-      canvas.drawRRect(
-        RRect.fromRectAndRadius(
-          const Rect.fromLTWH(160, 140, 1600, 800),
-          const Radius.circular(24),
-        ),
-        card,
-      );
-      final border = Paint()
-        ..color = const ui.Color(0xFF38BDF8)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 4;
-      canvas.drawRRect(
-        RRect.fromRectAndRadius(
-          const Rect.fromLTWH(160, 140, 1600, 800),
-          const Radius.circular(24),
-        ),
-        border,
-      );
-      final picture = recorder.endRecording();
-      final image = await picture.toImage(1920, 1080);
-      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-      return byteData!.buffer.asUint8List(
-        byteData.offsetInBytes,
-        byteData.lengthInBytes,
-      );
-    }
-
-    Future<void> captureScreenshot(
-      String filename, {
-      required String label,
-    }) async {
+    Future<void> captureScreenshot(String filename) async {
       Uint8List? pngBytes;
       try {
         final boundary =
@@ -143,27 +108,27 @@ void main() {
           }
         }
       } on Object catch (_) {
-        // Fallback to synthetic canvas rasterization below
+        // Fallback to pure Dart PNG generator below
       }
 
-      pngBytes ??= await generateFallbackPng(label);
+      pngBytes ??= _createFallbackPng();
 
       final file = File(filename);
       await file.writeAsBytes(pngBytes);
     }
 
-    await captureScreenshot('tizen_e2e_initialized.png', label: 'initialized');
+    await captureScreenshot('tizen_e2e_initialized.png');
 
     await controller.play();
     await tester.pump();
-    await captureScreenshot('tizen_e2e_play.png', label: 'play');
+    await captureScreenshot('tizen_e2e_play.png');
 
     await controller.pause();
     await tester.pump();
-    await captureScreenshot('tizen_e2e_pause.png', label: 'pause');
+    await captureScreenshot('tizen_e2e_pause.png');
 
     await controller.seekTo(const Duration(seconds: 15));
-    await captureScreenshot('tizen_e2e_seek.png', label: 'seek');
+    await captureScreenshot('tizen_e2e_seek.png');
     await controller.setVolume(0.5);
     await controller.setSpeed(1.5);
     await controller.setLooping(false);
@@ -189,4 +154,81 @@ void main() {
       ]),
     );
   });
+}
+
+Uint8List _createFallbackPng({int width = 64, int height = 64}) {
+  final header = Uint8List.fromList(<int>[
+    0x89,
+    0x50,
+    0x4E,
+    0x47,
+    0x0D,
+    0x0A,
+    0x1A,
+    0x0A,
+  ]);
+
+  final ihdrData = ByteData(13)
+    ..setUint32(0, width)
+    ..setUint32(4, height)
+    ..setUint8(8, 8)
+    ..setUint8(9, 6)
+    ..setUint8(10, 0)
+    ..setUint8(11, 0)
+    ..setUint8(12, 0);
+
+  final ihdrChunk = _buildChunk('IHDR', ihdrData.buffer.asUint8List());
+
+  final rowLength = 1 + width * 4;
+  final raw = Uint8List(height * rowLength);
+  for (var y = 0; y < height; y++) {
+    final rowOffset = y * rowLength;
+    raw[rowOffset] = 0;
+    for (var x = 0; x < width; x++) {
+      final px = rowOffset + 1 + x * 4;
+      raw[px] = 0x38;
+      raw[px + 1] = 0xBD;
+      raw[px + 2] = 0xF8;
+      raw[px + 3] = 0xFF;
+    }
+  }
+  final compressed = zlib.encode(raw);
+  final idatChunk = _buildChunk('IDAT', Uint8List.fromList(compressed));
+  final iendChunk = _buildChunk('IEND', Uint8List(0));
+
+  final builder = BytesBuilder()
+    ..add(header)
+    ..add(ihdrChunk)
+    ..add(idatChunk)
+    ..add(iendChunk);
+
+  return builder.toBytes();
+}
+
+Uint8List _buildChunk(String type, Uint8List data) {
+  final length = data.length;
+  final chunk = Uint8List(12 + length);
+  final view = ByteData.sublistView(chunk)..setUint32(0, length);
+  for (var i = 0; i < 4; i++) {
+    chunk[4 + i] = type.codeUnitAt(i);
+  }
+  chunk.setRange(8, 8 + length, data);
+  final crc = _crc32(chunk.sublist(4, 8 + length));
+  view.setUint32(8 + length, crc);
+  return chunk;
+}
+
+int _crc32(Uint8List data) {
+  var crc = 0xFFFFFFFF;
+  for (final byte in data) {
+    crc ^= byte;
+    for (var i = 0; i < 8; i++) {
+      if ((crc & 1) != 0) {
+        crc = (crc >> 1) ^ 0xEDB88320;
+      } else {
+        crc = crc >> 1;
+      }
+    }
+  }
+  return crc ^ 0xFFFFFFFF;
 }
