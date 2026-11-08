@@ -73,10 +73,21 @@ jobs:
 
       - name: Install Maestro
         run: |
-          if [ ! -d "$HOME/.maestro/bin" ]; then
-            curl -Ls "https://get.maestro.mobile.dev" | bash
+          if [ ! -x "$HOME/.maestro/bin/maestro" ]; then
+            echo "Attempting standard Maestro install..."
+            curl -Ls "https://get.maestro.mobile.dev" | bash || true
+          fi
+          if [ ! -x "$HOME/.maestro/bin/maestro" ]; then
+            echo "Standard installer failed. Fetching Maestro via GitHub API..."
+            ASSET_URL=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/mobile-dev-inc/maestro/releases/latest | jq -r '.assets[] | select(.name == "maestro.zip") | .url')
+            curl -sL -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/octet-stream" "$ASSET_URL" -o /tmp/maestro.zip
+            unzip -q -o /tmp/maestro.zip -d /tmp/maestro_extract
+            mkdir -p "$HOME/.maestro"
+            cp -r /tmp/maestro_extract/maestro/* "$HOME/.maestro/"
+            chmod +x "$HOME/.maestro/bin/maestro"
           fi
           echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+          "$HOME/.maestro/bin/maestro" --version
 
       - name: Start Simulator Boot
         run: |

@@ -67,7 +67,22 @@ jobs:
             ${{ runner.os }}-maestro-
 
       - name: Install Maestro
-        run: if [ ! -d "$HOME/.maestro/bin" ]; then curl -Ls "https://get.maestro.mobile.dev" | bash; fi; echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+        run: |
+          if [ ! -x "$HOME/.maestro/bin/maestro" ]; then
+            echo "Attempting standard Maestro install..."
+            curl -Ls "https://get.maestro.mobile.dev" | bash || true
+          fi
+          if [ ! -x "$HOME/.maestro/bin/maestro" ]; then
+            echo "Standard installer failed. Fetching Maestro via GitHub API..."
+            ASSET_URL=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/mobile-dev-inc/maestro/releases/latest | jq -r '.assets[] | select(.name == "maestro.zip") | .url')
+            curl -sL -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/octet-stream" "$ASSET_URL" -o /tmp/maestro.zip
+            unzip -q -o /tmp/maestro.zip -d /tmp/maestro_extract
+            mkdir -p "$HOME/.maestro"
+            cp -r /tmp/maestro_extract/maestro/* "$HOME/.maestro/"
+            chmod +x "$HOME/.maestro/bin/maestro"
+          fi
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+          "$HOME/.maestro/bin/maestro" --version
 
       - name: Setup Android SDK and Emulator
         run: sudo chmod 666 /dev/kvm
@@ -75,8 +90,29 @@ jobs:
       - name: Fetch dependencies
         run: flutter pub get; cd packages/better_player_example; flutter pub get
 
+      - name: Pre-cache Gradle dependencies
+        run: |
+          KOTLIN_DIR="$HOME/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-compiler-embeddable/2.2.21/b13aed5cf8412f9ee9d1e4db21bdcfebcc24f606"
+          mkdir -p "$KOTLIN_DIR"
+          if [ ! -s "$KOTLIN_DIR/kotlin-compiler-embeddable-2.2.21.jar" ]; then
+            echo "Pre-fetching kotlin-compiler-embeddable from Maven Central..."
+            curl -sL "https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-compiler-embeddable/2.2.21/kotlin-compiler-embeddable-2.2.21.jar" -o "$KOTLIN_DIR/kotlin-compiler-embeddable-2.2.21.jar"
+          fi
+
       - name: Build App
-        run: cd packages/better_player_example; flutter build apk --debug --target lib/main_e2e.dart
+        run: |
+          cd packages/better_player_example
+          for i in 1 2 3; do
+            echo "Attempt $i: Building APK..."
+            flutter build apk --debug --target lib/main_e2e.dart && break || {
+              if [ $i -eq 3 ]; then
+                echo "Build failed after 3 attempts."
+                exit 1
+              fi
+              echo "Build failed. Retrying in 10s..."
+              sleep 10
+            }
+          done
 
       - name: Run Maestro Tests
         uses: reactivecircus/android-emulator-runner@v2
