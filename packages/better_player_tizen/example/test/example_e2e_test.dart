@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player_tizen/better_player_tizen.dart';
+import 'package:better_player_tizen/src/player_tizen_controller.dart';
 import 'package:better_player_tizen_example/main.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -12,11 +14,12 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   final calls = <MethodCall>[];
-  MockStreamHandlerEventSink? eventSink;
+  late StreamController<dynamic> eventChannelController;
 
   setUp(() {
     calls.clear();
-    eventSink = null;
+    eventChannelController = StreamController<dynamic>.broadcast();
+
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
           const MethodChannel('better_player_tizen'),
@@ -26,12 +29,19 @@ void main() {
               return <String, dynamic>{'textureId': 1};
             }
             if (call.method == 'setDataSource') {
-              eventSink?.success(<String, dynamic>{
-                'event': 'initialized',
-                'duration': 60000,
-                'width': 1920,
-                'height': 1080,
-              });
+              unawaited(
+                Future.microtask(() {
+                  if (!eventChannelController.isClosed) {
+                    eventChannelController.add(<String, dynamic>{
+                      'event': 'initialized',
+                      'duration': 60000,
+                      'width': 1920,
+                      'height': 1080,
+                    });
+                  }
+                }),
+              );
+              return null;
             }
             if (call.method == 'getPosition') {
               return 12000;
@@ -39,41 +49,34 @@ void main() {
             return null;
           },
         );
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockStreamHandler(
-          const EventChannel('better_player_tizen/video_events_1'),
-          MockStreamHandler.inline(
-            onListen: (arguments, events) {
-              eventSink = events;
-            },
-          ),
+
+    BetterPlayerPlatform.instance = BetterPlayerTizen(
+      playerFactory: ({required textureId, bufferingConfiguration}) async {
+        return PlayerTizenController(
+          textureId: textureId,
+          rawEventStream: eventChannelController.stream,
         );
+      },
+    );
   });
 
-  tearDown(() {
+  tearDown(() async {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
           const MethodChannel('better_player_tizen'),
           null,
         );
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockStreamHandler(
-          const EventChannel('better_player_tizen/video_events_1'),
-          null,
-        );
+    await eventChannelController.close();
   });
 
   testWidgets('Full Tizen E2E playback lifecycle flow', (tester) async {
-    BetterPlayerTizen.register();
     final repaintBoundaryKey = GlobalKey();
 
     await tester.pumpWidget(
       BetterPlayerTizenExampleApp(repaintBoundaryKey: repaintBoundaryKey),
     );
-    await tester.runAsync(() async {
-      await Future<void>.delayed(const Duration(milliseconds: 50));
-    });
     await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
 
     expect(find.byType(TizenVideoPlayerScreen), findsOneWidget);
     expect(find.byType(BetterPlayer), findsOneWidget);
@@ -145,6 +148,11 @@ void main() {
         'setLooping',
       ]),
     );
+
+    await controller.pause();
+    controller.dispose();
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
   });
 }
 
