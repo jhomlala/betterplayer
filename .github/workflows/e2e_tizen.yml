@@ -81,9 +81,8 @@ jobs:
 
       - name: Install flutter-tizen
         run: |
-          git clone https://github.com/flutter-tizen/flutter-tizen.git $HOME/flutter-tizen
+          git clone --depth 1 https://github.com/flutter-tizen/flutter-tizen.git $HOME/flutter-tizen
           echo "$HOME/flutter-tizen/bin" >> $GITHUB_PATH
-          $HOME/flutter-tizen/bin/flutter-tizen precache --tizen
 
       - name: Fetch Workspace Dependencies
         run: flutter pub get
