@@ -64,6 +64,7 @@ jobs:
           $HOME/tizen-studio/package-manager/package-manager-cli.bin install \
             NativeToolchain-Gcc-9.2 \
             IOT-Headed-6.0-NativeAppDevelopment-CLI \
+            IOT-Headed-6.5-NativeAppDevelopment-CLI \
             Certificate-Manager \
             NativeCLI
 
@@ -84,28 +85,32 @@ jobs:
           git clone --depth 1 https://github.com/flutter-tizen/flutter-tizen.git $HOME/flutter-tizen
           echo "$HOME/flutter-tizen/bin" >> $GITHUB_PATH
 
-      - name: Pre-cache Tizen Engine Artifacts
+      - name: Pre-cache Tizen Engine and Embedder Artifacts
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ENGINE_VER=$(cut -c1-8 "$HOME/flutter-tizen/bin/internal/engine.version")
-          FULL_VER=$(cat "$HOME/flutter-tizen/bin/internal/engine.version")
-          echo "Flutter Tizen Engine revision: $ENGINE_VER ($FULL_VER)"
+          ENG_VER=$(cut -c1-8 "$HOME/flutter-tizen/bin/internal/engine.version")
+          FULL_ENG_VER=$(cat "$HOME/flutter-tizen/bin/internal/engine.version")
+          EMB_VER=$(cut -c1-7 "$HOME/flutter-tizen/bin/internal/embedder.version")
+          FULL_EMB_VER=$(cat "$HOME/flutter-tizen/bin/internal/embedder.version")
+          echo "Flutter Tizen Engine revision: $ENG_VER ($FULL_ENG_VER)"
+          echo "Flutter Tizen Embedder revision: $EMB_VER ($FULL_EMB_VER)"
           
           # Initialize flutter-tizen to clone internal flutter repo
           export PATH="$HOME/flutter-tizen/bin:$PATH"
           flutter-tizen --version
           
-          RELEASE_JSON=$(curl -s -H "Authorization: Bearer $GH_TOKEN" "https://api.github.com/repos/flutter-tizen/flutter/releases/tags/$ENGINE_VER")
           CACHE_DIRS=(
             "$HOME/flutter-tizen/bin/cache"
             "$HOME/flutter-tizen/flutter/bin/cache"
           )
           
+          # 1. Download engine artifacts
+          ENG_JSON=$(curl -s -H "Authorization: Bearer $GH_TOKEN" "https://api.github.com/repos/flutter-tizen/flutter/releases/tags/$ENG_VER")
           for pkg in tizen-arm-debug tizen-arm64-debug tizen-x86-debug; do
-            URL=$(echo "$RELEASE_JSON" | jq -r ".assets[] | select(.name==\"$pkg.zip\") | .url")
+            URL=$(echo "$ENG_JSON" | jq -r ".assets[] | select(.name==\"$pkg.zip\") | .url")
             if [ -n "$URL" ] && [ "$URL" != "null" ]; then
-              echo "Downloading $pkg via GitHub API..."
+              echo "Downloading engine $pkg via GitHub API..."
               curl -s -L \
                 -H "Authorization: Bearer $GH_TOKEN" \
                 -H "Accept: application/octet-stream" \
@@ -119,13 +124,68 @@ jobs:
             fi
           done
           
-          for cdir in "${CACHE_DIRS[@]}"; do
-            mkdir -p "$cdir"
-            echo "$FULL_VER" > "$cdir/tizen-engine.stamp"
+          # 2. Download embedder artifacts
+          EMB_JSON=$(curl -s -H "Authorization: Bearer $GH_TOKEN" "https://api.github.com/repos/flutter-tizen/embedder/releases/tags/$EMB_VER")
+          EMB_PKGS=(
+            "tizen-common:tizen-common.zip"
+            "tizen-arm/6.0:tizen-6.0-arm.zip"
+            "tizen-arm/6.5:tizen-6.5-arm.zip"
+            "tizen-arm64/6.0:tizen-6.0-arm64.zip"
+            "tizen-arm64/6.5:tizen-6.5-arm64.zip"
+            "tizen-x86/6.0:tizen-6.0-x86.zip"
+            "tizen-x86/6.5:tizen-6.5-x86.zip"
+            "tizen-x64/8.0:tizen-8.0-x64.zip"
+          )
+          for item in "${EMB_PKGS[@]}"; do
+            rel_dir="${item%%:*}"
+            zip_name="${item##*:}"
+            URL=$(echo "$EMB_JSON" | jq -r ".assets[] | select(.name==\"$zip_name\") | .url")
+            if [ -n "$URL" ] && [ "$URL" != "null" ]; then
+              echo "Downloading embedder $zip_name via GitHub API..."
+              curl -s -L \
+                -H "Authorization: Bearer $GH_TOKEN" \
+                -H "Accept: application/octet-stream" \
+                "$URL" -o "/tmp/$zip_name"
+              for cdir in "${CACHE_DIRS[@]}"; do
+                target="$cdir/artifacts/engine/$rel_dir"
+                mkdir -p "$target"
+                unzip -q -o "/tmp/$zip_name" -d "$target"
+                chmod -R a+x "$target"
+              done
+            fi
           done
           
-          echo "Tizen engine pre-cache complete:"
-          ls -la "$HOME/flutter-tizen/flutter/bin/cache/artifacts/engine" || true
+          # 3. Create dummy dirs for all other getBinaryDirs paths to satisfy isUpToDateInner
+          DUMMY_DIRS=(
+            "tizen-arm-profile"
+            "tizen-arm-release"
+            "tizen-arm64-profile"
+            "tizen-arm64-release"
+            "tizen-x64-debug"
+            "tizen-x64-profile"
+            "tizen-x64-release"
+            "tizen-arm-profile/linux-x64"
+            "tizen-arm-release/linux-x64"
+            "tizen-arm64-profile/linux-x64"
+            "tizen-arm64-release/linux-x64"
+            "tizen-x64-profile/linux-x64"
+            "tizen-x64-release/linux-x64"
+          )
+          for cdir in "${CACHE_DIRS[@]}"; do
+            for d in "${DUMMY_DIRS[@]}"; do
+              mkdir -p "$cdir/artifacts/engine/$d"
+            done
+            # Write stamps
+            echo "$FULL_ENG_VER" > "$cdir/tizen-engine.stamp"
+            echo "$FULL_EMB_VER" > "$cdir/tizen-embedder.stamp"
+          done
+          
+          echo "Pre-cache structure verified:"
+          ls -la "$HOME/flutter-tizen/flutter/bin/cache/artifacts/engine"
+          
+          # Verify precache using flutter-tizen
+          export FLUTTER_ROOT="$HOME/flutter-tizen/flutter"
+          flutter-tizen precache --tizen -v
 
       - name: Fetch Workspace Dependencies
         run: flutter pub get
@@ -140,9 +200,10 @@ jobs:
 
       - name: Build Tizen TPK Package
         working-directory: packages/better_player_tizen/example
+        env:
+          FLUTTER_ROOT: /home/runner/flutter-tizen/flutter
         run: |
-          export PATH="$HOME/flutter-tizen/bin:$HOME/tizen-studio/tools/ide/bin:$PATH"
-          export FLUTTER_ROOT="$HOME/flutter-tizen/flutter"
+          export PATH="$HOME/flutter-tizen/bin:$HOME/tizen-studio/tools:$HOME/tizen-studio/tools/ide/bin:$PATH"
           dbus-run-session -- bash -c "
             echo tizen | gnome-keyring-daemon --unlock &&
             for attempt in 1 2 3; do
