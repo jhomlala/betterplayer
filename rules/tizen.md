@@ -17,6 +17,8 @@ Better Player uses a federated architecture. Tizen is implemented as an isolated
 
 ## E2E & CI Verification
 
-* **Unit Tests**: `packages/better_player_tizen/test/better_player_tizen_test.dart` tests platform registration (`register` and `registerWith`), texture creation, method channel calls, and video event streams.
-* **Example E2E Test**: `packages/better_player_tizen/example/test/example_e2e_test.dart` and `packages/better_player_tizen/example/integration_test/tizen_flow_test.dart` verify full player lifecycle, play, pause, seek, volume, speed, looping, and disposal.
-* **CI Workflow**: `.github/workflows/e2e_tizen.yml` runs on `ubuntu-22.04`, installs Tizen Studio CLI (`iot-headed-6.0`), `flutter-tizen`, pre-caches engine/embedder artifacts via GitHub REST API, runs unit and E2E tests, and compiles the native C++ plugin into a signed `.tpk` package.
+* **NEVER Run E2E Tests Locally**: E2E integration tests run ONLY on CI/CD via GitHub Actions. Local verification is strictly for unit tests (`flutter test test`) and static analysis (`flutter analyze .`).
+* **Unit Tests**: `packages/better_player_tizen/test/better_player_tizen_test.dart` and `test/src/player_tizen_controller_test.dart` test platform registration, texture creation, method channel calls, file path normalization, and video event streams.
+* **Example E2E Tests**: `packages/better_player_tizen/example/test/example_e2e_test.dart` and `example/integration_test/tizen_flow_test.dart` verify full player lifecycle: play, pause, seek, volume, speed, looping, and disposal.
+* **Screenshot Artifacts**: E2E test runs capture playback screenshots (`tizen_e2e_initialized.png`, `tizen_e2e_play.png`, `tizen_e2e_pause.png`, `tizen_e2e_seek.png`) and upload them to GitHub Actions as the `tizen-e2e-screenshots` artifact.
+* **CI Workflow**: `.github/workflows/e2e_tizen.yml` runs on `ubuntu-22.04`, installs Tizen Studio CLI (`iot-headed-6.0`), `flutter-tizen`, pre-caches engine/embedder artifacts via GitHub REST API, runs unit and E2E tests, uploads screenshot artifacts, and compiles the native C++ plugin into a signed `.tpk` package.

@@ -8,11 +8,18 @@ void main() {
 /// Main application widget for the Tizen Better Player example.
 class BetterPlayerTizenExampleApp extends StatelessWidget {
   /// Creates the example application.
-  const BetterPlayerTizenExampleApp({super.key});
+  const BetterPlayerTizenExampleApp({super.key, this.repaintBoundaryKey});
+
+  /// Key used to capture screenshots in E2E tests.
+  final GlobalKey? repaintBoundaryKey;
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: TizenVideoPlayerScreen());
+    Widget home = const TizenVideoPlayerScreen();
+    if (repaintBoundaryKey != null) {
+      home = RepaintBoundary(key: repaintBoundaryKey, child: home);
+    }
+    return MaterialApp(home: home);
   }
 }
 

@@ -126,6 +126,7 @@ PlayerDataSource dataSource = PlayerDataSource(
 
 ## Testing
 - **Async Operations**: Always `await` asynchronous calls in tests (e.g., `setupDataSource`, `play`, `pause`, `seekTo`).
+- **NEVER Run E2E Tests Locally**: Full E2E integration tests across all platforms (Android/iOS via Maestro, Web via Playwright, Linux, macOS, Windows, and Tizen) MUST NEVER be run locally. They run ONLY on CI/CD in GitHub Actions workflows. Local verification is strictly limited to unit tests (`flutter test test`) and static analysis (`flutter analyze .`).
 - **Mocking**: Use `BetterPlayerMockController` and `MockPlayerEngineController` for unit tests.
 - **Verification**: ALWAYS run tests using the following command at the workspace root or within the relevant package directory to efficiently identify failures and avoid token limit issues:
   - Use `flutter test` within a specific package directory (e.g., `cd packages/better_player; flutter test`).

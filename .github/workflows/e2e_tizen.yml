@@ -213,6 +213,13 @@ jobs:
         working-directory: packages/better_player_tizen/example
         run: flutter test test/example_e2e_test.dart
 
+      - name: Verify Tizen Screenshots
+        if: always()
+        run: |
+          echo "=== Tizen Screenshot Artifacts ==="
+          ls -la packages/better_player_tizen/example/*.png 2>/dev/null || echo "No PNGs in example/"
+          ls -la *.png 2>/dev/null || true
+
       - name: Build Tizen TPK Package
         working-directory: packages/better_player_tizen/example
         env:
@@ -240,3 +247,14 @@ jobs:
           name: tizen-debug-tpk
           path: packages/better_player_tizen/example/build/tizen/tpk/*.tpk
           if-no-files-found: ignore
+
+      - name: Upload Tizen Screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tizen-e2e-screenshots
+          path: |
+            packages/better_player_tizen/example/*.png
+            packages/better_player_tizen/*.png
+            *.png
+          if-no-files-found: warn

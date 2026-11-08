@@ -9,3 +9,4 @@ example/build/
 *.o
 *.a
 *.tpk
+tizen_e2e_*.png

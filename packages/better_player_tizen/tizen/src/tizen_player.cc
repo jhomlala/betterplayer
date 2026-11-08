@@ -27,6 +27,7 @@ bool TizenPlayer::Initialize() {
   player_set_completed_cb(player_, OnCompleted, this);
   player_set_buffering_cb(player_, OnBuffering, this);
   player_set_error_cb(player_, OnError, this);
+  player_set_interrupted_cb(player_, OnInterrupted, this);
   player_set_media_packet_video_frame_decoded_cb(
       player_, OnVideoFrameDecoded, this);
 
@@ -143,6 +144,20 @@ void TizenPlayer::OnVideoFrameDecoded(media_packet_h packet, void *data) {
 
   media_packet_destroy(packet);
 
+  if (self->last_width_ != static_cast<size_t>(width) ||
+      self->last_height_ != static_cast<size_t>(height)) {
+    self->last_width_ = static_cast<size_t>(width);
+    self->last_height_ = static_cast<size_t>(height);
+    flutter::EncodableMap size_event;
+    size_event[flutter::EncodableValue("event")] =
+        flutter::EncodableValue("changedSize");
+    size_event[flutter::EncodableValue("width")] =
+        flutter::EncodableValue(static_cast<int32_t>(width));
+    size_event[flutter::EncodableValue("height")] =
+        flutter::EncodableValue(static_cast<int32_t>(height));
+    self->SendEvent(size_event);
+  }
+
   if (!self->is_disposed_.load() && self->texture_registrar_ &&
       self->texture_id_ >= 0) {
     self->texture_registrar_->MarkTextureFrameAvailable(self->texture_id_);
@@ -226,6 +241,7 @@ void TizenPlayer::OnCompleted(void *data) {
     return;
   }
 
+  self->is_completed_.store(true);
   flutter::EncodableMap event;
   event[flutter::EncodableValue("event")] = flutter::EncodableValue("completed");
   self->SendEvent(event);
@@ -247,6 +263,22 @@ void TizenPlayer::OnBuffering(int percent, void *data) {
   }
   int32_t buffered_end = static_cast<int32_t>(duration_ms * (percent / 100.0));
 
+  if (percent < 100) {
+    if (!self->is_buffering_.exchange(true)) {
+      flutter::EncodableMap start_event;
+      start_event[flutter::EncodableValue("event")] =
+          flutter::EncodableValue("bufferingStart");
+      self->SendEvent(start_event);
+    }
+  } else {
+    if (self->is_buffering_.exchange(false)) {
+      flutter::EncodableMap end_event;
+      end_event[flutter::EncodableValue("event")] =
+          flutter::EncodableValue("bufferingEnd");
+      self->SendEvent(end_event);
+    }
+  }
+
   flutter::EncodableList ranges;
   flutter::EncodableList range;
   range.push_back(flutter::EncodableValue(static_cast<int32_t>(0)));
@@ -266,6 +298,9 @@ void TizenPlayer::OnError(int error_code, void *data) {
     return;
   }
 
+  self->is_initialized_.store(false);
+  self->is_buffering_.store(false);
+
   std::lock_guard<std::mutex> lock(self->event_mutex_);
   if (self->event_sink_) {
     self->event_sink_->Error(
@@ -274,9 +309,25 @@ void TizenPlayer::OnError(int error_code, void *data) {
   }
 }
 
+void TizenPlayer::OnInterrupted(player_interrupted_code_e code, void *data) {
+  auto *self = static_cast<TizenPlayer *>(data);
+  if (!self || self->is_disposed_.load()) {
+    return;
+  }
+
+  flutter::EncodableMap event;
+  event[flutter::EncodableValue("event")] =
+      flutter::EncodableValue("isPlayingStateUpdate");
+  event[flutter::EncodableValue("isPlaying")] = flutter::EncodableValue(false);
+  self->SendEvent(event);
+}
+
 void TizenPlayer::Play() {
   std::lock_guard<std::recursive_mutex> lock(player_mutex_);
   if (player_ == nullptr || is_disposed_.load()) return;
+  if (is_completed_.exchange(false)) {
+    player_set_play_position(player_, 0, true, nullptr, nullptr);
+  }
   player_start(player_);
 
   flutter::EncodableMap event;
@@ -322,7 +373,9 @@ void TizenPlayer::SetVolume(double volume) {
 void TizenPlayer::SetPlaybackSpeed(double speed) {
   std::lock_guard<std::recursive_mutex> lock(player_mutex_);
   if (player_ == nullptr || is_disposed_.load()) return;
-  player_set_playback_rate(player_, static_cast<float>(speed));
+  if (std::isfinite(speed) && speed > 0.0) {
+    player_set_playback_rate(player_, static_cast<float>(speed));
+  }
 }
 
 void TizenPlayer::SetLooping(bool looping) {
@@ -347,6 +400,7 @@ void TizenPlayer::Dispose() {
     player_unset_completed_cb(player_to_destroy);
     player_unset_buffering_cb(player_to_destroy);
     player_unset_error_cb(player_to_destroy);
+    player_unset_interrupted_cb(player_to_destroy);
     player_unset_media_packet_video_frame_decoded_cb(player_to_destroy);
     player_stop(player_to_destroy);
     player_unprepare(player_to_destroy);

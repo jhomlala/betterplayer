@@ -46,7 +46,8 @@ class PlayerTizenController implements PlayerTizen {
 
     switch (eventType) {
       case 'initialized':
-        final durationMs = map['duration'] as int? ?? 0;
+        final rawDurationMs = map['duration'] as int? ?? 0;
+        final durationMs = rawDurationMs > 0 ? rawDurationMs : 0;
         final width = (map['width'] as num?)?.toDouble() ?? 0.0;
         final height = (map['height'] as num?)?.toDouble() ?? 0.0;
         _eventController.add(
@@ -60,6 +61,20 @@ class PlayerTizenController implements PlayerTizen {
       case 'completed':
         _eventController.add(
           VideoEvent(eventType: VideoEventType.completed, key: '$textureId'),
+        );
+      case 'bufferingStart':
+        _eventController.add(
+          VideoEvent(
+            eventType: VideoEventType.bufferingStart,
+            key: '$textureId',
+          ),
+        );
+      case 'bufferingEnd':
+        _eventController.add(
+          VideoEvent(
+            eventType: VideoEventType.bufferingEnd,
+            key: '$textureId',
+          ),
         );
       case 'bufferingUpdate':
         final rawBuffered = map['values'] as List<dynamic>? ?? <dynamic>[];
@@ -91,6 +106,16 @@ class PlayerTizenController implements PlayerTizen {
             key: '$textureId',
           ),
         );
+      case 'changedSize':
+        final width = (map['width'] as num?)?.toDouble() ?? 0.0;
+        final height = (map['height'] as num?)?.toDouble() ?? 0.0;
+        _eventController.add(
+          VideoEvent(
+            eventType: VideoEventType.changedSize,
+            key: '$textureId',
+            size: Size(width, height),
+          ),
+        );
       default:
         break;
     }
@@ -107,16 +132,26 @@ class PlayerTizenController implements PlayerTizen {
     if (_isDisposed) {
       return;
     }
-    final uri = dataSource.uri;
-    if (uri == null || uri.isEmpty) {
+    final rawUri = dataSource.uri ?? dataSource.asset;
+    if (rawUri == null || rawUri.isEmpty) {
       throw PlatformException(
         code: 'INVALID_DATA_SOURCE',
-        message: 'DataSource URI cannot be null or empty on Tizen.',
+        message:
+            'DataSource URI or asset path cannot be null or empty on Tizen.',
       );
+    }
+    var effectiveUri = rawUri;
+    if (dataSource.sourceType == DataSourceType.file &&
+        rawUri.startsWith('file://')) {
+      try {
+        effectiveUri = Uri.parse(rawUri).toFilePath(windows: false);
+      } on FormatException catch (_) {
+        effectiveUri = rawUri.replaceFirst('file://', '');
+      }
     }
     await _channel.invokeMethod<void>('setDataSource', <String, dynamic>{
       'textureId': textureId,
-      'uri': uri,
+      'uri': effectiveUri,
       'headers': dataSource.headers,
     });
   }
@@ -159,7 +194,7 @@ class PlayerTizenController implements PlayerTizen {
     }
     await _channel.invokeMethod<void>('setSpeed', <String, dynamic>{
       'textureId': textureId,
-      'speed': speed,
+      'speed': speed.clamp(0.25, 10.0),
     });
   }
 

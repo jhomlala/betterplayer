@@ -49,6 +49,7 @@ class TizenPlayer {
   static void OnCompleted(void *data);
   static void OnBuffering(int percent, void *data);
   static void OnError(int error_code, void *data);
+  static void OnInterrupted(player_interrupted_code_e code, void *data);
   static void OnVideoFrameDecoded(media_packet_h packet, void *data);
 
   flutter::PluginRegistrar *plugin_registrar_ = nullptr;
@@ -69,8 +70,12 @@ class TizenPlayer {
   std::vector<uint8_t> pixel_buffer_;
   size_t buffer_width_ = 0;
   size_t buffer_height_ = 0;
+  size_t last_width_ = 0;
+  size_t last_height_ = 0;
 
   std::atomic<bool> is_initialized_{false};
+  std::atomic<bool> is_completed_{false};
+  std::atomic<bool> is_buffering_{false};
   std::atomic<bool> is_disposed_{false};
 };
 
