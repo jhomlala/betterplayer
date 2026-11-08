@@ -5,7 +5,7 @@ title: Supported Formats
 
 # Supported Formats & Codecs
 
-Better Player uses the native media players for each platform: **ExoPlayer (Media3)** on Android, **AVPlayer (AVFoundation)** on iOS and macOS, **libmpv** on Windows and Linux, and **Shaka Player** on the Web. 
+Better Player uses the native media players for each platform: **ExoPlayer (Media3)** on Android, **AVPlayer (AVFoundation)** on iOS and macOS, **libmpv** on Windows and Linux, **Shaka Player** on the Web, and native **Tizen Multimedia `<player.h>`** on Tizen (Experimental). 
 
 Because we rely on these native engines without applying custom decoding, **Better Player supports whatever formats the underlying platform player supports**.
 
@@ -124,3 +124,4 @@ These tracks are embedded directly inside the HLS manifest or video stream. Embe
 * **iOS & macOS (AVFoundation):** [Apple HTTP Live Streaming Overview](https://developer.apple.com/documentation/http-live-streaming) and [Apple Supported Media Formats](https://developer.apple.com/documentation/technotes/tn3136-iosipados-supported-media-formats)
 * **Windows & Linux (libmpv):** [mpv Reference Manual](https://mpv.io/manual/master/)
 * **Web (Shaka Player):** [Shaka Player Project](https://github.com/shaka-project/shaka-player)
+* **Tizen (Experimental):** [Tizen Multimedia Player API](https://docs.tizen.org/application/native/api/wearable/6.0/group__CAPI__MEDIA__PLAYER__MODULE.html)

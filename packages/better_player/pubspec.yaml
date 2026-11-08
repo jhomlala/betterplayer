@@ -1,7 +1,7 @@
 name: better_player
 resolution: workspace
 description: Production video player for Flutter (Android, iOS, Web, Desktop) with HLS, DASH, DRM (Widevine/FairPlay), caching, PiP, VAST ads, and vertical video feeds.
-version: 1.35.0
+version: 1.36.0
 homepage: https://github.com/jhomlala/betterplayer/tree/master/packages/better_player
 documentation: https://jhomlala.github.io/betterplayer/
 topics:

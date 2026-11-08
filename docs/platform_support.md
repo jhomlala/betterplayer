@@ -5,28 +5,28 @@ title: Platform Support
 
 # Platform Support
 
-Better Player strives to provide a consistent and powerful playback experience across all supported platforms. However, due to underlying native video engine limitations, not all features are equally available across Android, iOS, macOS, Windows, Linux, and Web.
+Better Player strives to provide a consistent and powerful playback experience across all supported platforms. However, due to underlying native video engine limitations, not all features are equally available across Android, iOS, macOS, Windows, Linux, Web, and Tizen.
 
 The following matrix details the current feature support for Better Player across platforms:
 
-| Feature | Android | iOS | macOS | Windows | Linux | Web |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Basic Playback (MP4/WebM)** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **HLS (HTTP Live Streaming)** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **DASH (Dynamic Adaptive Streaming)**| ✓ | x | x | ✓ | ✓ | ✓ |
-| **Smooth Streaming** | ✓ | x | x | x | x | x |
-| **Subtitles & Captions (SRT/WebVTT/TTML/CEA)** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **Audio Track Selection** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **Picture in Picture (PiP)** | ✓ | ✓ | ✓ | x | x | ✓ |
-| **DRM (Widevine)** | ✓ | x | x | x | x | ✓ |
-| **DRM (FairPlay)** | x | ✓ | ✓ | x | x | ✓ |
-| **DRM (ClearKey)** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **Caching (Normal)** | ✓ | ✓ | ✓ | ✓ | ✓ | x |
-| **Pre-caching & Stop Caching** | ✓ | ✓ | ✓ | ✓ | ✓ | x |
-| **Background Audio / Notifications** | ✓ | ✓ | x | x | x | x |
-| **Mix Audio with Others** | ✓ | ✓ | ✓ | ✓ | ✓ | x |
-| **Auto Frame Rate (AFR)** | ✓ | x | x | x | x | x |
-| **AirPlay / Remote Playback** | x | ✓ | ✓ | x | x | ✓ |
+| Feature | Android | iOS | macOS | Windows | Linux | Web | Tizen (Exp.) |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Basic Playback (MP4/WebM)** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **HLS (HTTP Live Streaming)** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **DASH (Dynamic Adaptive Streaming)**| ✓ | x | x | ✓ | ✓ | ✓ | x |
+| **Smooth Streaming** | ✓ | x | x | x | x | x | x |
+| **Subtitles & Captions (SRT/WebVTT/TTML/CEA)** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | x |
+| **Audio Track Selection** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | x |
+| **Picture in Picture (PiP)** | ✓ | ✓ | ✓ | x | x | ✓ | x |
+| **DRM (Widevine)** | ✓ | x | x | x | x | ✓ | x |
+| **DRM (FairPlay)** | x | ✓ | ✓ | x | x | ✓ | x |
+| **DRM (ClearKey)** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | x |
+| **Caching (Normal)** | ✓ | ✓ | ✓ | ✓ | ✓ | x | x |
+| **Pre-caching & Stop Caching** | ✓ | ✓ | ✓ | ✓ | ✓ | x | x |
+| **Background Audio / Notifications** | ✓ | ✓ | x | x | x | x | x |
+| **Mix Audio with Others** | ✓ | ✓ | ✓ | ✓ | ✓ | x | x |
+| **Auto Frame Rate (AFR)** | ✓ | x | x | x | x | x | x |
+| **AirPlay / Remote Playback** | x | ✓ | ✓ | x | x | ✓ | x |
 
 ## Platform Specific Details
 

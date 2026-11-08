@@ -13,7 +13,7 @@ Add `better_player` to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  better_player: ^1.35.0
+  better_player: ^1.36.0
 ```
 
 ## 2. Install Package
@@ -88,6 +88,28 @@ To use Better Player on the web, you must include the Shaka Player library in yo
 ```
 
 Alternatively, you can download the script and host it locally.
+
+### Tizen Configuration (Experimental)
+
+To target Samsung Smart TVs or Tizen devices, add `better_player_tizen` to your `pubspec.yaml`:
+
+```yaml
+dependencies:
+  better_player: ^1.36.0
+  better_player_tizen: ^1.0.0
+```
+
+> **Warning**: `better_player_tizen` is **EXPERIMENTAL** and provides basic playback via the native Tizen Multimedia `<player.h>` API.
+
+Add network and storage privileges to your `tizen/tizen-manifest.xml`:
+
+```xml
+<privileges>
+    <privilege>http://tizen.org/privilege/internet</privilege>
+    <privilege>http://tizen.org/privilege/mediastorage</privilege>
+    <privilege>http://tizen.org/privilege/externalstorage</privilege>
+</privileges>
+```
 
 ## 5. Additional Configurations (Optional)
 

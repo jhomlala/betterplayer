@@ -1,4 +1,4 @@
-## Unreleased
+## 1.36.0
 - Added: Initial **EXPERIMENTAL** Tizen platform implementation in `packages/better_player_tizen`.
 
 ## 1.35.0
