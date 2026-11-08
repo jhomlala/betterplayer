@@ -103,22 +103,32 @@ jobs:
             touch "$GRADLE_DIR/gradle-9.5.0-all.zip.ok"
           fi
 
-          # Pre-fetch Kotlin compiler embeddable jars from Maven Central
-          for HASH in "002fac4210c52c27b244305d60b0906e831f49be" "2fac4210c52c27b244305d60b0906e831f49be"; do
-            KDIR="$HOME/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-compiler-embeddable/2.3.20/$HASH"
-            mkdir -p "$KDIR"
-            if [ ! -s "$KDIR/kotlin-compiler-embeddable-2.3.20.jar" ]; then
-              echo "Pre-fetching kotlin-compiler-embeddable 2.3.20 ($HASH)..."
-              curl -sL "https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-compiler-embeddable/2.3.20/kotlin-compiler-embeddable-2.3.20.jar" -o "$KDIR/kotlin-compiler-embeddable-2.3.20.jar"
-            fi
-          done
-
-          KOTLIN_DIR="$HOME/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-compiler-embeddable/2.2.21/b13aed5cf8412f9ee9d1e4db21bdcfebcc24f606"
-          mkdir -p "$KOTLIN_DIR"
-          if [ ! -s "$KOTLIN_DIR/kotlin-compiler-embeddable-2.2.21.jar" ]; then
-            echo "Pre-fetching kotlin-compiler-embeddable from Maven Central..."
-            curl -sL "https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-compiler-embeddable/2.2.21/kotlin-compiler-embeddable-2.2.21.jar" -o "$KOTLIN_DIR/kotlin-compiler-embeddable-2.2.21.jar"
-          fi
+          # Route mavenCentral through direct mirror to prevent Sonatype redirecting to GitHub releases (504 timeout)
+          mkdir -p "$HOME/.gradle/init.d"
+          cat << 'EOF' > "$HOME/.gradle/init.d/mirror.init.gradle"
+          allprojects {
+              buildscript {
+                  repositories {
+                      all { repo ->
+                          if (repo instanceof MavenArtifactRepository) {
+                              if (repo.url.toString().contains("repo.maven.apache.org") || repo.url.toString().contains("repo1.maven.org")) {
+                                  repo.url = uri("https://maven.aliyun.com/repository/public")
+                              }
+                          }
+                      }
+                  }
+              }
+              repositories {
+                  all { repo ->
+                      if (repo instanceof MavenArtifactRepository) {
+                          if (repo.url.toString().contains("repo.maven.apache.org") || repo.url.toString().contains("repo1.maven.org")) {
+                              repo.url = uri("https://maven.aliyun.com/repository/public")
+                          }
+                      }
+                  }
+              }
+          }
+          EOF
 
       - name: Build App
         run: |
