@@ -19,7 +19,10 @@ class BetterPlayerTizenExampleApp extends StatelessWidget {
     if (repaintBoundaryKey != null) {
       home = RepaintBoundary(key: repaintBoundaryKey, child: home);
     }
-    return MaterialApp(home: home);
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: home,
+    );
   }
 }
 
@@ -65,7 +68,11 @@ class TizenVideoPlayerScreenState extends State<TizenVideoPlayerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Better Player Tizen')),
+      backgroundColor: const Color(0xFF0F172A),
+      appBar: AppBar(
+        title: const Text('Better Player Tizen'),
+        backgroundColor: const Color(0xFF1E293B),
+      ),
       body: Center(
         child: AspectRatio(
           aspectRatio: 16 / 9,

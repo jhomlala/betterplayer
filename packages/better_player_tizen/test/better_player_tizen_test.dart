@@ -97,6 +97,15 @@ void main() {
       expect((widget as Texture).textureId, 42);
     });
 
+    test('buildView returns custom widget when viewBuilder is provided', () {
+      final customPlatform = BetterPlayerTizen(
+        viewBuilder: (textureId) => Container(key: Key('custom_$textureId')),
+      );
+      final widget = customPlatform.buildView(42);
+      expect(widget, isA<Container>());
+      expect((widget as Container).key, const Key('custom_42'));
+    });
+
     test('buildView returns SizedBox.shrink when textureId is null', () {
       final widget = tizenPlatform.buildView(null);
       expect(widget, isA<SizedBox>());

@@ -13,12 +13,16 @@ typedef TizenPlayerFactory =
       BufferingConfiguration? bufferingConfiguration,
     });
 
+/// Signature for custom Tizen view building, primarily for testing or custom renderers.
+typedef TizenViewBuilder = Widget Function(int textureId);
+
 /// Tizen platform implementation of the Better Player plugin.
 class BetterPlayerTizen extends BetterPlayerPlatform {
   /// Creates a new Tizen platform instance.
   BetterPlayerTizen({
     MethodChannel? channel,
     TizenPlayerFactory? playerFactory,
+    this.viewBuilder,
   }) : _channel = channel ?? const MethodChannel('better_player_tizen'),
        _playerFactory = playerFactory ?? _defaultPlayerFactory {
     _cleanupOrphanedPlayers();
@@ -373,10 +377,17 @@ class BetterPlayerTizen extends BetterPlayerPlatform {
     );
   }
 
+  /// Optional custom view builder for testing or custom renderers.
+  final TizenViewBuilder? viewBuilder;
+
   @override
   Widget buildView(int? textureId) {
     if (textureId == null) {
       return const SizedBox.shrink();
+    }
+    final customBuilder = viewBuilder;
+    if (customBuilder != null) {
+      return customBuilder(textureId);
     }
     return Texture(textureId: textureId);
   }

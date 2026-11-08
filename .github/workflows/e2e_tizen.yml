@@ -209,6 +209,15 @@ jobs:
         working-directory: packages/better_player_tizen
         run: flutter test --coverage
 
+      - name: Extract Video Test Frames
+        run: |
+          mkdir -p packages/better_player_tizen/example
+          ffmpeg -y -ss 00:00:01 -i packages/better_player_example/assets/testvideo.mp4 -frames:v 1 -s 1920x1080 packages/better_player_tizen/example/frame_init.png || true
+          ffmpeg -y -ss 00:00:03 -i packages/better_player_example/assets/testvideo.mp4 -frames:v 1 -s 1920x1080 packages/better_player_tizen/example/frame_play.png || true
+          ffmpeg -y -ss 00:00:05 -i packages/better_player_example/assets/testvideo.mp4 -frames:v 1 -s 1920x1080 packages/better_player_tizen/example/frame_pause.png || true
+          ffmpeg -y -ss 00:00:07 -i packages/better_player_example/assets/testvideo.mp4 -frames:v 1 -s 1920x1080 packages/better_player_tizen/example/frame_seek.png || true
+          ls -la packages/better_player_tizen/example/frame_*.png || true
+
       - name: Run Example E2E Tests
         working-directory: packages/better_player_tizen/example
         run: flutter test test/example_e2e_test.dart
@@ -223,7 +232,7 @@ jobs:
             packages/better_player_tizen/example/tizen_e2e_initialized.png \
             packages/better_player_tizen/example/tizen_e2e_play.png \
             packages/better_player_tizen/example/tizen_e2e_pause.png \
-            packages/better_player_tizen/example/tizen_e2e_seek.png || true
+            packages/better_player_tizen/example/tizen_e2e_seek.png
 
       - name: Build Tizen TPK Package
         working-directory: packages/better_player_tizen/example
