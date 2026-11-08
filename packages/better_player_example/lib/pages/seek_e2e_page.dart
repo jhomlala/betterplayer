@@ -1,5 +1,5 @@
 import 'package:better_player/better_player.dart';
-import 'package:better_player_example/constants.dart';
+import 'package:better_player_example/utils/e2e_local_media_server.dart';
 import 'package:material_ui/material_ui.dart';
 
 class SeekE2EPage extends StatefulWidget {
@@ -26,12 +26,16 @@ class _SeekE2EPageState extends State<SeekE2EPage> {
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await E2ELocalMediaServer.ensureStarted();
+      if (!mounted) {
+        return;
+      }
       final betterPlayerDataSource = PlayerDataSource(
         DataSourceType.network,
-        Constants.bugBuckBunnyVideoUrl,
+        E2ELocalMediaServer.mp4Url,
       );
-      _betterPlayerController.setupDataSource(betterPlayerDataSource);
+      await _betterPlayerController.setupDataSource(betterPlayerDataSource);
     });
 
     _betterPlayerController.addEventsListener((event) {
@@ -57,7 +61,7 @@ class _SeekE2EPageState extends State<SeekE2EPage> {
               _betterPlayerController.setupDataSource(
                 PlayerDataSource(
                   DataSourceType.network,
-                  Constants.bugBuckBunnyVideoUrl,
+                  E2ELocalMediaServer.mp4Url,
                 ),
               );
             }

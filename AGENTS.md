@@ -126,6 +126,7 @@ PlayerDataSource dataSource = PlayerDataSource(
 
 ## Testing
 - **Async Operations**: Always `await` asynchronous calls in tests (e.g., `setupDataSource`, `play`, `pause`, `seekTo`).
+- **NEVER Run E2E Tests Locally**: Full E2E integration tests across all platforms (Android/iOS via Maestro, Web via Playwright, Linux, macOS, Windows, and Tizen) MUST NEVER be run locally. They run ONLY on CI/CD in GitHub Actions workflows. Local verification is strictly limited to unit tests (`flutter test test`) and static analysis (`flutter analyze .`).
 - **Mocking**: Use `BetterPlayerMockController` and `MockPlayerEngineController` for unit tests.
 - **Verification**: ALWAYS run tests using the following command at the workspace root or within the relevant package directory to efficiently identify failures and avoid token limit issues:
   - Use `flutter test` within a specific package directory (e.g., `cd packages/better_player; flutter test`).
@@ -162,8 +163,11 @@ PlayerDataSource dataSource = PlayerDataSource(
 ## Linux Architecture & Testing
 - **Rules Reference**: ALWAYS follow the guidelines in rules/linux.md when working with `better_player_linux` or implementing Linux E2E tests.
 
+## Tizen Architecture & Testing
+- **Rules Reference**: ALWAYS follow the guidelines in rules/tizen.md when working with `better_player_tizen` (note: this package is EXPERIMENTAL).
+
 ## Architecture
-- **Plugin-First Principle (Dart Extensions vs Federated Packages)**: Keep the core player lean by building high-level Dart features (like ads, analytics, or overlays) as modular components. However, **NEVER create new standalone native Flutter plugin packages** in `packages/` (e.g. `better_player_downloader`) that duplicate or depend on `:better_player_android` or `better_player_ios`. Native playback, caching, DRM, and media engine features MUST live inside the existing federated platform packages (`better_player_android`, `better_player_ios`, `better_player_macos`, `better_player_windows`, `better_player_linux`, `better_player_web`) and `better_player_platform_interface`.
+- **Plugin-First Principle (Dart Extensions vs Federated Packages)**: Keep the core player lean by building high-level Dart features (like ads, analytics, or overlays) as modular components. However, **NEVER create new standalone native Flutter plugin packages** in `packages/` (e.g. `better_player_downloader`) that duplicate or depend on `:better_player_android` or `better_player_ios`. Native playback, caching, DRM, and media engine features MUST live inside the existing federated platform packages (`better_player_android`, `better_player_ios`, `better_player_macos`, `better_player_windows`, `better_player_linux`, `better_player_tizen`, `better_player_web`) and `better_player_platform_interface`.
 - **FFI/JNI Over MethodChannel & Polling**: Native communication on Android and iOS/macOS uses `jnigen` and `swiftgen` FFI bindings (`BetterPlayerApi`). Do NOT introduce new `MethodChannel` bridges for native features, and NEVER use `Timer.periodic` in Dart to poll native state or progress; push updates from native via callbacks instead.
 - **Proactive Refactoring**: This is a legacy plugin that requires significant effort to align its architecture with modern best practices (e.g., modularization, separation of concerns). Be proactive when refactoring; don't just fix the immediate issue if you see an opportunity to improve the underlying structure and ensure it follows current Android, iOS, and Flutter standards.
 

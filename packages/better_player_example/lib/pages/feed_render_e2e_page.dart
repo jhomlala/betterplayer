@@ -1,5 +1,6 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
+import 'package:better_player_example/utils/e2e_local_media_server.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// E2E page for #1632. It mounts a pooled [BetterPlayerFeed] with the same
@@ -21,9 +22,15 @@ class _FeedRenderE2EPageState extends State<FeedRenderE2EPage> {
     super.initState();
     _feedController = BetterPlayerFeedController(
       dataSources: [
-        PlayerDataSource.network(Constants.exampleResolutionsUrls['LOW']!),
         PlayerDataSource.network(
-          'https://test-videos.co.uk/vids/jellyfish/mp4/h264/360/Jellyfish_360_10s_1MB.mp4',
+          E2ELocalMediaServer.isRunning
+              ? E2ELocalMediaServer.mp4Url
+              : Constants.exampleResolutionsUrls['LOW']!,
+        ),
+        PlayerDataSource.network(
+          E2ELocalMediaServer.isRunning
+              ? E2ELocalMediaServer.secondaryMp4Url
+              : 'https://test-videos.co.uk/vids/jellyfish/mp4/h264/360/Jellyfish_360_10s_1MB.mp4',
         ),
       ],
       poolConfiguration: const PlayerPoolConfiguration(

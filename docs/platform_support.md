@@ -65,3 +65,10 @@ The following matrix details the current feature support for Better Player acros
 * Try the [Live Demo](https://jhomlala.github.io/betterplayer/demo/) running in the browser. Note: web streams must use HTTPS and support CORS headers.
 * To use Better Player on the web, you **must** include the Shaka Player library in your `web/index.html` file (see the [Installation](install.md) page).
 * Background notifications and fine-grained caching (`preCache`) are not supported on standard web browsers.
+
+
+### Tizen (Experimental)
+* **Warning**: `better_player_tizen` is **EXPERIMENTAL** and supports only basic playback features.
+* Tizen playback uses the native Tizen Multimedia API (`<player.h>`) with `PixelBufferTexture` frame copying.
+* Supports basic network (`http`/`https`) and local file playback, play/pause, seek, volume, speed, and looping.
+* DRM, caching/pre-caching, Picture in Picture, and native track switching are not supported yet.

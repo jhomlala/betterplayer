@@ -1,0 +1,12 @@
+# Native binary downloads and build artifacts
+build/
+.dart_tool/
+tizen/Debug/
+tizen/Release/
+example/build/
+*.so
+*.so.*
+*.o
+*.a
+*.tpk
+tizen_e2e_*.png

@@ -1,0 +1,15 @@
+APPNAME = better_player_tizen_plugin
+type = staticLib
+profile = common-6.0
+
+# Source files
+USER_SRCS += src/*.cc
+
+# User defines
+USER_CPP_DEFS = FLUTTER_PLUGIN_IMPL
+
+# User includes
+USER_INC_DIRS = inc src
+
+# User libraries
+USER_LIBS += capi-media-player capi-media-tool

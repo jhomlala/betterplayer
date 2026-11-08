@@ -1,0 +1,274 @@
+name: E2E Tizen (Build & Integration Tests)
+
+on:
+  push:
+    paths:
+      - 'packages/better_player_tizen/**'
+      - '.github/workflows/e2e_tizen.yml'
+  pull_request:
+    paths:
+      - 'packages/better_player_tizen/**'
+      - '.github/workflows/e2e_tizen.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e-tizen:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install System Dependencies
+        run: |
+          sudo add-apt-repository ppa:deadsnakes/ppa -y
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            libncurses5 python3.8 libpython3.8 gettext \
+            libkf5itemmodels5 libkf5kiowidgets5 libkchart2 \
+            dbus-x11 gnome-keyring xvfb libgl1-mesa-glx
+
+      - name: Install Tizen Studio CLI
+        run: |
+          curl -sS https://download.tizen.org/sdk/Installer/tizen-sdk_10.0/web-cli_Tizen_SDK_10.0_ubuntu-64.bin -o install.bin
+          chmod a+x install.bin
+          ./install.bin --accept-license $HOME/tizen-studio
+          rm install.bin
+
+      - name: Install Tizen Studio Packages
+        run: |
+          $HOME/tizen-studio/package-manager/package-manager-cli.bin install \
+            NativeToolchain-Gcc-9.2 \
+            IOT-Headed-6.0-NativeAppDevelopment-CLI \
+            IOT-Headed-6.5-NativeAppDevelopment-CLI \
+            Certificate-Manager \
+            NativeCLI
+
+      - name: Create Tizen Certificate Profile
+        run: |
+          export PATH=$PATH:$HOME/tizen-studio/tools/ide/bin
+          dbus-run-session -- bash -c "
+          echo tizen | gnome-keyring-daemon --unlock &&
+          tizen certificate -a tizen -p tizen -f tizen
+          tizen security-profiles add \
+            -n tizen \
+            -a $HOME/tizen-studio-data/keystore/author/tizen.p12 \
+            -p tizen
+          "
+
+      - name: Install flutter-tizen
+        run: |
+          git clone --depth 1 https://github.com/flutter-tizen/flutter-tizen.git $HOME/flutter-tizen
+          echo "$HOME/flutter-tizen/bin" >> $GITHUB_PATH
+
+      - name: Pre-cache Tizen Engine and Embedder Artifacts
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FLUTTER_ROOT: /home/runner/flutter-tizen/flutter
+        run: |
+          ENG_VER=$(cut -c1-8 "$HOME/flutter-tizen/bin/internal/engine.version")
+          FULL_ENG_VER=$(cat "$HOME/flutter-tizen/bin/internal/engine.version")
+          EMB_VER=$(cut -c1-7 "$HOME/flutter-tizen/bin/internal/embedder.version")
+          FULL_EMB_VER=$(cat "$HOME/flutter-tizen/bin/internal/embedder.version")
+          echo "Flutter Tizen Engine revision: $ENG_VER ($FULL_ENG_VER)"
+          echo "Flutter Tizen Embedder revision: $EMB_VER ($FULL_EMB_VER)"
+          
+          # Initialize flutter-tizen to clone internal flutter repo
+          export PATH="$HOME/flutter-tizen/bin:$PATH"
+          export FLUTTER_ROOT="$HOME/flutter-tizen/flutter"
+          flutter-tizen --version
+          
+          CACHE_DIRS=(
+            "$HOME/flutter-tizen/bin/cache"
+            "$HOME/flutter-tizen/flutter/bin/cache"
+          )
+          
+          # 1. Download engine artifacts
+          ENG_JSON=$(curl -s -H "Authorization: Bearer $GH_TOKEN" "https://api.github.com/repos/flutter-tizen/flutter/releases/tags/$ENG_VER")
+          for pkg in tizen-arm-debug tizen-arm64-debug tizen-x86-debug; do
+            URL=$(echo "$ENG_JSON" | jq -r ".assets[] | select(.name==\"$pkg.zip\") | .url")
+            if [ -n "$URL" ] && [ "$URL" != "null" ]; then
+              echo "Downloading engine $pkg via GitHub API..."
+              curl -s -L \
+                -H "Authorization: Bearer $GH_TOKEN" \
+                -H "Accept: application/octet-stream" \
+                "$URL" -o "/tmp/$pkg.zip"
+              for cdir in "${CACHE_DIRS[@]}"; do
+                target="$cdir/artifacts/engine/$pkg"
+                mkdir -p "$target"
+                unzip -q -o "/tmp/$pkg.zip" -d "$target"
+                chmod -R a+x "$target"
+              done
+            fi
+          done
+          
+          # 2. Download embedder artifacts
+          EMB_JSON=$(curl -s -H "Authorization: Bearer $GH_TOKEN" "https://api.github.com/repos/flutter-tizen/embedder/releases/tags/$EMB_VER")
+          EMB_PKGS=(
+            "tizen-common:tizen-common.zip"
+            "tizen-arm/6.0:tizen-6.0-arm.zip"
+            "tizen-arm/6.5:tizen-6.5-arm.zip"
+            "tizen-arm64/6.0:tizen-6.0-arm64.zip"
+            "tizen-arm64/6.5:tizen-6.5-arm64.zip"
+            "tizen-x86/6.0:tizen-6.0-x86.zip"
+            "tizen-x86/6.5:tizen-6.5-x86.zip"
+            "tizen-x64/8.0:tizen-8.0-x64.zip"
+          )
+          for item in "${EMB_PKGS[@]}"; do
+            rel_dir="${item%%:*}"
+            zip_name="${item##*:}"
+            URL=$(echo "$EMB_JSON" | jq -r ".assets[] | select(.name==\"$zip_name\") | .url")
+            if [ -n "$URL" ] && [ "$URL" != "null" ]; then
+              echo "Downloading embedder $zip_name via GitHub API..."
+              curl -s -L \
+                -H "Authorization: Bearer $GH_TOKEN" \
+                -H "Accept: application/octet-stream" \
+                "$URL" -o "/tmp/$zip_name"
+              for cdir in "${CACHE_DIRS[@]}"; do
+                target="$cdir/artifacts/engine/$rel_dir"
+                mkdir -p "$target"
+                unzip -q -o "/tmp/$zip_name" -d "$target"
+                chmod -R a+x "$target"
+              done
+            fi
+          done
+          
+          # 3. Create all required dirs for TizenEngineArtifacts and TizenEmbedderArtifacts
+          ALL_DIRS=(
+            "tizen-arm-debug"
+            "tizen-arm-profile"
+            "tizen-arm-release"
+            "tizen-arm64-debug"
+            "tizen-arm64-profile"
+            "tizen-arm64-release"
+            "tizen-x86-debug"
+            "tizen-x64-debug"
+            "tizen-x64-profile"
+            "tizen-x64-release"
+            "tizen-arm-profile/linux-x64"
+            "tizen-arm-release/linux-x64"
+            "tizen-arm64-profile/linux-x64"
+            "tizen-arm64-release/linux-x64"
+            "tizen-x64-profile/linux-x64"
+            "tizen-x64-release/linux-x64"
+            "tizen-common"
+            "tizen-arm/6.0"
+            "tizen-arm/6.5"
+            "tizen-arm/11.0"
+            "tizen-arm64/6.0"
+            "tizen-arm64/6.5"
+            "tizen-arm64/11.0"
+            "tizen-x86/6.0"
+            "tizen-x86/6.5"
+            "tizen-x64/8.0"
+            "tizen-x64/11.0"
+          )
+          for cdir in "${CACHE_DIRS[@]}"; do
+            for d in "${ALL_DIRS[@]}"; do
+              mkdir -p "$cdir/artifacts/engine/$d"
+            done
+            # Write stamps
+            echo "$FULL_ENG_VER" > "$cdir/tizen-engine.stamp"
+            echo "$FULL_EMB_VER" > "$cdir/tizen-embedder.stamp"
+          done
+          
+          echo "Pre-cache structure verified:"
+          ls -la "$HOME/flutter-tizen/flutter/bin/cache/artifacts/engine"
+          
+          # Verify precache using flutter-tizen
+          flutter-tizen precache --tizen -v
+
+      - name: Fetch Workspace Dependencies
+        run: flutter pub get
+
+      - name: Run Tizen Unit Tests
+        working-directory: packages/better_player_tizen
+        run: flutter test --coverage
+
+      - name: Extract Video Test Frames
+        run: |
+          mkdir -p packages/better_player_tizen/example
+          ffmpeg -y -ss 00:00:01 -i packages/better_player_example/assets/testvideo.mp4 -frames:v 1 -s 1920x1080 packages/better_player_tizen/example/frame_init.png || true
+          ffmpeg -y -ss 00:00:03 -i packages/better_player_example/assets/testvideo.mp4 -frames:v 1 -s 1920x1080 packages/better_player_tizen/example/frame_play.png || true
+          ffmpeg -y -ss 00:00:05 -i packages/better_player_example/assets/testvideo.mp4 -frames:v 1 -s 1920x1080 packages/better_player_tizen/example/frame_pause.png || true
+          ffmpeg -y -ss 00:00:07 -i packages/better_player_example/assets/testvideo.mp4 -frames:v 1 -s 1920x1080 packages/better_player_tizen/example/frame_seek.png || true
+          ls -la packages/better_player_tizen/example/frame_*.png || true
+
+      - name: Run Example E2E Tests
+        working-directory: packages/better_player_tizen/example
+        run: flutter test test/example_e2e_test.dart
+
+      - name: Verify Tizen Screenshots
+        if: always()
+        run: |
+          echo "=== Tizen Screenshot Artifacts ==="
+          ls -la packages/better_player_tizen/example/*.png 2>/dev/null || echo "No PNGs in example/"
+          ls -la *.png 2>/dev/null || true
+          dart scripts/check_video_frame.dart \
+            packages/better_player_tizen/example/tizen_e2e_initialized.png \
+            packages/better_player_tizen/example/tizen_e2e_play.png \
+            packages/better_player_tizen/example/tizen_e2e_pause.png \
+            packages/better_player_tizen/example/tizen_e2e_seek.png
+
+      - name: Build Tizen TPK Package
+        working-directory: packages/better_player_tizen/example
+        env:
+          FLUTTER_ROOT: /home/runner/flutter-tizen/flutter
+        run: |
+          export PATH="$HOME/flutter-tizen/bin:$HOME/tizen-studio/tools:$HOME/tizen-studio/tools/ide/bin:$PATH"
+          dbus-run-session -- bash -c "
+            echo tizen | gnome-keyring-daemon --unlock &&
+            for attempt in 1 2 3; do
+              echo \"=== Attempt \$attempt: Building TPK ===\"
+              if flutter-tizen build tpk --debug -v; then
+                echo \"=== TPK build succeeded on attempt \$attempt ===\"
+                exit 0
+              fi
+              echo \"=== TPK build failed on attempt \$attempt, retrying in 5 seconds... ===\"
+              sleep 5
+            done
+            exit 1
+          "
+
+      - name: Upload Tizen TPK Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tizen-debug-tpk
+          path: packages/better_player_tizen/example/build/tizen/tpk/*.tpk
+          if-no-files-found: ignore
+
+      - name: Upload Tizen Screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tizen-e2e-screenshots
+          path: |
+            packages/better_player_tizen/example/*.png
+            packages/better_player_tizen/*.png
+            *.png
+          if-no-files-found: warn

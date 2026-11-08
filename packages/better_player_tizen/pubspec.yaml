@@ -1,0 +1,42 @@
+name: better_player_tizen
+resolution: workspace
+description: EXPERIMENTAL Tizen implementation of the better_player plugin, providing basic video playback for Samsung Smart TVs and Tizen devices.
+version: 1.0.0
+homepage: https://github.com/jhomlala/betterplayer/tree/master/packages/better_player_tizen
+documentation: https://jhomlala.github.io/betterplayer/
+topics:
+  - video
+  - video-player
+  - tizen
+  - smart-tv
+  - streaming
+
+screenshots:
+  - description: 'Better Player logo'
+    path: assets/logo.png
+
+environment:
+  sdk: "^3.12.0"
+  flutter: ">=3.47.0"
+
+dependencies:
+  better_player_platform_interface: ^1.8.0
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  mocktail: ^1.0.5
+  very_good_analysis: ^10.3.0
+
+flutter:
+  plugin:
+    implements: better_player
+    platforms:
+      tizen:
+        pluginClass: BetterPlayerTizenPlugin
+        fileName: better_player_tizen_plugin.h
+        dartPluginClass: BetterPlayerTizen

@@ -1,0 +1,13 @@
+include: ../../analysis_options.yaml
+
+analyzer:
+  exclude:
+    - build/**
+    - "**/*.g.dart"
+    - "lib/src/**/*.g.dart"
+
+linter:
+  rules:
+    avoid_positional_boolean_parameters: false
+    cascade_invocations: false
+    discarded_futures: false

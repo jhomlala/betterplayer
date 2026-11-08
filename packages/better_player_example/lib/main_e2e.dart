@@ -4,10 +4,10 @@
 import 'dart:async';
 
 import 'package:better_player/better_player.dart';
-import 'package:better_player_example/constants.dart';
 import 'package:better_player_example/pages/feed_render_e2e_page.dart';
 import 'package:better_player_example/pages/ffi_test_page.dart';
 import 'package:better_player_example/pages/seek_e2e_page.dart';
+import 'package:better_player_example/utils/e2e_local_media_server.dart';
 import 'package:better_player_example/utils/example_io_utils.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
@@ -22,6 +22,7 @@ void main() {
   if (kIsWeb) {
     SemanticsBinding.instance.ensureSemantics();
   }
+  unawaited(E2ELocalMediaServer.ensureStarted());
   runApp(const BetterPlayerE2EApp());
 }
 
@@ -115,16 +116,26 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _setupDataSource(
-        url: Constants.bugBuckBunnyVideoUrl,
-        type: DataSourceType.network,
-      );
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await E2ELocalMediaServer.ensureStarted();
+      if (!mounted) {
+        return;
+      }
+      if (_currentUrl == null) {
+        _setupDataSource(
+          url: E2ELocalMediaServer.mp4Url,
+          type: DataSourceType.network,
+        );
+      }
       _betterPlayerController.setControlsAlwaysVisible(true);
     });
 
     _betterPlayerController.addEventsListener((event) {
       _emittedEvents.add(event.betterPlayerEventType);
+      if (event.betterPlayerEventType == PlayerEventType.metadataReady &&
+          mounted) {
+        setState(() {});
+      }
       if (!_allCoreEventsVerified &&
           _emittedEvents.containsAll(_requiredCoreEvents)) {
         if (mounted) {
@@ -180,13 +191,13 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
         });
         if (err != null &&
             (err.contains('TLS') || err.contains('-1200')) &&
-            _currentUrl == Constants.bugBuckBunnyVideoUrl &&
+            _currentUrl == E2ELocalMediaServer.mp4Url &&
             _mp4RetryCount < 3) {
           _mp4RetryCount++;
           Future<void>.delayed(const Duration(seconds: 1), () {
-            if (mounted && _currentUrl == Constants.bugBuckBunnyVideoUrl) {
+            if (mounted && _currentUrl == E2ELocalMediaServer.mp4Url) {
               _setupDataSource(
-                url: Constants.bugBuckBunnyVideoUrl,
+                url: E2ELocalMediaServer.mp4Url,
                 type: DataSourceType.network,
               );
             }
@@ -226,7 +237,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
       type,
       url,
       drmConfiguration: drmConfiguration,
-      subtitles: url == Constants.bugBuckBunnyVideoUrl
+      subtitles: url == E2ELocalMediaServer.mp4Url
           ? [
               PlayerSubtitlesSource(
                 type: PlayerSubtitlesSourceType.memory,
@@ -236,7 +247,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
               ),
             ]
           : null,
-      asmsTrackNames: url == Constants.hlsTestStreamUrl
+      asmsTrackNames: url == E2ELocalMediaServer.hlsUrl
           ? const [
               'Track 1',
               'Track 2',
@@ -353,11 +364,11 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
       playlistController.setupDataSourceList([
         PlayerDataSource(
           DataSourceType.network,
-          Constants.bugBuckBunnyVideoUrl,
+          E2ELocalMediaServer.mp4Url,
         ),
         PlayerDataSource(
           DataSourceType.network,
-          Constants.forBiggerBlazesUrl,
+          E2ELocalMediaServer.secondaryMp4Url,
         ),
       ]);
       final resetToFirst = playlistController.currentDataSourceIndex == 0;
@@ -383,7 +394,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
       tempController.setupDataSource(
         PlayerDataSource(
           DataSourceType.network,
-          Constants.bugBuckBunnyVideoUrl,
+          E2ELocalMediaServer.mp4Url,
         ),
       ),
     );
@@ -505,11 +516,11 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                         betterPlayerDataSourceList: [
                           PlayerDataSource(
                             DataSourceType.network,
-                            Constants.bugBuckBunnyVideoUrl,
+                            E2ELocalMediaServer.mp4Url,
                           ),
                           PlayerDataSource(
                             DataSourceType.network,
-                            Constants.forBiggerBlazesUrl,
+                            E2ELocalMediaServer.secondaryMp4Url,
                           ),
                         ],
                       )
@@ -520,7 +531,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                           BetterPlayerListVideoPlayer(
                             PlayerDataSource(
                               DataSourceType.network,
-                              Constants.bugBuckBunnyVideoUrl,
+                              E2ELocalMediaServer.mp4Url,
                             ),
                             configuration: const PlayerConfiguration(
                               aspectRatio: 16 / 9,
@@ -592,7 +603,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                 runSpacing: 4,
                 children: [
                   if (_isDataSourceInitialized &&
-                      _currentUrl == Constants.bugBuckBunnyVideoUrl)
+                      _currentUrl == E2ELocalMediaServer.mp4Url)
                     Semantics(
                       identifier: 'better_player_e2e_mp4_initialized',
                       label: 'better_player_e2e_mp4_initialized',
@@ -614,7 +625,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                       ),
                     ),
                   if (_isDataSourceInitialized &&
-                      _currentUrl == Constants.hlsTestStreamUrl &&
+                      _currentUrl == E2ELocalMediaServer.hlsUrl &&
                       _betterPlayerController.betterPlayerAsmsTracks.isNotEmpty)
                     Semantics(
                       identifier: 'better_player_e2e_hls_initialized',
@@ -843,10 +854,16 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                     container: true,
                     button: true,
                     child: ElevatedButton(
-                      onPressed: () => _setupDataSource(
-                        url: Constants.bugBuckBunnyVideoUrl,
-                        type: DataSourceType.network,
-                      ),
+                      onPressed: () async {
+                        await E2ELocalMediaServer.ensureStarted();
+                        if (!mounted) {
+                          return;
+                        }
+                        _setupDataSource(
+                          url: E2ELocalMediaServer.mp4Url,
+                          type: DataSourceType.network,
+                        );
+                      },
                       child: const Text('MP4'),
                     ),
                   ),
@@ -876,10 +893,16 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                     container: true,
                     button: true,
                     child: ElevatedButton(
-                      onPressed: () => _setupDataSource(
-                        url: Constants.hlsTestStreamUrl,
-                        type: DataSourceType.network,
-                      ),
+                      onPressed: () async {
+                        await E2ELocalMediaServer.ensureStarted();
+                        if (!mounted) {
+                          return;
+                        }
+                        _setupDataSource(
+                          url: E2ELocalMediaServer.hlsUrl,
+                          type: DataSourceType.network,
+                        );
+                      },
                       child: const Text('HLS'),
                     ),
                   ),
@@ -889,11 +912,16 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                     container: true,
                     button: true,
                     child: ElevatedButton(
-                      onPressed: () => _setupDataSource(
-                        url:
-                            'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/404.mp4',
-                        type: DataSourceType.network,
-                      ),
+                      onPressed: () async {
+                        await E2ELocalMediaServer.ensureStarted();
+                        if (!mounted) {
+                          return;
+                        }
+                        _setupDataSource(
+                          url: E2ELocalMediaServer.errorUrl,
+                          type: DataSourceType.network,
+                        );
+                      },
                       child: const Text('Invalid'),
                     ),
                   ),
