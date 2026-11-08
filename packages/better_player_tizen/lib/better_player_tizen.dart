@@ -7,17 +7,20 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 /// Factory signature for creating a [PlayerTizen] instance.
-typedef TizenPlayerFactory = Future<PlayerTizen> Function({
-  required int textureId,
-  BufferingConfiguration? bufferingConfiguration,
-});
+typedef TizenPlayerFactory =
+    Future<PlayerTizen> Function({
+      required int textureId,
+      BufferingConfiguration? bufferingConfiguration,
+    });
 
 /// Tizen platform implementation of the Better Player plugin.
 class BetterPlayerTizen extends BetterPlayerPlatform {
   /// Creates a new Tizen platform instance.
-  BetterPlayerTizen({MethodChannel? channel, TizenPlayerFactory? playerFactory})
-    : _channel = channel ?? const MethodChannel('better_player_tizen'),
-      _playerFactory = playerFactory ?? _defaultPlayerFactory;
+  BetterPlayerTizen({
+    MethodChannel? channel,
+    TizenPlayerFactory? playerFactory,
+  }) : _channel = channel ?? const MethodChannel('better_player_tizen'),
+       _playerFactory = playerFactory ?? _defaultPlayerFactory;
 
   /// Registers this implementation with the platform interface.
   static void registerWith() {
@@ -53,19 +56,28 @@ class BetterPlayerTizen extends BetterPlayerPlatform {
 
   /// Registers a player instance for testing.
   @visibleForTesting
-  void registerPlayer({required int textureId, required PlayerTizen player}) {
+  void registerPlayer({
+    required int textureId,
+    required PlayerTizen player,
+  }) {
     _players[textureId] = player;
   }
 
   @override
   Future<void> setupLogCallback(
-    void Function({required int levelIndex, required String message})? callback,
+    void Function({
+      required int levelIndex,
+      required String message,
+    })?
+    callback,
   ) async {
     _logCallback = callback;
   }
 
   @override
-  Future<int?> create({BufferingConfiguration? bufferingConfiguration}) async {
+  Future<int?> create({
+    BufferingConfiguration? bufferingConfiguration,
+  }) async {
     try {
       final result = await _channel.invokeMapMethod<String, dynamic>('create');
       final textureId = result?['textureId'] as int?;
@@ -215,7 +227,10 @@ class BetterPlayerTizen extends BetterPlayerPlatform {
 
   @override
   Future<void> clearCache() async {
-    _log(message: 'clearCache is not supported on Tizen', levelIndex: 0);
+    _log(
+      message: 'clearCache is not supported on Tizen',
+      levelIndex: 0,
+    );
   }
 
   @override
@@ -224,12 +239,18 @@ class BetterPlayerTizen extends BetterPlayerPlatform {
     int preCacheSize, {
     void Function(PreCacheProgress progress)? onProgress,
   }) async {
-    _log(message: 'preCache is not supported on Tizen', levelIndex: 2);
+    _log(
+      message: 'preCache is not supported on Tizen',
+      levelIndex: 2,
+    );
   }
 
   @override
   Future<void> stopPreCache(String url, String? cacheKey) async {
-    _log(message: 'stopPreCache is not supported on Tizen', levelIndex: 2);
+    _log(
+      message: 'stopPreCache is not supported on Tizen',
+      levelIndex: 2,
+    );
   }
 
   @override

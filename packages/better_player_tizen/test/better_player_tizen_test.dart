@@ -38,10 +38,12 @@ void main() {
       when(() => mockPlayer.setVolume(any())).thenAnswer((_) async {});
       when(() => mockPlayer.setSpeed(any())).thenAnswer((_) async {});
       when(() => mockPlayer.seekTo(any())).thenAnswer((_) async {});
-      when(() => mockPlayer.getPosition())
-          .thenAnswer((_) async => const Duration(seconds: 10));
-      when(() => mockPlayer.setLooping(looping: any(named: 'looping')))
-          .thenAnswer((_) async {});
+      when(
+        () => mockPlayer.getPosition(),
+      ).thenAnswer((_) async => const Duration(seconds: 10));
+      when(
+        () => mockPlayer.setLooping(looping: any(named: 'looping')),
+      ).thenAnswer((_) async {});
       when(
         () => mockPlayer.setTrackParameters(
           width: any(named: 'width'),

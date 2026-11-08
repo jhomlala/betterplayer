@@ -92,12 +92,23 @@ jobs:
         working-directory: packages/better_player_tizen
         run: flutter test --coverage
 
-      - name: Run Example Integration Tests
+      - name: Run Example E2E Tests
         working-directory: packages/better_player_tizen/example
-        run: xvfb-run -a flutter test integration_test/tizen_flow_test.dart
+        run: flutter test test/example_e2e_test.dart
 
       - name: Build Tizen TPK Package
         working-directory: packages/better_player_tizen/example
         run: |
           export PATH="$HOME/flutter-tizen/bin:$HOME/tizen-studio/tools/ide/bin:$PATH"
-          flutter-tizen build tpk --debug
+          dbus-run-session -- bash -c "
+            echo tizen | gnome-keyring-daemon --unlock &&
+            flutter-tizen build tpk --debug
+          "
+
+      - name: Upload Tizen TPK Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tizen-debug-tpk
+          path: packages/better_player_tizen/example/build/tizen/tpk/*.tpk
+          if-no-files-found: ignore
