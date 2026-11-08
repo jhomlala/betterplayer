@@ -30,14 +30,14 @@ class BetterPlayerTizenPlugin : public flutter::Plugin {
       const flutter::MethodCall<flutter::EncodableValue> &method_call,
       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
-  TizenPlayer *FindPlayer(
+  std::shared_ptr<TizenPlayer> FindPlayer(
       const flutter::EncodableMap *args,
       flutter::MethodResult<flutter::EncodableValue> *result);
 
   flutter::PluginRegistrar *registrar_;
   std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>> channel_;
   std::mutex mutex_;
-  std::map<int64_t, std::unique_ptr<TizenPlayer>> players_;
+  std::map<int64_t, std::shared_ptr<TizenPlayer>> players_;
 };
 
 void BetterPlayerTizenPlugin::RegisterWithRegistrar(
@@ -64,15 +64,20 @@ BetterPlayerTizenPlugin::BetterPlayerTizenPlugin(
     : registrar_(registrar), channel_(std::move(channel)) {}
 
 BetterPlayerTizenPlugin::~BetterPlayerTizenPlugin() {
-  std::map<int64_t, std::unique_ptr<TizenPlayer>> players_to_clear;
+  std::map<int64_t, std::shared_ptr<TizenPlayer>> players_to_clear;
   {
     std::lock_guard<std::mutex> lock(mutex_);
     players_to_clear = std::move(players_);
   }
+  for (auto &pair : players_to_clear) {
+    if (pair.second) {
+      pair.second->Dispose();
+    }
+  }
   players_to_clear.clear();
 }
 
-TizenPlayer *BetterPlayerTizenPlugin::FindPlayer(
+std::shared_ptr<TizenPlayer> BetterPlayerTizenPlugin::FindPlayer(
     const flutter::EncodableMap *args,
     flutter::MethodResult<flutter::EncodableValue> *result) {
   if (!args) {
@@ -93,7 +98,7 @@ TizenPlayer *BetterPlayerTizenPlugin::FindPlayer(
     result->Error("NOT_FOUND", "Player not found");
     return nullptr;
   }
-  return player_it->second.get();
+  return player_it->second;
 }
 
 void BetterPlayerTizenPlugin::HandleMethodCall(
@@ -104,7 +109,7 @@ void BetterPlayerTizenPlugin::HandleMethodCall(
       std::get_if<flutter::EncodableMap>(method_call.arguments());
 
   if (method == "create") {
-    auto player = std::make_unique<TizenPlayer>(
+    auto player = std::make_shared<TizenPlayer>(
         registrar_, registrar_->texture_registrar());
     if (!player->Initialize()) {
       result->Error("CREATION_FAILED", "Failed to initialize Tizen player");
@@ -133,7 +138,7 @@ void BetterPlayerTizenPlugin::HandleMethodCall(
     }
     int64_t texture_id = it->second.LongValue();
 
-    std::unique_ptr<TizenPlayer> player_to_destroy;
+    std::shared_ptr<TizenPlayer> player_to_destroy;
     {
       std::lock_guard<std::mutex> lock(mutex_);
       auto player_it = players_.find(texture_id);
@@ -142,18 +147,26 @@ void BetterPlayerTizenPlugin::HandleMethodCall(
         players_.erase(player_it);
       }
     }
+    if (player_to_destroy) {
+      player_to_destroy->Dispose();
+    }
     player_to_destroy.reset();
     result->Success();
   } else if (method == "clear") {
-    std::map<int64_t, std::unique_ptr<TizenPlayer>> players_to_clear;
+    std::map<int64_t, std::shared_ptr<TizenPlayer>> players_to_clear;
     {
       std::lock_guard<std::mutex> lock(mutex_);
       players_to_clear = std::move(players_);
     }
+    for (auto &pair : players_to_clear) {
+      if (pair.second) {
+        pair.second->Dispose();
+      }
+    }
     players_to_clear.clear();
     result->Success();
   } else if (method == "setDataSource") {
-    TizenPlayer *player = FindPlayer(args, result.get());
+    auto player = FindPlayer(args, result.get());
     if (!player) return;
 
     std::string uri;
@@ -173,17 +186,17 @@ void BetterPlayerTizenPlugin::HandleMethodCall(
     player->SetDataSource(uri, headers);
     result->Success();
   } else if (method == "play") {
-    TizenPlayer *player = FindPlayer(args, result.get());
+    auto player = FindPlayer(args, result.get());
     if (!player) return;
     player->Play();
     result->Success();
   } else if (method == "pause") {
-    TizenPlayer *player = FindPlayer(args, result.get());
+    auto player = FindPlayer(args, result.get());
     if (!player) return;
     player->Pause();
     result->Success();
   } else if (method == "seekTo") {
-    TizenPlayer *player = FindPlayer(args, result.get());
+    auto player = FindPlayer(args, result.get());
     if (!player) return;
     int32_t position_ms = 0;
     auto it = args->find(flutter::EncodableValue("position"));
@@ -193,12 +206,12 @@ void BetterPlayerTizenPlugin::HandleMethodCall(
     player->SeekTo(position_ms);
     result->Success();
   } else if (method == "getPosition") {
-    TizenPlayer *player = FindPlayer(args, result.get());
+    auto player = FindPlayer(args, result.get());
     if (!player) return;
     int32_t position_ms = player->GetPosition();
     result->Success(flutter::EncodableValue(position_ms));
   } else if (method == "setVolume") {
-    TizenPlayer *player = FindPlayer(args, result.get());
+    auto player = FindPlayer(args, result.get());
     if (!player) return;
     double volume = 1.0;
     auto it = args->find(flutter::EncodableValue("volume"));
@@ -214,7 +227,7 @@ void BetterPlayerTizenPlugin::HandleMethodCall(
     player->SetVolume(volume);
     result->Success();
   } else if (method == "setSpeed") {
-    TizenPlayer *player = FindPlayer(args, result.get());
+    auto player = FindPlayer(args, result.get());
     if (!player) return;
     double speed = 1.0;
     auto it = args->find(flutter::EncodableValue("speed"));
@@ -230,7 +243,7 @@ void BetterPlayerTizenPlugin::HandleMethodCall(
     player->SetPlaybackSpeed(speed);
     result->Success();
   } else if (method == "setLooping") {
-    TizenPlayer *player = FindPlayer(args, result.get());
+    auto player = FindPlayer(args, result.get());
     if (!player) return;
     bool looping = false;
     auto it = args->find(flutter::EncodableValue("looping"));

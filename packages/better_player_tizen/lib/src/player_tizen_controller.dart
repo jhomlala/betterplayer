@@ -35,7 +35,9 @@ class PlayerTizenController implements PlayerTizen {
   Stream<VideoEvent> get events => _eventController.stream;
 
   void _handleEvent(dynamic rawEvent) {
-    if (_isDisposed || rawEvent is! Map<dynamic, dynamic>) {
+    if (_isDisposed ||
+        _eventController.isClosed ||
+        rawEvent is! Map<dynamic, dynamic>) {
       return;
     }
 
@@ -102,6 +104,9 @@ class PlayerTizenController implements PlayerTizen {
 
   @override
   Future<void> setDataSource(DataSource dataSource) async {
+    if (_isDisposed) {
+      return;
+    }
     final uri = dataSource.uri;
     if (uri == null || uri.isEmpty) {
       throw PlatformException(
@@ -118,6 +123,9 @@ class PlayerTizenController implements PlayerTizen {
 
   @override
   Future<void> play() async {
+    if (_isDisposed) {
+      return;
+    }
     await _channel.invokeMethod<void>('play', <String, dynamic>{
       'textureId': textureId,
     });
@@ -125,6 +133,9 @@ class PlayerTizenController implements PlayerTizen {
 
   @override
   Future<void> pause() async {
+    if (_isDisposed) {
+      return;
+    }
     await _channel.invokeMethod<void>('pause', <String, dynamic>{
       'textureId': textureId,
     });
@@ -132,6 +143,9 @@ class PlayerTizenController implements PlayerTizen {
 
   @override
   Future<void> setVolume(double volume) async {
+    if (_isDisposed) {
+      return;
+    }
     await _channel.invokeMethod<void>('setVolume', <String, dynamic>{
       'textureId': textureId,
       'volume': volume.clamp(0.0, 1.0),
@@ -140,6 +154,9 @@ class PlayerTizenController implements PlayerTizen {
 
   @override
   Future<void> setSpeed(double speed) async {
+    if (_isDisposed) {
+      return;
+    }
     await _channel.invokeMethod<void>('setSpeed', <String, dynamic>{
       'textureId': textureId,
       'speed': speed,
@@ -148,6 +165,9 @@ class PlayerTizenController implements PlayerTizen {
 
   @override
   Future<void> seekTo(Duration position) async {
+    if (_isDisposed) {
+      return;
+    }
     await _channel.invokeMethod<void>('seekTo', <String, dynamic>{
       'textureId': textureId,
       'position': position.inMilliseconds,
@@ -156,6 +176,9 @@ class PlayerTizenController implements PlayerTizen {
 
   @override
   Future<Duration> getPosition() async {
+    if (_isDisposed) {
+      return Duration.zero;
+    }
     final positionMs = await _channel.invokeMethod<int>(
       'getPosition',
       <String, dynamic>{'textureId': textureId},
@@ -165,6 +188,9 @@ class PlayerTizenController implements PlayerTizen {
 
   @override
   Future<void> setLooping({required bool looping}) async {
+    if (_isDisposed) {
+      return;
+    }
     await _channel.invokeMethod<void>('setLooping', <String, dynamic>{
       'textureId': textureId,
       'looping': looping,

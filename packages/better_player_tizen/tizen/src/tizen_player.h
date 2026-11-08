@@ -57,7 +57,9 @@ class TizenPlayer {
   FlutterDesktopPixelBuffer desktop_pixel_buffer_{};
   int64_t texture_id_ = -1;
 
+  std::recursive_mutex player_mutex_;
   player_h player_ = nullptr;
+
   std::unique_ptr<flutter::EventChannel<flutter::EncodableValue>>
       event_channel_;
   std::mutex event_mutex_;

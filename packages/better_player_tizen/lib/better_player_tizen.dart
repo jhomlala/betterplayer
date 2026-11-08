@@ -134,11 +134,15 @@ class BetterPlayerTizen extends BetterPlayerPlatform {
     final player = _players.remove(textureId);
     if (player != null) {
       await player.dispose();
-      _log(
-        message: 'Disposed Tizen player textureId: $textureId',
-        levelIndex: 1,
-      );
+    } else {
+      await _channel.invokeMethod<void>('dispose', <String, dynamic>{
+        'textureId': textureId,
+      });
     }
+    _log(
+      message: 'Disposed Tizen player textureId: $textureId',
+      levelIndex: 1,
+    );
   }
 
   @override
@@ -241,6 +245,17 @@ class BetterPlayerTizen extends BetterPlayerPlatform {
   }
 
   @override
+  Future<List<Map<String, dynamic>>> getAudioTracks(int? textureId) async {
+    _log(
+      message:
+          'getAudioTracks: textureId=$textureId '
+          '(not supported in experimental Tizen implementation)',
+      levelIndex: 0,
+    );
+    return const <Map<String, dynamic>>[];
+  }
+
+  @override
   Future<void> setAudioTrack(int? textureId, String? name, int? index) async {
     _log(
       message:
@@ -339,7 +354,30 @@ class BetterPlayerTizen extends BetterPlayerPlatform {
   }
 
   @override
+  Future<void> setScreenCaptureProtection({required bool enabled}) async {
+    _log(
+      message:
+          'setScreenCaptureProtection: enabled=$enabled '
+          '(screen capture protection is not applicable on Tizen)',
+      levelIndex: 0,
+    );
+  }
+
+  @override
+  Future<void> showExternalPlaybackPicker({required int? textureId}) async {
+    _log(
+      message:
+          'showExternalPlaybackPicker: textureId=$textureId '
+          '(external playback picker is not applicable on Tizen)',
+      levelIndex: 0,
+    );
+  }
+
+  @override
   Widget buildView(int? textureId) {
-    return Texture(textureId: textureId!);
+    if (textureId == null) {
+      return const SizedBox.shrink();
+    }
+    return Texture(textureId: textureId);
   }
 }

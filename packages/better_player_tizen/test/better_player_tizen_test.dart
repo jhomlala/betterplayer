@@ -92,10 +92,15 @@ void main() {
       expect(methodCalls.any((c) => c.method == 'clear'), isTrue);
     });
 
-    test('buildView returns Texture widget', () {
+    test('buildView returns Texture widget when textureId is valid', () {
       final widget = tizenPlatform.buildView(42);
       expect(widget, isA<Texture>());
       expect((widget as Texture).textureId, 42);
+    });
+
+    test('buildView returns SizedBox.shrink when textureId is null', () {
+      final widget = tizenPlatform.buildView(null);
+      expect(widget, isA<SizedBox>());
     });
 
     test('create initializes player and returns textureId', () async {
@@ -127,6 +132,17 @@ void main() {
     test('dispose ignores null textureId', () async {
       await tizenPlatform.dispose(null);
       verifyNever(() => mockPlayer.dispose());
+    });
+
+    test('dispose invokes native dispose for untracked player', () async {
+      await tizenPlatform.dispose(999);
+      expect(
+        methodCalls.any(
+          (c) =>
+              c.method == 'dispose' && (c.arguments as Map)['textureId'] == 999,
+        ),
+        isTrue,
+      );
     });
 
     test('setDataSource delegates to player', () async {
@@ -209,6 +225,7 @@ void main() {
       'unsupported platform methods complete safely without throwing',
       () async {
         expect(await tizenPlatform.isPictureInPictureSupported(42), isFalse);
+        expect(await tizenPlatform.getAudioTracks(42), isEmpty);
         await tizenPlatform.enablePictureInPicture(42, 0, 0, 100, 100);
         await tizenPlatform.disablePictureInPicture(42);
         await tizenPlatform.setTrackParameters(42, 1920, 1080, 5000000);
@@ -216,6 +233,8 @@ void main() {
         await tizenPlatform.setTextTrack(42, 'Subtitles', 0);
         await tizenPlatform.setMixWithOthers(42, true);
         await tizenPlatform.setAndroidMatchFrameRate(42, true);
+        await tizenPlatform.setScreenCaptureProtection(enabled: true);
+        await tizenPlatform.showExternalPlaybackPicker(textureId: 42);
         await tizenPlatform.clearCache();
         await tizenPlatform.preCache(
           DataSource(
@@ -311,6 +330,19 @@ void main() {
         );
       },
     );
+
+    test('controller methods gracefully no-op when disposed', () async {
+      await controller.dispose();
+      final callCount = recordedCalls.length;
+      await controller.play();
+      await controller.pause();
+      await controller.setVolume(0.5);
+      await controller.setSpeed(1);
+      await controller.seekTo(Duration.zero);
+      await controller.setLooping(looping: true);
+      expect(await controller.getPosition(), Duration.zero);
+      expect(recordedCalls.length, callCount);
+    });
 
     test('processes initialized event correctly', () async {
       final futureEvent = controller.events.first;
