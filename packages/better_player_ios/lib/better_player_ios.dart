@@ -650,9 +650,10 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
     Map<String, String> headers = const {},
   }) {
     // The native string overload discards headers. Use the URL overload.
+    final resolvedUrl = url.startsWith('/') ? 'file://$url' : url;
     final nativeUrl =
-        objc.NSURL.URLWithString(url.toNSString()) ??
-        objc.NSURL.URLWithString(Uri.encodeFull(url).toNSString());
+        objc.NSURL.URLWithString(resolvedUrl.toNSString()) ??
+        objc.NSURL.URLWithString(Uri.encodeFull(resolvedUrl).toNSString());
     if (nativeUrl == null) return;
 
     _player.setDataSourceURL(

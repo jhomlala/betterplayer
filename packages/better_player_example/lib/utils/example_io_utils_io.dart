@@ -29,7 +29,10 @@ class ExampleIoUtils {
     required List<int> bytes,
   }) async {
     final tempDir = Directory.systemTemp;
-    final file = File('${tempDir.path}${Platform.pathSeparator}$fileName');
+    final tempDirPath = tempDir.path.endsWith(Platform.pathSeparator)
+        ? tempDir.path.substring(0, tempDir.path.length - 1)
+        : tempDir.path;
+    final file = File('$tempDirPath${Platform.pathSeparator}$fileName');
     if (!file.existsSync() || file.lengthSync() != bytes.length) {
       await file.writeAsBytes(bytes, flush: true);
     }

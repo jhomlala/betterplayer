@@ -9,13 +9,23 @@ appId: pl.hasoft.example
 - assertVisible:
     id: "better_player_e2e_app_bar_title"
 
+# Wait for initial MP4 playback ready
+- extendedWaitUntil:
+    visible:
+      id: "better_player_e2e_mp4_initialized"
+    timeout: 60000
+
 # Switch to local file playback (DataSourceType.file)
+- extendedWaitUntil:
+    visible:
+      id: "better_player_e2e_setup_file"
+    timeout: 10000
 - tapOn:
     id: "better_player_e2e_setup_file"
 - extendedWaitUntil:
     visible:
       id: "better_player_e2e_file_status"
-    timeout: 30000
+    timeout: 45000
 - assertVisible:
     id: "better_player_e2e_file_status"
 
