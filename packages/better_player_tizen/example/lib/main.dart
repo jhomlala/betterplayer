@@ -22,11 +22,13 @@ class TizenVideoPlayerScreen extends StatefulWidget {
   const TizenVideoPlayerScreen({super.key});
 
   @override
-  State<TizenVideoPlayerScreen> createState() => _TizenVideoPlayerScreenState();
+  State<TizenVideoPlayerScreen> createState() => TizenVideoPlayerScreenState();
 }
 
-class _TizenVideoPlayerScreenState extends State<TizenVideoPlayerScreen> {
-  late final BetterPlayerController _controller;
+/// State for [TizenVideoPlayerScreen] exposing [controller] for E2E tests.
+class TizenVideoPlayerScreenState extends State<TizenVideoPlayerScreen> {
+  /// Active player controller instance.
+  late final BetterPlayerController controller;
 
   @override
   void initState() {
@@ -41,7 +43,7 @@ class _TizenVideoPlayerScreenState extends State<TizenVideoPlayerScreen> {
       DataSourceType.network,
       'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
     );
-    _controller = BetterPlayerController(
+    controller = BetterPlayerController(
       config,
       betterPlayerDataSource: dataSource,
     );
@@ -49,7 +51,7 @@ class _TizenVideoPlayerScreenState extends State<TizenVideoPlayerScreen> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    controller.dispose();
     super.dispose();
   }
 
@@ -60,7 +62,7 @@ class _TizenVideoPlayerScreenState extends State<TizenVideoPlayerScreen> {
       body: Center(
         child: AspectRatio(
           aspectRatio: 16 / 9,
-          child: BetterPlayer(controller: _controller),
+          child: BetterPlayer(controller: controller),
         ),
       ),
     );

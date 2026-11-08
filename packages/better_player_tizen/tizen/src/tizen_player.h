@@ -7,6 +7,7 @@
 #include <flutter/texture_registrar.h>
 #include <player.h>
 
+#include <atomic>
 #include <cstdint>
 #include <memory>
 #include <mutex>
@@ -20,6 +21,9 @@ class TizenPlayer {
   TizenPlayer(flutter::PluginRegistrar *plugin_registrar,
               flutter::TextureRegistrar *texture_registrar);
   ~TizenPlayer();
+
+  TizenPlayer(const TizenPlayer &) = delete;
+  TizenPlayer &operator=(const TizenPlayer &) = delete;
 
   bool Initialize();
   void Dispose();
@@ -56,6 +60,7 @@ class TizenPlayer {
   player_h player_ = nullptr;
   std::unique_ptr<flutter::EventChannel<flutter::EncodableValue>>
       event_channel_;
+  std::mutex event_mutex_;
   std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> event_sink_;
 
   std::mutex buffer_mutex_;
@@ -63,8 +68,8 @@ class TizenPlayer {
   size_t buffer_width_ = 0;
   size_t buffer_height_ = 0;
 
-  bool is_initialized_ = false;
-  bool is_disposed_ = false;
+  std::atomic<bool> is_initialized_{false};
+  std::atomic<bool> is_disposed_{false};
 };
 
 }  // namespace better_player_tizen

@@ -40,9 +40,9 @@ class PlayerTizenController implements PlayerTizen {
     }
 
     final map = rawEvent.cast<String, dynamic>();
-    final eventTypeString = map['event'] as String?;
+    final eventType = map['event'] as String?;
 
-    switch (eventTypeString) {
+    switch (eventType) {
       case 'initialized':
         final durationMs = map['duration'] as int? ?? 0;
         final width = (map['width'] as num?)?.toDouble() ?? 0.0;
@@ -103,6 +103,12 @@ class PlayerTizenController implements PlayerTizen {
   @override
   Future<void> setDataSource(DataSource dataSource) async {
     final uri = dataSource.uri;
+    if (uri == null || uri.isEmpty) {
+      throw PlatformException(
+        code: 'INVALID_DATA_SOURCE',
+        message: 'DataSource URI cannot be null or empty on Tizen.',
+      );
+    }
     await _channel.invokeMethod<void>('setDataSource', <String, dynamic>{
       'textureId': textureId,
       'uri': uri,
@@ -162,20 +168,6 @@ class PlayerTizenController implements PlayerTizen {
     await _channel.invokeMethod<void>('setLooping', <String, dynamic>{
       'textureId': textureId,
       'looping': looping,
-    });
-  }
-
-  @override
-  Future<void> setTrackParameters({
-    required int width,
-    required int height,
-    required int bitrate,
-  }) async {
-    await _channel.invokeMethod<void>('setTrackParameters', <String, dynamic>{
-      'textureId': textureId,
-      'width': width,
-      'height': height,
-      'bitrate': bitrate,
     });
   }
 

@@ -36,11 +36,4 @@ abstract class PlayerTizen {
 
   /// Configures whether playback should loop when finished.
   Future<void> setLooping({required bool looping});
-
-  /// Configures track parameters for adaptive streams.
-  Future<void> setTrackParameters({
-    required int width,
-    required int height,
-    required int bitrate,
-  });
 }

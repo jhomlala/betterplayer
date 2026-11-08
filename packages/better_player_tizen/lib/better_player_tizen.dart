@@ -20,7 +20,18 @@ class BetterPlayerTizen extends BetterPlayerPlatform {
     MethodChannel? channel,
     TizenPlayerFactory? playerFactory,
   }) : _channel = channel ?? const MethodChannel('better_player_tizen'),
-       _playerFactory = playerFactory ?? _defaultPlayerFactory;
+       _playerFactory = playerFactory ?? _defaultPlayerFactory {
+    _cleanupOrphanedPlayers();
+  }
+
+  Future<void>? _cleanupFuture;
+
+  void _cleanupOrphanedPlayers() {
+    _cleanupFuture = _channel
+        .invokeMethod<void>('clear')
+        .catchError((Object _) {})
+        .whenComplete(() => _cleanupFuture = null);
+  }
 
   /// Registers this class as the default instance of [BetterPlayerPlatform].
   static void register() {
@@ -84,6 +95,9 @@ class BetterPlayerTizen extends BetterPlayerPlatform {
     BufferingConfiguration? bufferingConfiguration,
   }) async {
     try {
+      if (_cleanupFuture != null) {
+        await _cleanupFuture;
+      }
       final result = await _channel.invokeMapMethod<String, dynamic>('create');
       final textureId = result?['textureId'] as int?;
       if (textureId == null) {
@@ -220,13 +234,52 @@ class BetterPlayerTizen extends BetterPlayerPlatform {
   ) async {
     _log(
       message:
-          'setTrackParameters: textureId=$textureId, width=$width, height=$height, bitrate=$bitrate',
+          'setTrackParameters: textureId=$textureId, width=$width, height=$height, bitrate=$bitrate '
+          '(adaptive track selection is managed automatically by Tizen player)',
       levelIndex: 0,
     );
-    await getPlayer(textureId)?.setTrackParameters(
-      width: width ?? 0,
-      height: height ?? 0,
-      bitrate: bitrate ?? 0,
+  }
+
+  @override
+  Future<void> setAudioTrack(int? textureId, String? name, int? index) async {
+    _log(
+      message:
+          'setAudioTrack: textureId=$textureId, name=$name, index=$index '
+          '(not supported in experimental Tizen implementation)',
+      levelIndex: 0,
+    );
+  }
+
+  @override
+  Future<void> setTextTrack(int? textureId, String? name, int? index) async {
+    _log(
+      message:
+          'setTextTrack: textureId=$textureId, name=$name, index=$index '
+          '(not supported in experimental Tizen implementation)',
+      levelIndex: 0,
+    );
+  }
+
+  @override
+  Future<void> setMixWithOthers(int? textureId, bool mixWithOthers) async {
+    _log(
+      message:
+          'setMixWithOthers: textureId=$textureId, mixWithOthers=$mixWithOthers '
+          '(audio policy is managed by Tizen system sound manager)',
+      levelIndex: 0,
+    );
+  }
+
+  @override
+  Future<void> setAndroidMatchFrameRate(
+    int? textureId,
+    bool matchFrameRate,
+  ) async {
+    _log(
+      message:
+          'setAndroidMatchFrameRate: textureId=$textureId, matchFrameRate=$matchFrameRate '
+          '(frame rate matching is not applicable on Tizen)',
+      levelIndex: 0,
     );
   }
 
@@ -261,6 +314,28 @@ class BetterPlayerTizen extends BetterPlayerPlatform {
   @override
   Future<bool?> isPictureInPictureSupported(int? textureId) async {
     return false;
+  }
+
+  @override
+  Future<void> enablePictureInPicture(
+    int? textureId,
+    double? top,
+    double? left,
+    double? width,
+    double? height,
+  ) async {
+    _log(
+      message: 'Picture-in-picture is not supported on Tizen',
+      levelIndex: 2,
+    );
+  }
+
+  @override
+  Future<void> disablePictureInPicture(int? textureId) async {
+    _log(
+      message: 'Picture-in-picture is not supported on Tizen',
+      levelIndex: 2,
+    );
   }
 
   @override

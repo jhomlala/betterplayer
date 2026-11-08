@@ -54,12 +54,14 @@ void TizenPlayer::SetUpEventChannel(flutter::BinaryMessenger *messenger) {
                      &&events)
               -> std::unique_ptr<
                   flutter::StreamHandlerError<flutter::EncodableValue>> {
+            std::lock_guard<std::mutex> lock(event_mutex_);
             event_sink_ = std::move(events);
             return nullptr;
           },
           [this](const flutter::EncodableValue *arguments)
               -> std::unique_ptr<
                   flutter::StreamHandlerError<flutter::EncodableValue>> {
+            std::lock_guard<std::mutex> lock(event_mutex_);
             event_sink_ = nullptr;
             return nullptr;
           });
@@ -68,7 +70,11 @@ void TizenPlayer::SetUpEventChannel(flutter::BinaryMessenger *messenger) {
 }
 
 void TizenPlayer::SendEvent(const flutter::EncodableMap &map) {
-  if (event_sink_ && !is_disposed_) {
+  if (is_disposed_.load()) {
+    return;
+  }
+  std::lock_guard<std::mutex> lock(event_mutex_);
+  if (event_sink_) {
     event_sink_->Success(flutter::EncodableValue(map));
   }
 }
@@ -76,7 +82,7 @@ void TizenPlayer::SendEvent(const flutter::EncodableMap &map) {
 const FlutterDesktopPixelBuffer *TizenPlayer::CopyPixelBuffer(size_t width,
                                                               size_t height) {
   std::lock_guard<std::mutex> lock(buffer_mutex_);
-  if (pixel_buffer_.empty()) {
+  if (is_disposed_.load() || pixel_buffer_.empty()) {
     return nullptr;
   }
   desktop_pixel_buffer_.buffer = pixel_buffer_.data();
@@ -89,13 +95,18 @@ const FlutterDesktopPixelBuffer *TizenPlayer::CopyPixelBuffer(size_t width,
 
 void TizenPlayer::OnVideoFrameDecoded(media_packet_h packet, void *data) {
   auto *self = static_cast<TizenPlayer *>(data);
-  if (!self || self->is_disposed_ || !packet) {
+  if (!self || self->is_disposed_.load() || !packet) {
+    if (packet) {
+      media_packet_destroy(packet);
+    }
     return;
   }
 
   void *buffer_ptr = nullptr;
   int ret = media_packet_get_buffer_data_ptr(packet, &buffer_ptr);
-  if (ret != 0 || !buffer_ptr) {
+  uint64_t packet_size = 0;
+  media_packet_get_buffer_size(packet, &packet_size);
+  if (ret != 0 || !buffer_ptr || packet_size == 0) {
     media_packet_destroy(packet);
     return;
   }
@@ -108,35 +119,54 @@ void TizenPlayer::OnVideoFrameDecoded(media_packet_h packet, void *data) {
     return;
   }
 
-  size_t buffer_size = static_cast<size_t>(width * height * 4);
+  size_t buffer_size = static_cast<size_t>(width) * static_cast<size_t>(height) * 4;
+  size_t copy_bytes = std::min(buffer_size, static_cast<size_t>(packet_size));
   {
     std::lock_guard<std::mutex> lock(self->buffer_mutex_);
     if (self->pixel_buffer_.size() != buffer_size) {
-      self->pixel_buffer_.resize(buffer_size, 0);
+      self->pixel_buffer_.assign(buffer_size, 0);
     }
     self->buffer_width_ = static_cast<size_t>(width);
     self->buffer_height_ = static_cast<size_t>(height);
-    std::copy_n(static_cast<const uint8_t *>(buffer_ptr), buffer_size,
+    std::copy_n(static_cast<const uint8_t *>(buffer_ptr), copy_bytes,
                 self->pixel_buffer_.data());
   }
 
   media_packet_destroy(packet);
 
-  if (self->texture_registrar_ && self->texture_id_ >= 0) {
+  if (!self->is_disposed_.load() && self->texture_registrar_ &&
+      self->texture_id_ >= 0) {
     self->texture_registrar_->MarkTextureFrameAvailable(self->texture_id_);
   }
 }
 
 void TizenPlayer::SetDataSource(const std::string &uri,
                                 const flutter::EncodableMap &headers) {
-  if (player_ == nullptr) {
+  if (player_ == nullptr || is_disposed_.load()) {
     return;
+  }
+
+  if (is_initialized_.exchange(false)) {
+    player_stop(player_);
+    player_unprepare(player_);
+  }
+
+  for (const auto &kv : headers) {
+    if (std::holds_alternative<std::string>(kv.first) &&
+        std::holds_alternative<std::string>(kv.second)) {
+      const auto &key = std::get<std::string>(kv.first);
+      const auto &val = std::get<std::string>(kv.second);
+      if ((key == "Cookie" || key == "cookie") && !val.empty()) {
+        player_set_streaming_cookie(player_, val.c_str(), val.size());
+      }
+    }
   }
 
   int ret = player_set_uri(player_, uri.c_str());
   if (ret != PLAYER_ERROR_NONE) {
     std::cerr << "[BetterPlayerTizen] player_set_uri failed: " << ret
               << std::endl;
+    OnError(ret, this);
     return;
   }
 
@@ -144,16 +174,17 @@ void TizenPlayer::SetDataSource(const std::string &uri,
   if (ret != PLAYER_ERROR_NONE) {
     std::cerr << "[BetterPlayerTizen] player_prepare_async failed: " << ret
               << std::endl;
+    OnError(ret, this);
   }
 }
 
 void TizenPlayer::OnPrepared(void *data) {
   auto *self = static_cast<TizenPlayer *>(data);
-  if (!self || self->is_disposed_) {
+  if (!self || self->is_disposed_.load()) {
     return;
   }
 
-  self->is_initialized_ = true;
+  self->is_initialized_.store(true);
   int duration_ms = 0;
   player_get_duration(self->player_, &duration_ms);
 
@@ -165,16 +196,18 @@ void TizenPlayer::OnPrepared(void *data) {
   event[flutter::EncodableValue("event")] =
       flutter::EncodableValue("initialized");
   event[flutter::EncodableValue("duration")] =
-      flutter::EncodableValue(duration_ms);
-  event[flutter::EncodableValue("width")] = flutter::EncodableValue(width);
-  event[flutter::EncodableValue("height")] = flutter::EncodableValue(height);
+      flutter::EncodableValue(static_cast<int32_t>(duration_ms));
+  event[flutter::EncodableValue("width")] =
+      flutter::EncodableValue(static_cast<int32_t>(width));
+  event[flutter::EncodableValue("height")] =
+      flutter::EncodableValue(static_cast<int32_t>(height));
 
   self->SendEvent(event);
 }
 
 void TizenPlayer::OnCompleted(void *data) {
   auto *self = static_cast<TizenPlayer *>(data);
-  if (!self || self->is_disposed_) {
+  if (!self || self->is_disposed_.load()) {
     return;
   }
 
@@ -185,17 +218,17 @@ void TizenPlayer::OnCompleted(void *data) {
 
 void TizenPlayer::OnBuffering(int percent, void *data) {
   auto *self = static_cast<TizenPlayer *>(data);
-  if (!self || self->is_disposed_) {
+  if (!self || self->is_disposed_.load()) {
     return;
   }
 
   int duration_ms = 0;
   player_get_duration(self->player_, &duration_ms);
-  int buffered_end = static_cast<int>(duration_ms * (percent / 100.0));
+  int32_t buffered_end = static_cast<int32_t>(duration_ms * (percent / 100.0));
 
   flutter::EncodableList ranges;
   flutter::EncodableList range;
-  range.push_back(flutter::EncodableValue(0));
+  range.push_back(flutter::EncodableValue(static_cast<int32_t>(0)));
   range.push_back(flutter::EncodableValue(buffered_end));
   ranges.push_back(flutter::EncodableValue(range));
 
@@ -208,16 +241,20 @@ void TizenPlayer::OnBuffering(int percent, void *data) {
 
 void TizenPlayer::OnError(int error_code, void *data) {
   auto *self = static_cast<TizenPlayer *>(data);
-  if (!self || self->is_disposed_ || !self->event_sink_) {
+  if (!self || self->is_disposed_.load()) {
     return;
   }
 
-  self->event_sink_->Error(
-      "PLAYER_ERROR", "Tizen media player error: " + std::to_string(error_code));
+  std::lock_guard<std::mutex> lock(self->event_mutex_);
+  if (self->event_sink_) {
+    self->event_sink_->Error(
+        "PLAYER_ERROR",
+        "Tizen media player error: " + std::to_string(error_code));
+  }
 }
 
 void TizenPlayer::Play() {
-  if (player_ == nullptr) return;
+  if (player_ == nullptr || is_disposed_.load()) return;
   player_start(player_);
 
   flutter::EncodableMap event;
@@ -228,7 +265,7 @@ void TizenPlayer::Play() {
 }
 
 void TizenPlayer::Pause() {
-  if (player_ == nullptr) return;
+  if (player_ == nullptr || is_disposed_.load()) return;
   player_pause(player_);
 
   flutter::EncodableMap event;
@@ -239,38 +276,48 @@ void TizenPlayer::Pause() {
 }
 
 void TizenPlayer::SeekTo(int32_t position_ms) {
-  if (player_ == nullptr) return;
+  if (player_ == nullptr || is_disposed_.load()) return;
   player_set_play_position(player_, position_ms, true, nullptr, nullptr);
 }
 
 int32_t TizenPlayer::GetPosition() {
-  if (player_ == nullptr) return 0;
+  if (player_ == nullptr || is_disposed_.load()) return 0;
   int position_ms = 0;
   player_get_play_position(player_, &position_ms);
-  return position_ms;
+  return static_cast<int32_t>(position_ms);
 }
 
 void TizenPlayer::SetVolume(double volume) {
-  if (player_ == nullptr) return;
+  if (player_ == nullptr || is_disposed_.load()) return;
   float vol = static_cast<float>(std::clamp(volume, 0.0, 1.0));
   player_set_volume(player_, vol, vol);
 }
 
 void TizenPlayer::SetPlaybackSpeed(double speed) {
-  if (player_ == nullptr) return;
+  if (player_ == nullptr || is_disposed_.load()) return;
   player_set_playback_rate(player_, static_cast<float>(speed));
 }
 
 void TizenPlayer::SetLooping(bool looping) {
-  if (player_ == nullptr) return;
+  if (player_ == nullptr || is_disposed_.load()) return;
   player_set_looping(player_, looping);
 }
 
 void TizenPlayer::Dispose() {
-  if (is_disposed_) {
+  if (is_disposed_.exchange(true)) {
     return;
   }
-  is_disposed_ = true;
+
+  if (player_) {
+    player_unset_completed_cb(player_);
+    player_unset_buffering_cb(player_);
+    player_unset_error_cb(player_);
+    player_unset_media_packet_video_frame_decoded_cb(player_);
+    player_stop(player_);
+    player_unprepare(player_);
+    player_destroy(player_);
+    player_ = nullptr;
+  }
 
   if (texture_registrar_ && texture_id_ >= 0) {
     texture_registrar_->UnregisterTexture(texture_id_);
@@ -282,12 +329,9 @@ void TizenPlayer::Dispose() {
     event_channel_->SetStreamHandler(nullptr);
     event_channel_ = nullptr;
   }
-
-  if (player_) {
-    player_stop(player_);
-    player_unprepare(player_);
-    player_destroy(player_);
-    player_ = nullptr;
+  {
+    std::lock_guard<std::mutex> lock(event_mutex_);
+    event_sink_ = nullptr;
   }
 
   std::lock_guard<std::mutex> lock(buffer_mutex_);

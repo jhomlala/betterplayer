@@ -22,13 +22,17 @@ class BetterPlayerTizenPlugin : public flutter::Plugin {
       std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>> channel);
   virtual ~BetterPlayerTizenPlugin();
 
+  BetterPlayerTizenPlugin(const BetterPlayerTizenPlugin &) = delete;
+  BetterPlayerTizenPlugin &operator=(const BetterPlayerTizenPlugin &) = delete;
+
  private:
   void HandleMethodCall(
       const flutter::MethodCall<flutter::EncodableValue> &method_call,
       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
-  TizenPlayer *FindPlayer(const flutter::EncodableMap *args,
-                          flutter::MethodResult<flutter::EncodableValue> *result);
+  TizenPlayer *FindPlayer(
+      const flutter::EncodableMap *args,
+      flutter::MethodResult<flutter::EncodableValue> *result);
 
   flutter::PluginRegistrar *registrar_;
   std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>> channel_;
@@ -60,8 +64,12 @@ BetterPlayerTizenPlugin::BetterPlayerTizenPlugin(
     : registrar_(registrar), channel_(std::move(channel)) {}
 
 BetterPlayerTizenPlugin::~BetterPlayerTizenPlugin() {
-  std::lock_guard<std::mutex> lock(mutex_);
-  players_.clear();
+  std::map<int64_t, std::unique_ptr<TizenPlayer>> players_to_clear;
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    players_to_clear = std::move(players_);
+  }
+  players_to_clear.clear();
 }
 
 TizenPlayer *BetterPlayerTizenPlugin::FindPlayer(
@@ -137,8 +145,12 @@ void BetterPlayerTizenPlugin::HandleMethodCall(
     player_to_destroy.reset();
     result->Success();
   } else if (method == "clear") {
-    std::lock_guard<std::mutex> lock(mutex_);
-    players_.clear();
+    std::map<int64_t, std::unique_ptr<TizenPlayer>> players_to_clear;
+    {
+      std::lock_guard<std::mutex> lock(mutex_);
+      players_to_clear = std::move(players_);
+    }
+    players_to_clear.clear();
     result->Success();
   } else if (method == "setDataSource") {
     TizenPlayer *player = FindPlayer(args, result.get());
@@ -146,7 +158,8 @@ void BetterPlayerTizenPlugin::HandleMethodCall(
 
     std::string uri;
     auto uri_it = args->find(flutter::EncodableValue("uri"));
-    if (uri_it != args->end() && std::holds_alternative<std::string>(uri_it->second)) {
+    if (uri_it != args->end() &&
+        std::holds_alternative<std::string>(uri_it->second)) {
       uri = std::get<std::string>(uri_it->second);
     }
 
@@ -225,8 +238,6 @@ void BetterPlayerTizenPlugin::HandleMethodCall(
       looping = std::get<bool>(it->second);
     }
     player->SetLooping(looping);
-    result->Success();
-  } else if (method == "setTrackParameters") {
     result->Success();
   } else {
     result->NotImplemented();
