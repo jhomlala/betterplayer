@@ -35,6 +35,12 @@ jobs:
         working-directory: packages/better_player_ios
         run: dart run tool/swiftgen.dart
 
+      - name: Rebase onto latest remote changes
+        run: |
+          git stash --include-untracked
+          git pull origin ${{ github.head_ref || github.ref_name }} --rebase
+          git stash pop || true
+
       - name: Commit Generated Bindings
         uses: stefanzweifel/git-auto-commit-action@v5
         with:

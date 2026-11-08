@@ -380,11 +380,8 @@ class BetterPlayerController {
   /// The exact subtitle line that should currently be rendered on the screen
   /// based on the video's current playback position.
   PlayerSubtitle? get renderedSubtitle => _subtitleState.renderedSubtitle;
-  set renderedSubtitle(PlayerSubtitle? value) =>
-      _subtitleState = _subtitleState.copyWith(
-        renderedSubtitle: value,
-        clearRenderedSubtitle: value == null,
-      );
+  set renderedSubtitle(PlayerSubtitle? value) => _subtitleState = _subtitleState
+      .copyWith(renderedSubtitle: value, clearRenderedSubtitle: value == null);
 
   /// Active embedded closed caption text lines emitted by the native engine.
   List<String> get activeCaptions => _subtitleState.activeCaptions;
@@ -573,6 +570,10 @@ class BetterPlayerController {
         hasCurrentDataSourceInitialized: true,
       );
       _postEvent(PlayerEvent(PlayerEventType.initialized));
+      if (_betterPlayerDataSource?.useAsmsAudioTracks != false &&
+          _trackState.asmsAudioTracks.isEmpty) {
+        unawaited(getAudioTracks());
+      }
       final currentSubtitle = _subtitleState.subtitlesSource;
       if (currentSubtitle != null) {
         if (currentSubtitle.type == PlayerSubtitlesSourceType.embedded) {

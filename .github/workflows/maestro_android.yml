@@ -49,7 +49,7 @@ jobs:
             ${{ runner.os }}-pub-
 
       - name: Cache Gradle
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: |
             ~/.gradle/caches
@@ -67,7 +67,22 @@ jobs:
             ${{ runner.os }}-maestro-
 
       - name: Install Maestro
-        run: if [ ! -d "$HOME/.maestro/bin" ]; then curl -Ls "https://get.maestro.mobile.dev" | bash; fi; echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+        run: |
+          if [ ! -x "$HOME/.maestro/bin/maestro" ]; then
+            echo "Attempting standard Maestro install..."
+            curl -Ls "https://get.maestro.mobile.dev" | bash || true
+          fi
+          if [ ! -x "$HOME/.maestro/bin/maestro" ]; then
+            echo "Standard installer failed. Fetching Maestro via GitHub API..."
+            ASSET_URL=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/mobile-dev-inc/maestro/releases/latest | jq -r '.assets[] | select(.name == "maestro.zip") | .url')
+            curl -sL -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/octet-stream" "$ASSET_URL" -o /tmp/maestro.zip
+            unzip -q -o /tmp/maestro.zip -d /tmp/maestro_extract
+            mkdir -p "$HOME/.maestro"
+            cp -r /tmp/maestro_extract/maestro/* "$HOME/.maestro/"
+            chmod +x "$HOME/.maestro/bin/maestro"
+          fi
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+          "$HOME/.maestro/bin/maestro" --version
 
       - name: Setup Android SDK and Emulator
         run: sudo chmod 666 /dev/kvm
@@ -75,8 +90,71 @@ jobs:
       - name: Fetch dependencies
         run: flutter pub get; cd packages/better_player_example; flutter pub get
 
+      - name: Pre-cache Gradle dependencies
+        run: |
+          # Pre-fetch Gradle 9.5.0 distribution to bypass transient 504 on services.gradle.org
+          GRADLE_DIR="$HOME/.gradle/wrapper/dists/gradle-9.5.0-all/aca6g93cdtcf0oapcfka748qh"
+          mkdir -p "$GRADLE_DIR"
+          if [ ! -f "$GRADLE_DIR/gradle-9.5.0-all.zip.ok" ]; then
+            echo "Pre-fetching Gradle 9.5.0..."
+            curl -sL "https://mirrors.cloud.tencent.com/gradle/gradle-9.5.0-all.zip" -o "$GRADLE_DIR/gradle-9.5.0-all.zip" || \
+            curl -sL "https://repo.huaweicloud.com/gradle/gradle-9.5.0-all.zip" -o "$GRADLE_DIR/gradle-9.5.0-all.zip"
+            unzip -q -o "$GRADLE_DIR/gradle-9.5.0-all.zip" -d "$GRADLE_DIR"
+            touch "$GRADLE_DIR/gradle-9.5.0-all.zip.ok"
+          fi
+
+          mkdir -p "$HOME/.gradle/init.d"
+          cat << 'EOF' > "$HOME/.gradle/init.d/mirror.init.gradle"
+          // Route Maven Central through Google's mirror. Central redirects some jars
+          // to GitHub release assets, which return 504 on CI.
+          def mirror = 'https://maven-central.storage-download.googleapis.com/maven2/'
+          def rewrite = { repo ->
+              if (repo instanceof MavenArtifactRepository) {
+                  def u = repo.url.toString()
+                  if (u.contains('repo.maven.apache.org') || u.contains('repo1.maven.org')) {
+                      println "mirror.init: ${u} -> ${mirror}"
+                      repo.url = uri(mirror)
+                  }
+              }
+          }
+          beforeSettings { settings ->
+              settings.pluginManagement.repositories.all(rewrite)
+          }
+          settingsEvaluated { settings ->
+              settings.pluginManagement.repositories.all(rewrite)
+              settings.dependencyResolutionManagement.repositories.all(rewrite)
+          }
+          allprojects {
+              buildscript.repositories.all(rewrite)
+              repositories.all(rewrite)
+          }
+          EOF
+
       - name: Build App
-        run: cd packages/better_player_example; flutter build apk --debug --target lib/main_e2e.dart
+        run: |
+          cat "$HOME/.gradle/init.d/mirror.init.gradle" | head -5
+          cd packages/better_player_example
+          for i in 1 2 3 4 5; do
+            echo "Attempt $i: Building APK..."
+            flutter build apk --debug --target lib/main_e2e.dart && break || {
+              if [ $i -eq 5 ]; then
+                echo "Build failed after 5 attempts."
+                exit 1
+              fi
+              echo "Build failed. Retrying in 60s..."
+              sleep 60
+            }
+          done
+
+      - name: Save Gradle cache
+        if: always()
+        continue-on-error: true
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
       - name: Run Maestro Tests
         uses: reactivecircus/android-emulator-runner@v2

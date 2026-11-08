@@ -64,7 +64,51 @@ extension PlayerTrackExtension on BetterPlayerController {
     );
   }
 
-  ///Set [audioTrack] in player. Works only for HLS or DASH streams.
+  /// Retrieves the list of available audio tracks.
+  ///
+  /// If ASMS tracks were detected from an HLS or DASH manifest, returns them.
+  /// Otherwise queries the native player for embedded container audio tracks (MKV, MP4, etc.).
+  Future<List<PlayerAsmsAudioTrack>> getAudioTracks() async {
+    if (_trackState.asmsAudioTracks.isNotEmpty) {
+      return _trackState.asmsAudioTracks;
+    }
+    if (_engine == null) {
+      return const <PlayerAsmsAudioTrack>[];
+    }
+    try {
+      final nativeTracks = await _engine!.getAudioTracks();
+      final parsed = <PlayerAsmsAudioTrack>[];
+      for (final track in nativeTracks) {
+        final index = track['index'] as int? ?? 0;
+        final label = track['label'] as String?;
+        final language = track['language'] as String?;
+        final mimeType = track['mimeType'] as String?;
+        parsed.add(
+          PlayerAsmsAudioTrack(
+            id: index,
+            label: label ?? language ?? 'Track $index',
+            language: language ?? 'und',
+            mimeType: mimeType,
+          ),
+        );
+      }
+      if (parsed.isNotEmpty) {
+        _trackState = _trackState.copyWith(asmsAudioTracks: parsed);
+        if (_trackState.asmsAudioTrack == null) {
+          _trackState = _trackState.copyWith(asmsAudioTrack: parsed.first);
+        }
+      }
+      return parsed;
+    } on Object catch (e) {
+      PlayerLogger.warning(
+        message: 'Failed to retrieve native audio tracks: $e',
+        textureId: textureId,
+      );
+      return const <PlayerAsmsAudioTrack>[];
+    }
+  }
+
+  ///Set [audioTrack] in player.
   void setAudioTrack(PlayerAsmsAudioTrack audioTrack) {
     if (_engine == null) {
       throw StateError('The data source has not been initialized');

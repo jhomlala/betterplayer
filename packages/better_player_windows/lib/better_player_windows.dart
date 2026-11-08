@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:ffi' as ffi;
+
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:better_player_windows/src/mpv/mpv_ffi.dart';
 import 'package:better_player_windows/src/mpv/mpv_player.dart';
@@ -85,19 +86,13 @@ class BetterPlayerWindows extends BetterPlayerPlatform {
 
   @override
   Future<void> setupLogCallback(
-    void Function({
-      required int levelIndex,
-      required String message,
-    })?
-    callback,
+    void Function({required int levelIndex, required String message})? callback,
   ) async {
     _logCallback = callback;
   }
 
   @override
-  Future<int?> create({
-    BufferingConfiguration? bufferingConfiguration,
-  }) async {
+  Future<int?> create({BufferingConfiguration? bufferingConfiguration}) async {
     try {
       if (_cleanupFuture != null) {
         await _cleanupFuture;
@@ -236,6 +231,13 @@ class BetterPlayerWindows extends BetterPlayerPlatform {
   }
 
   @override
+  Future<List<Map<String, dynamic>>> getAudioTracks(int? textureId) async {
+    final player = getPlayer(textureId);
+    if (player == null) return const <Map<String, dynamic>>[];
+    return player.getAudioTracks();
+  }
+
+  @override
   Future<void> setAudioTrack(int? textureId, String? name, int? index) async {
     _log(
       message: 'setAudioTrack: textureId=$textureId, name=$name, index=$index',
@@ -291,10 +293,9 @@ class BetterPlayerWindows extends BetterPlayerPlatform {
   @override
   Future<void> setScreenCaptureProtection({required bool enabled}) async {
     try {
-      await _channel.invokeMethod<void>(
-        'setScreenCaptureProtection',
-        {'enabled': enabled},
-      );
+      await _channel.invokeMethod<void>('setScreenCaptureProtection', {
+        'enabled': enabled,
+      });
     } on PlatformException catch (e) {
       _log(
         message: 'Failed to set screen capture protection: ${e.message}',
@@ -318,10 +319,7 @@ class BetterPlayerWindows extends BetterPlayerPlatform {
 
   @override
   Future<void> stopPreCache(String url, String? cacheKey) async {
-    _log(
-      message: 'stopPreCache is not supported on Windows',
-      levelIndex: 2,
-    );
+    _log(message: 'stopPreCache is not supported on Windows', levelIndex: 2);
   }
 
   @override

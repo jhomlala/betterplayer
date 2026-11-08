@@ -19,11 +19,7 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
 
   @override
   Future<void> setupLogCallback(
-    void Function({
-      required int levelIndex,
-      required String message,
-    })?
-    callback,
+    void Function({required int levelIndex, required String message})? callback,
   ) async {
     if (callback == null) {
       _logCallback = null;
@@ -32,10 +28,7 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
     }
     _logCallback = BetterPlayerLogCallback$Builder.implementAsListener(
       onLog_message_: (level, message) {
-        callback(
-          levelIndex: level,
-          message: message.toDartString(),
-        );
+        callback(levelIndex: level, message: message.toDartString());
       },
     );
     BetterPlayerApi.setLogCallback(_logCallback);
@@ -160,9 +153,7 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
   }
 
   @override
-  Future<int?> create({
-    BufferingConfiguration? bufferingConfiguration,
-  }) async {
+  Future<int?> create({BufferingConfiguration? bufferingConfiguration}) async {
     int? currentTextureId;
 
     final callback = BetterPlayerCallback$Builder.implementAsListener(
@@ -275,11 +266,7 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
         }
       },
       onError_errorMessage_errorDetails_:
-          (
-            errorCode,
-            errorMessage,
-            errorDetails,
-          ) {
+          (errorCode, errorMessage, errorDetails) {
             if (currentTextureId == null) return;
             _eventControllers[currentTextureId]?.addError(
               PlatformException(
@@ -342,9 +329,7 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
     } else {
       // Match Android by converting null header values to empty strings.
       final headers =
-          dataSource.headers?.map(
-            (key, value) => MapEntry(key, value ?? ''),
-          ) ??
+          dataSource.headers?.map((key, value) => MapEntry(key, value ?? '')) ??
           const <String, String>{};
 
       player.setDataSourceURLString(
@@ -416,13 +401,7 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
     _preCacheCallback =
         BetterPlayerPreCacheCallback$Builder.implementAsListener(
           onProgressWithUrl_cacheKey_progress_bytesDownloaded_totalBytes_:
-              (
-                url,
-                cacheKey,
-                progress,
-                bytesDownloaded,
-                totalBytes,
-              ) {
+              (url, cacheKey, progress, bytesDownloaded, totalBytes) {
                 emitPreCacheProgress(
                   PreCacheProgress(
                     url: url.toDartString(),
@@ -485,10 +464,9 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
   @override
   Future<void> showExternalPlaybackPicker({required int? textureId}) async {
     try {
-      await _channel.invokeMethod<void>(
-        'showExternalPlaybackPicker',
-        {'textureId': textureId},
-      );
+      await _channel.invokeMethod<void>('showExternalPlaybackPicker', {
+        'textureId': textureId,
+      });
     } on PlatformException catch (_) {}
   }
 
@@ -509,10 +487,9 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
   @override
   Future<void> setScreenCaptureProtection({required bool enabled}) async {
     try {
-      await _channel.invokeMethod<void>(
-        'setScreenCaptureProtection',
-        {'enabled': enabled},
-      );
+      await _channel.invokeMethod<void>('setScreenCaptureProtection', {
+        'enabled': enabled,
+      });
     } on PlatformException catch (_) {}
   }
 
@@ -529,6 +506,20 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
       height: height ?? 0,
       bitrate: bitrate ?? 0,
     );
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getAudioTracks(int? textureId) async {
+    if (textureId == null) return const <Map<String, dynamic>>[];
+    final player = getPlayer(textureId);
+    if (player == null) return const <Map<String, dynamic>>[];
+    final jsonStr = player.getAudioTracksJson();
+    try {
+      final decoded = jsonDecode(jsonStr) as List<dynamic>;
+      return decoded.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+    } on Object catch (_) {
+      return const <Map<String, dynamic>>[];
+    }
   }
 
   @override
@@ -624,6 +615,7 @@ abstract class BetterPlayerWrapper {
     required int bitrate,
   });
   void setAudioTrack(String name, {required int index});
+  String getAudioTracksJson();
   void setTextTrack(String name, {required int index});
   void enablePictureInPicture(objc.CGRect frame);
   void disablePictureInPicture();
@@ -658,9 +650,10 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
     Map<String, String> headers = const {},
   }) {
     // The native string overload discards headers. Use the URL overload.
+    final resolvedUrl = url.startsWith('/') ? 'file://$url' : url;
     final nativeUrl =
-        objc.NSURL.URLWithString(url.toNSString()) ??
-        objc.NSURL.URLWithString(Uri.encodeFull(url).toNSString());
+        objc.NSURL.URLWithString(resolvedUrl.toNSString()) ??
+        objc.NSURL.URLWithString(Uri.encodeFull(resolvedUrl).toNSString());
     if (nativeUrl == null) return;
 
     _player.setDataSourceURL(
@@ -713,6 +706,9 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
   @override
   void setAudioTrack(String name, {required int index}) =>
       _player.setAudioTrackWithName(name.toNSString(), index: index);
+
+  @override
+  String getAudioTracksJson() => _player.getAudioTracksJson().toDartString();
 
   @override
   void setTextTrack(String name, {required int index}) =>

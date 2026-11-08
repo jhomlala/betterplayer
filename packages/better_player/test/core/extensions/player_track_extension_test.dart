@@ -11,6 +11,16 @@ class _TrackingEngineController extends MockPlayerEngineController {
   String? lastAudioName;
   int? lastAudioIndex;
   bool? lastMixWithOthers;
+  List<Map<String, dynamic>> nativeTracks = const [];
+  bool throwOnGetAudioTracks = false;
+
+  @override
+  Future<List<Map<String, dynamic>>> getAudioTracks() async {
+    if (throwOnGetAudioTracks) {
+      throw Exception('Simulated native track query failure');
+    }
+    return nativeTracks;
+  }
 
   @override
   Future<void> setTrackParameters({
@@ -60,6 +70,11 @@ void main() {
       );
     });
 
+    test('getAudioTracks returns empty list when engine is null', () async {
+      final tracks = await controller.getAudioTracks();
+      expect(tracks, isEmpty);
+    });
+
     test('setAudioTrack throws StateError when engine is null', () {
       expect(
         () => controller.setAudioTrack(
@@ -70,10 +85,7 @@ void main() {
     });
 
     test('setMixWithOthers throws StateError when engine is null', () {
-      expect(
-        () => controller.setMixWithOthers(true),
-        throwsStateError,
-      );
+      expect(() => controller.setMixWithOthers(true), throwsStateError);
     });
 
     test('setTrackParameters throws StateError when engine is null', () async {
@@ -122,15 +134,7 @@ void main() {
       final events = <PlayerEvent>[];
       controller.addEventsListener(events.add);
 
-      const track = PlayerAsmsTrack(
-        'hd',
-        1920,
-        1080,
-        4500000,
-        30,
-        null,
-        null,
-      );
+      const track = PlayerAsmsTrack('hd', 1920, 1080, 4500000, 30, null, null);
       controller.setTrack(track);
 
       expect(trackingEngine.lastWidth, 1920);
@@ -157,6 +161,92 @@ void main() {
       expect(trackingEngine.lastAudioName, 'Spanish');
       expect(trackingEngine.lastAudioIndex, 2);
       expect(controller.betterPlayerAsmsAudioTrack, audioTrack);
+    });
+
+    test(
+      'getAudioTracks queries native engine and populates trackState',
+      () async {
+        trackingEngine.nativeTracks = [
+          <String, dynamic>{
+            'index': 0,
+            'label': 'Japanese',
+            'language': 'ja',
+            'mimeType': 'audio/aac',
+          },
+          <String, dynamic>{'index': 1, 'label': 'English', 'language': 'en'},
+        ];
+
+        final tracks = await controller.getAudioTracks();
+        expect(tracks, hasLength(2));
+        expect(tracks[0].id, 0);
+        expect(tracks[0].label, 'Japanese');
+        expect(tracks[0].language, 'ja');
+        expect(tracks[0].mimeType, 'audio/aac');
+        expect(tracks[1].id, 1);
+        expect(tracks[1].label, 'English');
+        expect(tracks[1].language, 'en');
+
+        expect(controller.betterPlayerAsmsAudioTracks, hasLength(2));
+        expect(controller.betterPlayerAsmsAudioTrack?.label, 'Japanese');
+      },
+    );
+
+    test('getAudioTracks returns cached tracks if already present', () async {
+      trackingEngine.nativeTracks = [
+        <String, dynamic>{'index': 0, 'label': 'First Fetch'},
+      ];
+
+      final firstTracks = await controller.getAudioTracks();
+      expect(firstTracks.first.label, 'First Fetch');
+
+      // Now change native tracks on engine:
+      trackingEngine.nativeTracks = [
+        <String, dynamic>{'index': 99, 'label': 'Second Fetch'},
+      ];
+
+      // Second call returns cached tracks from trackState
+      final cachedTracks = await controller.getAudioTracks();
+      expect(cachedTracks.first.label, 'First Fetch');
+    });
+
+    test(
+      'getAudioTracks handles engine exceptions and returns empty list',
+      () async {
+        trackingEngine.throwOnGetAudioTracks = true;
+
+        final tracks = await controller.getAudioTracks();
+        expect(tracks, isEmpty);
+        expect(controller.betterPlayerAsmsAudioTracks, isEmpty);
+      },
+    );
+
+    test(
+      'getAudioTracks populates default values when fields are absent',
+      () async {
+        trackingEngine.nativeTracks = [
+          <String, dynamic>{'index': 0},
+        ];
+
+        final tracks = await controller.getAudioTracks();
+        expect(tracks, hasLength(1));
+        expect(tracks.first.id, 0);
+        expect(tracks.first.label, 'Track 0');
+        expect(tracks.first.language, 'und');
+        expect(tracks.first.mimeType, isNull);
+      },
+    );
+
+    test('getAudioTracks preserves selected track if already chosen', () async {
+      final preselected = PlayerAsmsAudioTrack(id: 99, label: 'Custom');
+      controller.setAudioTrack(preselected);
+
+      trackingEngine.nativeTracks = [
+        <String, dynamic>{'index': 0, 'label': 'Discovered 1'},
+        <String, dynamic>{'index': 1, 'label': 'Discovered 2'},
+      ];
+
+      await controller.getAudioTracks();
+      expect(controller.betterPlayerAsmsAudioTrack, preselected);
     });
 
     test('setAudioTrack with empty track clears asmsAudioTrack', () {

@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:better_player_platform_interface/src/models/buffering_configuration.dart';
 import 'package:better_player_platform_interface/src/models/data_source.dart';
 import 'package:better_player_platform_interface/src/models/pre_cache_progress.dart';
@@ -57,9 +58,7 @@ abstract class BetterPlayerPlatform extends PlatformInterface {
   }
 
   /// Creates an instance of a video player and returns its textureId.
-  Future<int?> create({
-    BufferingConfiguration? bufferingConfiguration,
-  }) {
+  Future<int?> create({BufferingConfiguration? bufferingConfiguration}) {
     throw UnimplementedError('create() has not been implemented.');
   }
 
@@ -115,9 +114,22 @@ abstract class BetterPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('setVolume() has not been implemented.');
   }
 
-  /// Sets the video speed to a range between 0.0 and 4.0
+  /// Sets the video speed to a range between 0.0 and 10.0
   Future<void> setSpeed(int? textureId, double speed) {
     throw UnimplementedError('setSpeed() has not been implemented.');
+  }
+
+  /// Returns a list of audio track descriptions from the native player.
+  ///
+  /// Each track map contains keys:
+  /// * `index` (int): Track index.
+  /// * `label` (String?): Human-readable name or track title.
+  /// * `language` (String?): Language code (e.g. "en", "ja").
+  /// * `mimeType` (String?): Audio MIME type or codec name.
+  /// * `bitrate` (int?): Audio bitrate in bits per second, if available.
+  /// * `channelCount` (int?): Number of audio channels, if available.
+  Future<List<Map<String, dynamic>>> getAudioTracks(int? textureId) async {
+    return const <Map<String, dynamic>>[];
   }
 
   /// Sets the video track parameters (used to select quality of the video)
@@ -192,11 +204,7 @@ abstract class BetterPlayerPlatform extends PlatformInterface {
   /// Only called when logLevel != none. When not called, native logCallback
   /// stays null — zero JNI/FFI overhead.
   Future<void> setupLogCallback(
-    void Function({
-      required int levelIndex,
-      required String message,
-    })?
-    callback,
+    void Function({required int levelIndex, required String message})? callback,
   ) {
     throw UnimplementedError('setupLogCallback() has not been implemented.');
   }

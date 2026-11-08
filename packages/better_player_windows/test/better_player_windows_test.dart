@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:better_player_windows/better_player_windows.dart';
 import 'package:better_player_windows/src/mpv/mpv_player.dart';
@@ -56,6 +57,11 @@ void main() {
           bitrate: any(named: 'bitrate'),
         ),
       ).thenAnswer((_) async {});
+      when(() => mockPlayer.getAudioTracks()).thenAnswer(
+        (_) async => [
+          <String, dynamic>{'index': 0, 'label': 'English'},
+        ],
+      );
       when(
         () => mockPlayer.setAudioTrack(
           name: any(named: 'name'),
@@ -150,6 +156,10 @@ void main() {
         ),
       ).called(1);
 
+      final tracks = await windowsPlatform.getAudioTracks(42);
+      expect(tracks, hasLength(1));
+      verify(() => mockPlayer.getAudioTracks()).called(1);
+
       await windowsPlatform.setAudioTrack(42, 'English', 1);
       verify(
         () => mockPlayer.setAudioTrack(name: 'English', index: 1),
@@ -217,9 +227,7 @@ void main() {
           bufferingConfiguration: const BufferingConfiguration(),
         );
         expect(
-          logs.any(
-            (l) => l.contains('Applying buffering configuration'),
-          ),
+          logs.any((l) => l.contains('Applying buffering configuration')),
           isTrue,
         );
 

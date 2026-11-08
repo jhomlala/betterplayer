@@ -1,3 +1,7 @@
+## Unreleased
+- Added: `getAudioTracks` method to `BetterPlayerPlatform` to retrieve audio tracks from the native player.
+- Updated: Updated doc comment for `setSpeed` to reflect the new 10.0 limit.
+
 ## 1.7.1
 - Updated: Aligned analysis options with root `analysis_options.yaml` and resolved linter warnings across models and tests.
 

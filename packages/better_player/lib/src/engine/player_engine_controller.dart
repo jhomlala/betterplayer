@@ -570,6 +570,10 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
     value = value.copyWith();
   }
 
+  Future<List<Map<String, dynamic>>> getAudioTracks() {
+    return _betterPlayerPlatform.getAudioTracks(_textureId);
+  }
+
   void setAudioTrack(String? name, int? index) {
     _betterPlayerPlatform.setAudioTrack(_textureId, name, index);
   }
@@ -589,14 +593,8 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
   static Stream<PreCacheProgress> get preCacheProgressStream =>
       _betterPlayerPlatform.preCacheProgressStream;
 
-  static Future<void> preCache(
-    DataSource dataSource,
-    int preCacheSize,
-  ) async {
-    return _betterPlayerPlatform.preCache(
-      dataSource,
-      preCacheSize,
-    );
+  static Future<void> preCache(DataSource dataSource, int preCacheSize) async {
+    return _betterPlayerPlatform.preCache(dataSource, preCacheSize);
   }
 
   static Future<void> stopPreCache(String url, String? cacheKey) async {

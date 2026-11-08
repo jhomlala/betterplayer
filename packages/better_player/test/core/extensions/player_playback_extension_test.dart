@@ -76,7 +76,7 @@ void main() {
     test('setSpeed throws ArgumentError for invalid values', () {
       expect(() => controller.setSpeed(0), throwsArgumentError);
       expect(() => controller.setSpeed(-1), throwsArgumentError);
-      expect(() => controller.setSpeed(4.5), throwsArgumentError);
+      expect(() => controller.setSpeed(10.5), throwsArgumentError);
     });
   });
 
@@ -158,6 +158,32 @@ void main() {
         (e) => e.betterPlayerEventType == PlayerEventType.setSpeed,
       );
       expect(speedEvent.parameters?[PlayerEventConstants.speedParameter], 2);
+    });
+
+    test('setSpeed supports speeds up to 10.0', () async {
+      final events = <PlayerEvent>[];
+      controller.addEventsListener(events.add);
+
+      await controller.setSpeed(5);
+      expect(mockEngine.speed, 5);
+
+      await controller.setSpeed(10);
+      expect(mockEngine.speed, 10);
+
+      final speedEvents = events
+          .where(
+            (e) => e.betterPlayerEventType == PlayerEventType.setSpeed,
+          )
+          .toList();
+      expect(speedEvents, hasLength(2));
+      expect(
+        speedEvents.first.parameters?[PlayerEventConstants.speedParameter],
+        5,
+      );
+      expect(
+        speedEvents.last.parameters?[PlayerEventConstants.speedParameter],
+        10,
+      );
     });
 
     test('seekTo updates engine position and posts seekTo event', () async {

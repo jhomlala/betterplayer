@@ -1,6 +1,11 @@
+## Unreleased
+- Added: `getAudioTracks` implementation to query audio tracks from Media3 `trackSelector.currentMappedTrackInfo`.
+- Fixed: Improved `setAudioTrack` matching logic to resolve multi-audio tracks by index and language when container tracks lack explicit labels.
+
 ## 1.12.0
 - Updated: Upgraded `androidx.media3` to `1.11.1`, `androidx.lifecycle` to `2.11.0`, `androidx.annotation` to `1.11.0`, and `androidx.work:work-runtime` to `2.12.0`.
 - Updated: Removed legacy unused `androidx.media:media` dependency and imports.
+
 - Fixed: Pre-cache worker falsely reporting HTTP errors as completed downloads.
 - Fixed: Widevine DRM defaulting to L3 software security level when drmSecurityLevel is not specified.
 
@@ -75,6 +80,7 @@
 ## 1.0.0
 * Updated: Extracted Android native code from the core package into a standalone federated plugin package (`better_player_android`).
 * Fixed: Added missing `result.success(null)` for `setMixWithOthers` method channel call.
+
 
 
 

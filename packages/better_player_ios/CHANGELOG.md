@@ -1,3 +1,7 @@
+## Unreleased
+- Added: `getAudioTracks` implementation to query audible options on AVPlayer's current media asset.
+- Updated: Increased playback speed ceiling from `4.0` to `10.0` in `setSpeed`.
+
 ## 1.12.0
 - [BREAKING_CHANGE] Fixed: Resolved FairPlay key loading thread deadlocks by removing blocking `DispatchSemaphore`, made `assetId` strictly local per request to prevent race conditions, added thread-safe certificate caching with in-flight request deduplication, and scoped EZDRM URL path rewriting to EZDRM domains only. Non-EZDRM license servers now receive standard direct POST requests.
 - Fixed: CacheManager shared state race condition during concurrent pre-caching and dynamic maxCacheSize updates.
@@ -82,6 +86,7 @@
 ## 1.0.0
 * Updated: Extracted iOS native code from the core package into a standalone federated plugin package (`better_player_ios`).
 * Fixed: Restored remote notification (lock screen) controls by correctly storing data source information.
+
 
 
 

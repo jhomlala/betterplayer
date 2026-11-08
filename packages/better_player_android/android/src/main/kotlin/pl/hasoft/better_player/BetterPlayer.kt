@@ -57,6 +57,8 @@ import kotlin.math.max
 import kotlin.math.min
 
 import androidx.annotation.Keep
+import org.json.JSONArray
+import org.json.JSONObject
 
 @Keep
 @UnstableApi
@@ -657,44 +659,87 @@ class BetterPlayer(
     }
 
     @Keep
+    fun getAudioTracksJson(): String {
+        try {
+            val mappedTrackInfo = trackSelector.currentMappedTrackInfo ?: return "[]"
+            val array = JSONArray()
+            var trackIndex = 0
+            for (rendererIndex in 0 until mappedTrackInfo.rendererCount) {
+                if (mappedTrackInfo.getRendererType(rendererIndex) != C.TRACK_TYPE_AUDIO) {
+                    continue
+                }
+                val trackGroupArray = mappedTrackInfo.getTrackGroups(rendererIndex)
+                for (groupIndex in 0 until trackGroupArray.length) {
+                    val group = trackGroupArray[groupIndex]
+                    for (groupElementIndex in 0 until group.length) {
+                        val format = group.getFormat(groupElementIndex)
+                        val label = format.label ?: ""
+                        val language = format.language ?: ""
+                        val obj = JSONObject()
+                        obj.put("index", trackIndex)
+                        obj.put("label", label)
+                        obj.put("language", language)
+                        array.put(obj)
+                        trackIndex++
+                    }
+                }
+            }
+            return array.toString()
+        } catch (exception: Exception) {
+            BetterPlayerApi.log(2, "getAudioTracksJson error: ${exception.message}")
+            return "[]"
+        }
+    }
+
+    @Keep
     fun setAudioTrack(name: String, index: Int) {
         BetterPlayerApi.log(0, "setAudioTrack: name=$name, index=$index")
         try {
-            val mappedTrackInfo = trackSelector.currentMappedTrackInfo
-            if (mappedTrackInfo != null) {
-                for (rendererIndex in 0 until mappedTrackInfo.rendererCount) {
-                    if (mappedTrackInfo.getRendererType(rendererIndex) != C.TRACK_TYPE_AUDIO) {
-                        continue
-                    }
-                    val trackGroupArray = mappedTrackInfo.getTrackGroups(rendererIndex)
-                    var hasElementWithoutLabel = false
-                    var hasStrangeAudioTrack = false
+            val mappedTrackInfo = trackSelector.currentMappedTrackInfo ?: return
+            for (rendererIndex in 0 until mappedTrackInfo.rendererCount) {
+                if (mappedTrackInfo.getRendererType(rendererIndex) != C.TRACK_TYPE_AUDIO) {
+                    continue
+                }
+                val trackGroupArray = mappedTrackInfo.getTrackGroups(rendererIndex)
+                var runningIndex = 0
+
+                if (name.isNotEmpty()) {
+                    runningIndex = 0
                     for (groupIndex in 0 until trackGroupArray.length) {
                         val group = trackGroupArray[groupIndex]
                         for (groupElementIndex in 0 until group.length) {
                             val format = group.getFormat(groupElementIndex)
-                            if (format.label == null) {
-                                hasElementWithoutLabel = true
+                            val label = format.label ?: ""
+                            val lang = format.language ?: ""
+                            if (runningIndex == index && (name == label || name.equals(lang, ignoreCase = true))) {
+                                setAudioTrack(rendererIndex, groupIndex, groupElementIndex)
+                                return
                             }
-                            if (format.id != null && format.id == "1/15") {
-                                hasStrangeAudioTrack = true
-                            }
+                            runningIndex++
                         }
                     }
+                }
+
+                runningIndex = 0
+                for (groupIndex in 0 until trackGroupArray.length) {
+                    val group = trackGroupArray[groupIndex]
+                    for (groupElementIndex in 0 until group.length) {
+                        if (runningIndex == index || groupIndex == index) {
+                            setAudioTrack(rendererIndex, groupIndex, groupElementIndex)
+                            return
+                        }
+                        runningIndex++
+                    }
+                }
+
+                if (name.isNotEmpty()) {
                     for (groupIndex in 0 until trackGroupArray.length) {
                         val group = trackGroupArray[groupIndex]
                         for (groupElementIndex in 0 until group.length) {
-                            val label = group.getFormat(groupElementIndex).label
-                            if (name == label && index == groupIndex) {
-                                setAudioTrack(rendererIndex, groupIndex, groupElementIndex)
-                                return
-                            }
-
-                            if (!hasStrangeAudioTrack && hasElementWithoutLabel && index == groupIndex) {
-                                setAudioTrack(rendererIndex, groupIndex, groupElementIndex)
-                                return
-                            }
-                            if (hasStrangeAudioTrack && name == label) {
+                            val format = group.getFormat(groupElementIndex)
+                            val label = format.label ?: ""
+                            val lang = format.language ?: ""
+                            if (name == label || name.equals(lang, ignoreCase = true)) {
                                 setAudioTrack(rendererIndex, groupIndex, groupElementIndex)
                                 return
                             }
@@ -703,6 +748,7 @@ class BetterPlayer(
                 }
             }
         } catch (exception: Exception) {
+            BetterPlayerApi.log(2, "setAudioTrack error: ${exception.message}")
         }
     }
 

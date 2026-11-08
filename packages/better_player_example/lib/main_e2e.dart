@@ -419,21 +419,23 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
   }
 
   Future<void> _setupLocalFileDataSource() async {
+    debugPrint('[_setupLocalFileDataSource] Triggered');
     try {
       final byteData = await rootBundle.load('assets/testvideo.mp4');
       final filePath = await ExampleIoUtils.writeTempFile(
-        fileName: 'better_player_windows_local_test.mp4',
+        fileName: 'better_player_local_test.mp4',
         bytes: byteData.buffer.asUint8List(
           byteData.offsetInBytes,
           byteData.lengthInBytes,
         ),
       );
+      debugPrint('[_setupLocalFileDataSource] File written to: $filePath');
       _setupDataSource(
         url: filePath,
         type: DataSourceType.file,
       );
-    } on Object catch (e) {
-      debugPrint('Failed to setup local file: $e');
+    } on Object catch (e, stack) {
+      debugPrint('Failed to setup local file: $e\n$stack');
     }
   }
 

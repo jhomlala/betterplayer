@@ -1,3 +1,6 @@
+## Unreleased
+- Added: `getAudioTracks` implementation to query audio tracks from Shaka Player variant tracks and audio languages.
+
 ## 1.5.0
 - Added: ClearKey DRM support on Web via Shaka Player `clearKeys` (supporting both standard and Base64Url JWKs and hex keys) and `servers['org.w3.clearkey']` (for license servers).
 
@@ -48,6 +51,7 @@
 ## 1.0.0
 
 * Initial release of better_player_web package.
+
 
 
 

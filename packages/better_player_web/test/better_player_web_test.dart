@@ -118,6 +118,13 @@ void main() {
         ),
       ).called(1);
 
+      when(() => mockPlayer.getAudioTracks()).thenReturn([
+        <String, dynamic>{'index': 0, 'language': 'en', 'label': 'English'},
+      ]);
+      final tracks = await plugin.getAudioTracks(id);
+      expect(tracks, hasLength(1));
+      verify(() => mockPlayer.getAudioTracks()).called(1);
+
       when(
         () => mockPlayer.setAudioTrack(
           language: any(named: 'language'),
@@ -136,9 +143,7 @@ void main() {
         ),
       ).thenReturn(null);
       await plugin.setTextTrack(id, 'en', 1);
-      verify(
-        () => mockPlayer.setTextTrack(language: 'en', index: 1),
-      ).called(1);
+      verify(() => mockPlayer.setTextTrack(language: 'en', index: 1)).called(1);
 
       when(() => mockPlayer.enablePictureInPicture()).thenAnswer((_) async {});
       await plugin.enablePictureInPicture(id, null, null, null, null);
@@ -156,10 +161,7 @@ void main() {
     test('no-op methods log warnings', () async {
       int? lastLevel;
       String? lastMessage;
-      await plugin.setupLogCallback(({
-        required levelIndex,
-        required message,
-      }) {
+      await plugin.setupLogCallback(({required levelIndex, required message}) {
         lastLevel = levelIndex;
         lastMessage = message;
       });
@@ -193,10 +195,7 @@ void main() {
     test('setupLogCallback wires up callback and logs info', () async {
       int? lastLevel;
       String? lastMessage;
-      await plugin.setupLogCallback(({
-        required levelIndex,
-        required message,
-      }) {
+      await plugin.setupLogCallback(({required levelIndex, required message}) {
         lastLevel = levelIndex;
         lastMessage = message;
       });

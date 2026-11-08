@@ -36,6 +36,44 @@ jobs:
       - name: Install Android Dependencies
         working-directory: packages/better_player_android
         run: |
+          # Pre-fetch Gradle 9.5.0 distribution to bypass transient 504 on services.gradle.org
+          GRADLE_DIR="$HOME/.gradle/wrapper/dists/gradle-9.5.0-all/aca6g93cdtcf0oapcfka748qh"
+          mkdir -p "$GRADLE_DIR"
+          if [ ! -f "$GRADLE_DIR/gradle-9.5.0-all.zip.ok" ]; then
+            echo "Pre-fetching Gradle 9.5.0..."
+            curl -sL "https://mirrors.cloud.tencent.com/gradle/gradle-9.5.0-all.zip" -o "$GRADLE_DIR/gradle-9.5.0-all.zip" || \
+            curl -sL "https://repo.huaweicloud.com/gradle/gradle-9.5.0-all.zip" -o "$GRADLE_DIR/gradle-9.5.0-all.zip"
+            unzip -q -o "$GRADLE_DIR/gradle-9.5.0-all.zip" -d "$GRADLE_DIR"
+            touch "$GRADLE_DIR/gradle-9.5.0-all.zip.ok"
+          fi
+
+          mkdir -p "$HOME/.gradle/init.d"
+          cat << 'EOF' > "$HOME/.gradle/init.d/mirror.init.gradle"
+          // Route Maven Central through Google's mirror. Central redirects some jars
+          // to GitHub release assets, which return 504 on CI.
+          def mirror = 'https://maven-central.storage-download.googleapis.com/maven2/'
+          def rewrite = { repo ->
+              if (repo instanceof MavenArtifactRepository) {
+                  def u = repo.url.toString()
+                  if (u.contains('repo.maven.apache.org') || u.contains('repo1.maven.org')) {
+                      println "mirror.init: ${u} -> ${mirror}"
+                      repo.url = uri(mirror)
+                  }
+              }
+          }
+          beforeSettings { settings ->
+              settings.pluginManagement.repositories.all(rewrite)
+          }
+          settingsEvaluated { settings ->
+              settings.pluginManagement.repositories.all(rewrite)
+              settings.dependencyResolutionManagement.repositories.all(rewrite)
+          }
+          allprojects {
+              buildscript.repositories.all(rewrite)
+              repositories.all(rewrite)
+          }
+          EOF
+
           flutter pub get
           cd example_ffi
           flutter pub get
@@ -47,6 +85,12 @@ jobs:
       - name: Generate Android FFI (jnigen)
         working-directory: packages/better_player_android
         run: dart run tool/jnigen.dart
+
+      - name: Rebase onto latest remote changes
+        run: |
+          git stash --include-untracked
+          git pull origin ${{ github.head_ref || github.ref_name }} --rebase
+          git stash pop || true
 
       - name: Commit Generated Bindings
         uses: stefanzweifel/git-auto-commit-action@v5

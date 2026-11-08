@@ -549,6 +549,13 @@ extension BetterPlayer$Methods on BetterPlayer {
     _objc_msgSend_1okkq16(_$$ref.pointer, _sel_enablePictureInPicture_, frame);
   }
 
+  /// Returns a JSON string of available audio tracks.
+  objc.NSString getAudioTracksJson() {
+    final _$$ref = object$.ref;
+    final $ret = _objc_msgSend_151sglz(_$$ref.pointer, _sel_getAudioTracksJson);
+    return objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
   /// init
   BetterPlayer init() {
     final _$$ref = object$.ref;
@@ -6452,6 +6459,7 @@ late final _sel_duration = objc.registerName("duration");
 late final _sel_enablePictureInPicture_ = objc.registerName(
   "enablePictureInPicture:",
 );
+late final _sel_getAudioTracksJson = objc.registerName("getAudioTracksJson");
 late final _sel_getPlayer_ = objc.registerName("getPlayer:");
 late final _sel_init = objc.registerName("init");
 late final _sel_isKindOfClass_ = objc.registerName("isKindOfClass:");
@@ -6553,8 +6561,8 @@ late final _sel_stopPreCacheWithUrl_cacheKey_ = objc.registerName(
 );
 late final _sel_view = objc.registerName("view");
 
-/// better_player_macos_Swift_468
-extension better_player_macos_Swift_468 on BetterPlayer {
+/// better_player_macos_Swift_470
+extension better_player_macos_Swift_470 on BetterPlayer {
   /// legibleOutput:didOutputAttributedStrings:nativeSampleBuffers:forItemTime:
   void legibleOutput(
     AVPlayerItemLegibleOutput output, {

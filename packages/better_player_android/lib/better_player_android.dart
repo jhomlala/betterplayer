@@ -19,11 +19,7 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
 
   @override
   Future<void> setupLogCallback(
-    void Function({
-      required int levelIndex,
-      required String message,
-    })?
-    callback,
+    void Function({required int levelIndex, required String message})? callback,
   ) async {
     if (callback == null) {
       BetterPlayerApi.Companion.logCallback = null;
@@ -32,10 +28,7 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
     final jniCallback = BetterPlayerLogCallback.implement(
       $BetterPlayerLogCallback(
         onLog: (level, message) {
-          callback(
-            levelIndex: level,
-            message: message.toDartString(),
-          );
+          callback(levelIndex: level, message: message.toDartString());
         },
         onLog$async: true,
       ),
@@ -77,9 +70,7 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
   }
 
   @override
-  Future<int?> create({
-    BufferingConfiguration? bufferingConfiguration,
-  }) async {
+  Future<int?> create({BufferingConfiguration? bufferingConfiguration}) async {
     final tempController = StreamController<VideoEvent>.broadcast();
 
     final callback = buildCallback(
@@ -384,10 +375,9 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
   @override
   Future<void> setScreenCaptureProtection({required bool enabled}) async {
     try {
-      await _channel.invokeMethod<void>(
-        'setScreenCaptureProtection',
-        {'enabled': enabled},
-      );
+      await _channel.invokeMethod<void>('setScreenCaptureProtection', {
+        'enabled': enabled,
+      });
     } on PlatformException catch (_) {}
   }
 
@@ -403,6 +393,20 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
       height ?? 0,
       bitrate ?? 0,
     );
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getAudioTracks(int? textureId) async {
+    if (textureId == null) return const <Map<String, dynamic>>[];
+    final player = _players[textureId];
+    if (player == null) return const <Map<String, dynamic>>[];
+    final jsonStr = player.getAudioTracksJson();
+    try {
+      final decoded = jsonDecode(jsonStr) as List<dynamic>;
+      return decoded.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+    } on Object catch (_) {
+      return const <Map<String, dynamic>>[];
+    }
   }
 
   @override
@@ -561,6 +565,7 @@ abstract class BetterPlayerWrapper {
   );
   void setTrackParameters(int width, int height, int bitrate);
   void setAudioTrack(String name, int index);
+  String getAudioTracksJson();
   void setTextTrack(String name, int index);
   set mixWithOthers(bool mixWithOthers);
   void play();
@@ -646,6 +651,9 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
   @override
   void setAudioTrack(String name, int index) =>
       _player.setAudioTrack(name.toJString(), index);
+
+  @override
+  String getAudioTracksJson() => _player.getAudioTracksJson().toDartString();
 
   @override
   void setTextTrack(String name, int index) {
