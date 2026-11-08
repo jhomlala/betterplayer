@@ -87,6 +87,11 @@ void main() {
       expect(BetterPlayerPlatform.instance, isA<BetterPlayerTizen>());
     });
 
+    test('register sets instance', () {
+      BetterPlayerTizen.register();
+      expect(BetterPlayerPlatform.instance, isA<BetterPlayerTizen>());
+    });
+
     test('buildView returns Texture widget', () {
       final widget = tizenPlatform.buildView(42);
       expect(widget, isA<Texture>());

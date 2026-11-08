@@ -22,6 +22,11 @@ class BetterPlayerTizen extends BetterPlayerPlatform {
   }) : _channel = channel ?? const MethodChannel('better_player_tizen'),
        _playerFactory = playerFactory ?? _defaultPlayerFactory;
 
+  /// Registers this class as the default instance of [BetterPlayerPlatform].
+  static void register() {
+    registerWith();
+  }
+
   /// Registers this implementation with the platform interface.
   static void registerWith() {
     BetterPlayerPlatform.instance = BetterPlayerTizen();
