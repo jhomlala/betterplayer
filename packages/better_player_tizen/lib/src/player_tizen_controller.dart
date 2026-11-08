@@ -116,6 +116,15 @@ class PlayerTizenController implements PlayerTizen {
             size: Size(width, height),
           ),
         );
+      case 'seek':
+        final positionMs = map['position'] as int? ?? 0;
+        _eventController.add(
+          VideoEvent(
+            eventType: VideoEventType.seek,
+            key: '$textureId',
+            position: Duration(milliseconds: positionMs),
+          ),
+        );
       default:
         break;
     }

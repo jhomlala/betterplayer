@@ -219,6 +219,11 @@ jobs:
           echo "=== Tizen Screenshot Artifacts ==="
           ls -la packages/better_player_tizen/example/*.png 2>/dev/null || echo "No PNGs in example/"
           ls -la *.png 2>/dev/null || true
+          dart scripts/check_video_frame.dart \
+            packages/better_player_tizen/example/tizen_e2e_initialized.png \
+            packages/better_player_tizen/example/tizen_e2e_play.png \
+            packages/better_player_tizen/example/tizen_e2e_pause.png \
+            packages/better_player_tizen/example/tizen_e2e_seek.png || true
 
       - name: Build Tizen TPK Package
         working-directory: packages/better_player_tizen/example

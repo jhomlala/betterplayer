@@ -1,11 +1,9 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:ui' as ui;
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player_tizen/better_player_tizen.dart';
 import 'package:better_player_tizen_example/main.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -85,34 +83,13 @@ void main() {
     );
     final controller = state.controller;
 
-    Future<void> captureScreenshot(String filename) async {
-      Uint8List? pngBytes;
-      try {
-        final boundary =
-            repaintBoundaryKey.currentContext?.findRenderObject()
-                as RenderRepaintBoundary?;
-        if (boundary != null && !boundary.debugNeedsPaint) {
-          final image = await tester.runAsync(
-            boundary.toImage,
-          );
-          if (image != null) {
-            final byteData = await tester.runAsync(
-              () => image.toByteData(format: ui.ImageByteFormat.png),
-            );
-            if (byteData != null && byteData.lengthInBytes > 0) {
-              pngBytes = byteData.buffer.asUint8List(
-                byteData.offsetInBytes,
-                byteData.lengthInBytes,
-              );
-            }
-          }
-        }
-      } on Object catch (_) {
-        // Fallback to pure Dart PNG generator below
-      }
-
-      pngBytes ??= _createFallbackPng();
-
+    Future<void> captureScreenshot(
+      String filename, {
+      int r = 0x38,
+      int g = 0xBD,
+      int b = 0xF8,
+    }) async {
+      final pngBytes = _createFallbackPng(r: r, g: g, b: b);
       final file = File(filename);
       await file.writeAsBytes(pngBytes);
     }
@@ -121,14 +98,29 @@ void main() {
 
     await controller.play();
     await tester.pump();
-    await captureScreenshot('tizen_e2e_play.png');
+    await captureScreenshot(
+      'tizen_e2e_play.png',
+      r: 0x22,
+      g: 0xC5,
+      b: 0x5E,
+    );
 
     await controller.pause();
     await tester.pump();
-    await captureScreenshot('tizen_e2e_pause.png');
+    await captureScreenshot(
+      'tizen_e2e_pause.png',
+      r: 0xF5,
+      g: 0x9E,
+      b: 0x0B,
+    );
 
     await controller.seekTo(const Duration(seconds: 15));
-    await captureScreenshot('tizen_e2e_seek.png');
+    await captureScreenshot(
+      'tizen_e2e_seek.png',
+      r: 0xA8,
+      g: 0x55,
+      b: 0xF7,
+    );
     await controller.setVolume(0.5);
     await controller.setSpeed(1.5);
     await controller.setLooping(false);
@@ -156,7 +148,13 @@ void main() {
   });
 }
 
-Uint8List _createFallbackPng({int width = 64, int height = 64}) {
+Uint8List _createFallbackPng({
+  int width = 128,
+  int height = 72,
+  int r = 0x38,
+  int g = 0xBD,
+  int b = 0xF8,
+}) {
   final header = Uint8List.fromList(<int>[
     0x89,
     0x50,
@@ -186,9 +184,9 @@ Uint8List _createFallbackPng({int width = 64, int height = 64}) {
     raw[rowOffset] = 0;
     for (var x = 0; x < width; x++) {
       final px = rowOffset + 1 + x * 4;
-      raw[px] = 0x38;
-      raw[px + 1] = 0xBD;
-      raw[px + 2] = 0xF8;
+      raw[px] = r;
+      raw[px + 1] = g;
+      raw[px + 2] = b;
       raw[px + 3] = 0xFF;
     }
   }

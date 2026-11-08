@@ -183,6 +183,8 @@ void TizenPlayer::SetDataSource(const std::string &uri,
       const auto &val = std::get<std::string>(kv.second);
       if ((key == "Cookie" || key == "cookie") && !val.empty()) {
         player_set_streaming_cookie(player_, val.c_str(), val.size());
+      } else if ((key == "User-Agent" || key == "user-agent") && !val.empty()) {
+        player_set_streaming_user_agent(player_, val.c_str(), val.size());
       }
     }
   }
@@ -353,6 +355,12 @@ void TizenPlayer::SeekTo(int32_t position_ms) {
   std::lock_guard<std::recursive_mutex> lock(player_mutex_);
   if (player_ == nullptr || is_disposed_.load()) return;
   player_set_play_position(player_, position_ms, true, nullptr, nullptr);
+
+  flutter::EncodableMap event;
+  event[flutter::EncodableValue("event")] = flutter::EncodableValue("seek");
+  event[flutter::EncodableValue("position")] =
+      flutter::EncodableValue(position_ms);
+  SendEvent(event);
 }
 
 int32_t TizenPlayer::GetPosition() {

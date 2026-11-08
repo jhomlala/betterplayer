@@ -200,6 +200,18 @@ void main() {
       expect(event.size, const Size(1280, 720));
     });
 
+    test('processes seek event correctly', () async {
+      final futureEvent = controller.events.first;
+      rawEvents.add(<String, dynamic>{
+        'event': 'seek',
+        'position': 15000,
+      });
+
+      final event = await futureEvent;
+      expect(event.eventType, VideoEventType.seek);
+      expect(event.position, const Duration(milliseconds: 15000));
+    });
+
     test('handles asset DataSource without uri', () async {
       await controller.setDataSource(
         DataSource(
