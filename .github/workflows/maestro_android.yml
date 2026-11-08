@@ -103,6 +103,14 @@ jobs:
             touch "$GRADLE_DIR/gradle-9.5.0-all.zip.ok"
           fi
 
+          # Pre-fetch Kotlin compiler embeddable jars from Maven Central
+          KOTLIN_23_DIR="$HOME/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-compiler-embeddable/2.3.20/002fac4210c52c27b244305d60b0906e831f49be"
+          mkdir -p "$KOTLIN_23_DIR"
+          if [ ! -s "$KOTLIN_23_DIR/kotlin-compiler-embeddable-2.3.20.jar" ]; then
+            echo "Pre-fetching kotlin-compiler-embeddable 2.3.20 from Maven Central..."
+            curl -sL "https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-compiler-embeddable/2.3.20/kotlin-compiler-embeddable-2.3.20.jar" -o "$KOTLIN_23_DIR/kotlin-compiler-embeddable-2.3.20.jar"
+          fi
+
           KOTLIN_DIR="$HOME/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-compiler-embeddable/2.2.21/b13aed5cf8412f9ee9d1e4db21bdcfebcc24f606"
           mkdir -p "$KOTLIN_DIR"
           if [ ! -s "$KOTLIN_DIR/kotlin-compiler-embeddable-2.2.21.jar" ]; then
