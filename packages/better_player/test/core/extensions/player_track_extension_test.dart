@@ -12,9 +12,15 @@ class _TrackingEngineController extends MockPlayerEngineController {
   int? lastAudioIndex;
   bool? lastMixWithOthers;
   List<Map<String, dynamic>> nativeTracks = const [];
+  bool throwOnGetAudioTracks = false;
 
   @override
-  Future<List<Map<String, dynamic>>> getAudioTracks() async => nativeTracks;
+  Future<List<Map<String, dynamic>>> getAudioTracks() async {
+    if (throwOnGetAudioTracks) {
+      throw Exception('Simulated native track query failure');
+    }
+    return nativeTracks;
+  }
 
   @override
   Future<void> setTrackParameters({
@@ -201,6 +207,46 @@ void main() {
       // Second call returns cached tracks from trackState
       final cachedTracks = await controller.getAudioTracks();
       expect(cachedTracks.first.label, 'First Fetch');
+    });
+
+    test(
+      'getAudioTracks handles engine exceptions and returns empty list',
+      () async {
+        trackingEngine.throwOnGetAudioTracks = true;
+
+        final tracks = await controller.getAudioTracks();
+        expect(tracks, isEmpty);
+        expect(controller.betterPlayerAsmsAudioTracks, isEmpty);
+      },
+    );
+
+    test(
+      'getAudioTracks populates default values when fields are absent',
+      () async {
+        trackingEngine.nativeTracks = [
+          <String, dynamic>{'index': 0},
+        ];
+
+        final tracks = await controller.getAudioTracks();
+        expect(tracks, hasLength(1));
+        expect(tracks.first.id, 0);
+        expect(tracks.first.label, 'Track 0');
+        expect(tracks.first.language, 'und');
+        expect(tracks.first.mimeType, isNull);
+      },
+    );
+
+    test('getAudioTracks preserves selected track if already chosen', () async {
+      final preselected = PlayerAsmsAudioTrack(id: 99, label: 'Custom');
+      controller.setAudioTrack(preselected);
+
+      trackingEngine.nativeTracks = [
+        <String, dynamic>{'index': 0, 'label': 'Discovered 1'},
+        <String, dynamic>{'index': 1, 'label': 'Discovered 2'},
+      ];
+
+      await controller.getAudioTracks();
+      expect(controller.betterPlayerAsmsAudioTrack, preselected);
     });
 
     test('setAudioTrack with empty track clears asmsAudioTrack', () {

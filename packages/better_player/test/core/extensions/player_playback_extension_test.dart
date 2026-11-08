@@ -160,6 +160,32 @@ void main() {
       expect(speedEvent.parameters?[PlayerEventConstants.speedParameter], 2);
     });
 
+    test('setSpeed supports speeds up to 10.0', () async {
+      final events = <PlayerEvent>[];
+      controller.addEventsListener(events.add);
+
+      await controller.setSpeed(5);
+      expect(mockEngine.speed, 5);
+
+      await controller.setSpeed(10);
+      expect(mockEngine.speed, 10);
+
+      final speedEvents = events
+          .where(
+            (e) => e.betterPlayerEventType == PlayerEventType.setSpeed,
+          )
+          .toList();
+      expect(speedEvents, hasLength(2));
+      expect(
+        speedEvents.first.parameters?[PlayerEventConstants.speedParameter],
+        5,
+      );
+      expect(
+        speedEvents.last.parameters?[PlayerEventConstants.speedParameter],
+        10,
+      );
+    });
+
     test('seekTo updates engine position and posts seekTo event', () async {
       mockEngine.emitInitialized();
       mockEngine.setDuration(const Duration(seconds: 100));
