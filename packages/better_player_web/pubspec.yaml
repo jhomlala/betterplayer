@@ -9,7 +9,6 @@ topics:
   - web
   - shaka-player
   - hls
-  - dash
 
 screenshots:
   - description: 'Better Player logo'

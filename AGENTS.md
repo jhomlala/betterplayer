@@ -117,6 +117,8 @@ PlayerDataSource dataSource = PlayerDataSource(
   - **No Unwired or Placeholder Fields**: NEVER add unused or "future-proof" fields to models, configurations, or requests. Every public field or parameter MUST be wired end-to-end and covered by tests in the same change.
   - **Deterministic Persistent IDs**: NEVER use Dart's `Object.hashCode` or `String.hashCode` for persistent cache keys, file names, or native database IDs (Dart randomizes string hash codes per process run). Use the raw key/URL or a deterministic hash.
   - **No Em Dashes in Prose or Comments**: NEVER use Unicode em dashes (`—`) or double hyphens (`--`) in documentation, changelogs, PR/issue comments, or docstrings. Use a comma, colon, or parentheses instead.
+  - **No Shell Escape Corruption in Text & Changelogs**: NEVER use double-quoted PowerShell strings or string interpolation containing backticks (`) when writing or modifying Markdown, Changelogs, or documentation. In PowerShell, backticks before letters expand into control characters (e.g., `b expands to ASCII 0x08 Backspace producing `\x08etter_player`, and `a expands to ASCII 0x07 Bell producing `\x07ndroidx`), and a trailing backtick before a quote (`") escapes the quote. ALWAYS use single-quoted here-strings (@' ... '@), the `write_file`/`edit_file` tools, or Dart scripts to manipulate text. Ensure all markdown files and changelogs contain strictly printable UTF-8 characters without control characters or stripped leading letters.
+  - **Pubspec Topics Limit (pub.dev)**: Pub.dev enforces a hard limit of at most 5 topics per package. NEVER define more than 5 topics under `topics:` in any package's `pubspec.yaml`.
   - **No AI Slop / Over-Descriptive Names**: Name variables, parameters, and methods the way a pragmatically lazy, sharp human developer writes them: short, clear, and direct (e.g., `items`, `id`, `url`, `res`, `err`, `play()`, `pause()`, `index`). NEVER generate verbose, bloated pseudo-literary prose names (e.g., `comprehensiveMediaSourceCollectionContainer`, `executePlaybackStateTransitionMechanism`, `orchestrateSlotEvictionCycle`). If a 1-2 word name is unambiguous in context, use it.
   - **Breaking Changes to Released APIs**: Modifying, removing, or changing signatures of public APIs that were released in a previous version breaks existing users. When modifying previously released APIs:
     - Strongly prefer maintaining backward compatibility where practical (e.g., keeping a deprecated alias if viable).
@@ -194,6 +196,7 @@ PlayerDataSource dataSource = PlayerDataSource(
   - `Fixed`: for bug fixes.
 - **Attribution**: If the work was done by a contributor, append `(by @username)` or `(by Name)` to the end of the entry.
 - **Sub-package Changelogs**: When updating changelogs, ensure you are updating the correct `CHANGELOG.md` for the package that actually changed (e.g., native changes go in `better_player_android/CHANGELOG.md` or `better_player_ios/CHANGELOG.md`).
+- **Character & Text Integrity**: Verify that changelog entries and PR descriptions contain no stray control bytes (such as `\x08` or `\x07`), no unprintable characters, and no corrupted identifiers missing leading characters (such as `etter_player` instead of `better_player`, or `ndroidx` instead of `androidx`).
 
 ## Release Management
 - **Versioning Strategy (Federated Architecture)**: The core package (`better_player` and `better_player_example`) maintains a SEPARATE versioning track from the federated sub-packages (`better_player_android`, `better_player_ios`, `better_player_platform_interface`).
@@ -201,7 +204,7 @@ PlayerDataSource dataSource = PlayerDataSource(
   - Sub-packages should only be bumped incrementally from their *own* current version (e.g., `1.1.0` -> `1.2.0`) based on their own unreleased changes.
 - **Preparation**: When asked to "Prepare a release for version X.Y.Z" (referring to the core package), the AI must:
   1. Update `version: X.Y.Z` in `packages/better_player/pubspec.yaml` and `packages/better_player_example/pubspec.yaml`, as well as `PlayerAboutConstants.version` in `packages/better_player/lib/src/core/player_about_constants.dart`.
-  2. Evaluate sub-packages (`android`, `ios`, `platform_interface`). If they have changes, bump their versions incrementally (e.g., to `A.B.C`) in their respective `pubspec.yaml` files.
+  2. Evaluate sub-packages (`android`, `ios`, `platform_interface`). If they have changes, bump their versions incrementally (e.g., to `A.B.C`) in their respective `pubspec.yaml` files. Ensure `topics:` in each bumped `pubspec.yaml` has at most 5 topics (pub.dev hard limit).
   3. Update `s.version = 'A.B.C'` in `packages/better_player_ios/ios/better_player_ios.podspec` to match the iOS sub-package version.
   4. Update the dependencies in `packages/better_player/pubspec.yaml` to point to the newly bumped `^A.B.C` versions of the sub-packages.
   5. Update `better_player: ^X.Y.Z` in the installation snippet of `docs/install.md`.

@@ -13,6 +13,8 @@ When instructed to publish the `betterplayer` packages, you must follow this wor
   $env:GITHUB_TOKEN="your_token_here"
   ```
 - All packages must be versioned and their `CHANGELOG.md` files must be up-to-date before publishing.
+- Ensure `topics:` in each package `pubspec.yaml` has at most 5 items (pub.dev enforces a hard limit of 5 topics per package).
+- Verify character and text integrity: changelogs must not contain unprintable control characters (such as `\x08` or `\x07`) or corrupted names from PowerShell backtick escaping.
 
 ## 1. Check for Unreleased Sections
 
@@ -22,14 +24,14 @@ Before starting the publish process, verify that there are no `## Unreleased` se
 
 Packages must be published from least dependent to most complicated. Run `flutter pub publish --force` inside each package directory in this **strict order**:
 
-### Step 1 — Platform Interface
+### Step 1: Platform Interface
 ```powershell
 cd packages/better_player_platform_interface
 flutter pub publish --force
 ```
 Wait for this to complete successfully before proceeding.
 
-### Step 2 — Platform Implementations (can be done in sequence)
+### Step 2: Platform Implementations (can be done in sequence)
 ```powershell
 cd packages/better_player_android
 flutter pub publish --force
@@ -49,7 +51,7 @@ flutter pub publish --force
 These platform packages only depend on the platform interface, not on each other.  
 Wait for each to complete successfully before moving on.
 
-### Step 3 — Main Package
+### Step 3: Main Package
 ```powershell
 cd packages/better_player
 flutter pub publish --force
