@@ -1,5 +1,5 @@
 import 'package:better_player/better_player.dart';
-import 'package:better_player_example/constants.dart';
+import 'package:better_player_example/utils/e2e_local_media_server.dart';
 import 'package:material_ui/material_ui.dart';
 
 class FFITestPage extends StatefulWidget {
@@ -19,7 +19,7 @@ class _FFITestPageState extends State<FFITestPage> {
   void _setupDataSource() {
     final betterPlayerDataSource = PlayerDataSource(
       DataSourceType.network,
-      Constants.bugBuckBunnyVideoUrl,
+      E2ELocalMediaServer.mp4Url,
     );
     debugPrint(
       'FFI TEST PAGE: Setting up data source: ${betterPlayerDataSource.url} (attempt ${_retryCount + 1})',
@@ -65,8 +65,12 @@ class _FFITestPageState extends State<FFITestPage> {
       }
     });
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       debugPrint('FFI TEST PAGE: addPostFrameCallback');
+      await E2ELocalMediaServer.ensureStarted();
+      if (!mounted) {
+        return;
+      }
       // Check if already initialized (e.g. if events were missed)
       if (_betterPlayerController.videoPlayerValue?.initialized ?? false) {
         debugPrint('FFI TEST PAGE: Already initialized');
@@ -295,7 +299,7 @@ class _FFITestPageState extends State<FFITestPage> {
                   action: () async => _betterPlayerController.preCache(
                     PlayerDataSource(
                       DataSourceType.network,
-                      Constants.bugBuckBunnyVideoUrl,
+                      E2ELocalMediaServer.mp4Url,
                     ),
                   ),
                 ),
@@ -304,7 +308,7 @@ class _FFITestPageState extends State<FFITestPage> {
                   action: () async => _betterPlayerController.stopPreCache(
                     PlayerDataSource(
                       DataSourceType.network,
-                      Constants.bugBuckBunnyVideoUrl,
+                      E2ELocalMediaServer.mp4Url,
                     ),
                   ),
                 ),
