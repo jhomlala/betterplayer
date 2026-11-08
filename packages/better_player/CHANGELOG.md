@@ -11,7 +11,7 @@
 - Fixed: Resolved byte truncation bug in `BetterPlayerClearKeyUtils.generateKey` preserving leading zero bytes in 16-byte DRM keys.
 - Fixed: Decoded network subtitles as UTF-8 via response bytes to prevent Latin-1 encoding corruption, and guarded against HTTP error response bodies.
 - Fixed: BetterPlayerPool active index protection during slot eviction, failed lease slot reuse, and concurrent bind state tracking.
-- Updated: Bumped federated sub-packages: etter_player_android to ^1.12.0, etter_player_ios to ^1.12.0, etter_player_macos to ^1.7.0, and etter_player_web to ^1.5.0.
+- Updated: Bumped federated sub-packages: `better_player_android` to `^1.12.0`, `better_player_ios` to `^1.12.0`, `better_player_macos` to `^1.7.0`, and `better_player_web` to `^1.5.0`.
 
 ## 1.33.0
 - Added: Feed error handling with `PlayerFeedConfiguration.errorBuilder`, localized `PlayerFeedErrorView`, and `BetterPlayerFeedController.retry`.

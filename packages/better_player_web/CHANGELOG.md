@@ -36,7 +36,7 @@
 - Updated: `better_player_platform_interface` version bump.
 
 ## 1.1.2
-- Updated: etter_player_platform_interface version bump.
+- Updated: `better_player_platform_interface` version bump.
 
 ## 1.1.1
 - Updated: package metadata
