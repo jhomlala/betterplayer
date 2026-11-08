@@ -10,7 +10,7 @@ kotlin {
 
 android {
     namespace "pl.hasoft.better_player"
-    compileSdkVersion 36
+    compileSdk 36
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_21
@@ -22,14 +22,14 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 24
+        minSdk 24
     }
 
     dependencies {
-        def media3Version = "1.11.0"
-        def lifecycleVersion = "2.4.0-beta01"
-        def annotationVersion = "1.2.0"
-        def workVersion = "2.7.0"
+        def media3Version = "1.11.1"
+        def lifecycleVersion = "2.11.0"
+        def annotationVersion = "1.11.0"
+        def workVersion = "2.12.0"
 
         implementation "androidx.media3:media3-exoplayer:$media3Version"
         implementation "androidx.media3:media3-datasource:$media3Version"
@@ -40,7 +40,6 @@ android {
         implementation "androidx.media3:media3-exoplayer-rtsp:$media3Version"
         implementation "androidx.media3:media3-ui:$media3Version"
         implementation "androidx.media3:media3-session:$media3Version"
-        implementation "androidx.media:media:1.7.0"
         implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion"
         implementation "androidx.lifecycle:lifecycle-common:$lifecycleVersion"
         implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"

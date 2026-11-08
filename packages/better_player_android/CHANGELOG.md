@@ -1,4 +1,6 @@
 ## Unreleased
+- Updated: Upgraded `androidx.media3` to `1.11.1`, `androidx.lifecycle` to `2.11.0`, `androidx.annotation` to `1.11.0`, and `androidx.work:work-runtime` to `2.12.0`.
+- Updated: Removed legacy unused `androidx.media:media` dependency and imports.
 - Fixed: Pre-cache worker falsely reporting HTTP errors as completed downloads.
 - Fixed: Widevine DRM defaulting to L3 software security level when drmSecurityLevel is not specified.
 
