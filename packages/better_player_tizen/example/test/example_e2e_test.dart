@@ -9,6 +9,7 @@ import 'package:better_player_tizen_example/main.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -17,6 +18,7 @@ void main() {
   late StreamController<dynamic> eventChannelController;
 
   setUp(() {
+    VisibilityDetectorController.instance.updateInterval = Duration.zero;
     calls.clear();
     eventChannelController = StreamController<dynamic>.broadcast();
 
@@ -86,22 +88,21 @@ void main() {
     );
     final controller = state.controller;
 
-    Future<void> captureScreenshot(
+    void captureScreenshot(
       String filename, {
       int r = 0x38,
       int g = 0xBD,
       int b = 0xF8,
-    }) async {
+    }) {
       final pngBytes = _createFallbackPng(r: r, g: g, b: b);
-      final file = File(filename);
-      await file.writeAsBytes(pngBytes);
+      File(filename).writeAsBytesSync(pngBytes, flush: true);
     }
 
-    await captureScreenshot('tizen_e2e_initialized.png');
+    captureScreenshot('tizen_e2e_initialized.png');
 
     await controller.play();
     await tester.pump();
-    await captureScreenshot(
+    captureScreenshot(
       'tizen_e2e_play.png',
       r: 0x22,
       g: 0xC5,
@@ -110,7 +111,7 @@ void main() {
 
     await controller.pause();
     await tester.pump();
-    await captureScreenshot(
+    captureScreenshot(
       'tizen_e2e_pause.png',
       r: 0xF5,
       g: 0x9E,
@@ -118,7 +119,7 @@ void main() {
     );
 
     await controller.seekTo(const Duration(seconds: 15));
-    await captureScreenshot(
+    captureScreenshot(
       'tizen_e2e_seek.png',
       r: 0xA8,
       g: 0x55,

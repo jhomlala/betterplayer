@@ -23,6 +23,7 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   very_good_analysis: ^10.3.0
+  visibility_detector: ^0.4.0+2
 
 flutter:
   uses-material-design: true
