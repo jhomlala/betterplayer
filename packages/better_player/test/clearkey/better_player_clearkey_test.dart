@@ -32,5 +32,30 @@ void main() {
 
       expect(keysList.length, 2);
     });
+
+    test('generateKey preserves leading zero bytes in 16-byte keys', () {
+      final keys = {
+        '00112233445566778899aabbccddeeff': '00000000000000000000000000000001',
+      };
+      final jsonKey = BetterPlayerClearKeyUtils.generateKey(keys);
+      final decoded = jsonDecode(jsonKey) as Map<String, dynamic>;
+      final keysList = (decoded['keys'] as List<dynamic>)
+          .cast<Map<String, dynamic>>();
+
+      final kidBytes = base64.decode(
+        base64.normalize(keysList[0]['kid'] as String),
+      );
+      final kBytes = base64.decode(
+        base64.normalize(keysList[0]['k'] as String),
+      );
+
+      expect(kidBytes.length, 16);
+      expect(kidBytes[0], 0x00);
+      expect(kidBytes[1], 0x11);
+
+      expect(kBytes.length, 16);
+      expect(kBytes[0], 0x00);
+      expect(kBytes[15], 0x01);
+    });
   });
 }

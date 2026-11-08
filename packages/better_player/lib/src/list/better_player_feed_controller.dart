@@ -14,7 +14,7 @@ class BetterPlayerFeedController extends ChangeNotifier {
     PlayerPoolConfiguration? poolConfiguration,
     PageController? pageController,
     String Function(int index)? idGetter,
-    this.autoPlay = true,
+    bool? autoPlay,
   }) : _pool =
            pool ??
            BetterPlayerPool(
@@ -23,7 +23,8 @@ class BetterPlayerFeedController extends ChangeNotifier {
            ),
        _ownsPool = pool == null,
        _pageController = pageController ?? PageController(),
-       _ownsPageController = pageController == null {
+       _ownsPageController = pageController == null,
+       _autoPlay = autoPlay ?? true {
     final effectiveIdGetter = idGetter ?? ((index) => 'item_$index');
     final seenIds = <String>{};
     for (var i = 0; i < dataSources.length; i++) {
@@ -73,8 +74,52 @@ class BetterPlayerFeedController extends ChangeNotifier {
   /// Current active index in the feed.
   int get currentIndex => _currentIndex;
 
+  bool _autoPlay;
+
   /// Whether active items should play automatically.
-  final bool autoPlay;
+  bool get autoPlay => _autoPlay;
+  set autoPlay(bool value) {
+    if (_autoPlay != value) {
+      _autoPlay = value;
+      notifyListeners();
+    }
+  }
+
+  /// The controller for the currently active feed item, or null if unallocated.
+  BetterPlayerController? get activeController {
+    if (_currentIndex >= 0 && _currentIndex < _entries.length) {
+      return _entries[_currentIndex].leaseNotifier.value?.controller;
+    }
+    return null;
+  }
+
+  /// Whether the currently active video is playing.
+  bool get isPlaying => activeController?.isPlaying() ?? false;
+
+  /// Plays the currently active video.
+  Future<void> play() async {
+    final controller = activeController;
+    if (controller != null) {
+      await controller.play();
+    }
+  }
+
+  /// Pauses the currently active video.
+  Future<void> pause() async {
+    final controller = activeController;
+    if (controller != null) {
+      await controller.pause();
+    }
+  }
+
+  /// Toggles play/pause for the currently active video.
+  Future<void> togglePlay() async {
+    if (isPlaying) {
+      await pause();
+    } else {
+      await play();
+    }
+  }
 
   /// Broadcast stream emitting performance and Quality of Experience (QoE) metrics.
   Stream<PlayerFeedItemMetrics> get metricsStream => _metricsController.stream;
@@ -112,12 +157,38 @@ class BetterPlayerFeedController extends ChangeNotifier {
     _pool.reindex(indexById: indexById);
   }
 
-  /// Returns the notifier for a specific feed index.
-  ValueNotifier<PlayerPoolLease?> getLeaseNotifier(int index) {
+  /// Returns the lease notifier for a specific feed [index].
+  ValueNotifier<PlayerPoolLease?> leaseNotifier(int index) {
     if (index >= 0 && index < _entries.length) {
       return _entries[index].leaseNotifier;
     }
     throw RangeError.index(index, _entries, 'index');
+  }
+
+  /// Jumps to the feed item at [index], updating playback and scrolling the view.
+  void jumpTo(int index) {
+    if (index < 0 || index >= _entries.length) {
+      return;
+    }
+    if (_pageController.hasClients) {
+      _pageController.jumpToPage(index);
+    } else {
+      unawaited(onIndexChanged(index));
+    }
+  }
+
+  /// Advances to the next video in the feed.
+  void next() {
+    if (_currentIndex + 1 < _entries.length) {
+      jumpTo(_currentIndex + 1);
+    }
+  }
+
+  /// Moves to the previous video in the feed.
+  void previous() {
+    if (_currentIndex > 0) {
+      jumpTo(_currentIndex - 1);
+    }
   }
 
   /// Focuses a new index, acquires a lease for it, triggers lookahead
@@ -288,36 +359,63 @@ class BetterPlayerFeedController extends ChangeNotifier {
     }
   }
 
-  /// Retries loading and binding the feed item at [index].
-  Future<void> retry({required int index}) async {
-    if (_isDisposed || index < 0 || index >= _entries.length) {
+  /// Retries loading and binding the feed item at [index] (defaults to [currentIndex]).
+  Future<void> retry([int? index]) async {
+    final targetIndex = index ?? _currentIndex;
+    if (_isDisposed || targetIndex < 0 || targetIndex >= _entries.length) {
       return;
     }
-    final entry = _entries[index];
+    final entry = _entries[targetIndex];
     final currentLease = entry.leaseNotifier.value;
     entry.leaseNotifier.value = null;
     currentLease?.release();
 
-    if (_currentIndex == index) {
-      await onIndexChanged(index);
+    if (_currentIndex == targetIndex) {
+      await onIndexChanged(targetIndex);
     }
   }
 
-  /// Inserts [dataSources] at [index] with optional custom [ids].
-  void insertDataSources({
-    required int index,
-    required List<PlayerDataSource> dataSources,
+  /// Adds a single [dataSource] to the end of the feed.
+  void add(PlayerDataSource dataSource, {String? id}) {
+    addAll([dataSource], ids: id != null ? [id] : null);
+  }
+
+  /// Appends [sources] to the end of the feed.
+  void addAll(
+    List<PlayerDataSource> sources, {
     List<String>? ids,
   }) {
-    if (_isDisposed || dataSources.isEmpty) {
+    insertAll(index: _entries.length, sources: sources, ids: ids);
+  }
+
+  /// Inserts a single [dataSource] at [index].
+  void insert({
+    required int index,
+    required PlayerDataSource dataSource,
+    String? id,
+  }) {
+    insertAll(
+      index: index,
+      sources: [dataSource],
+      ids: id != null ? [id] : null,
+    );
+  }
+
+  /// Inserts [sources] at [index] with optional custom [ids].
+  void insertAll({
+    required int index,
+    required List<PlayerDataSource> sources,
+    List<String>? ids,
+  }) {
+    if (_isDisposed || sources.isEmpty) {
       return;
     }
     if (index < 0 || index > _entries.length) {
       throw RangeError.range(index, 0, _entries.length, 'index');
     }
-    if (ids != null && ids.length != dataSources.length) {
+    if (ids != null && ids.length != sources.length) {
       throw ArgumentError(
-        'ids length (${ids.length}) must match dataSources length (${dataSources.length})',
+        'ids length (${ids.length}) must match sources length (${sources.length})',
       );
     }
 
@@ -334,12 +432,12 @@ class BetterPlayerFeedController extends ChangeNotifier {
     }
 
     final newEntries = <PlayerFeedEntry>[];
-    for (var i = 0; i < dataSources.length; i++) {
+    for (var i = 0; i < sources.length; i++) {
       final id = ids != null ? ids[i] : _generateUniqueId();
       newEntries.add(
         PlayerFeedEntry(
           id: id,
-          dataSource: dataSources[i],
+          dataSource: sources[i],
         ),
       );
     }
@@ -347,7 +445,7 @@ class BetterPlayerFeedController extends ChangeNotifier {
     _entries.insertAll(index, newEntries);
 
     if (index <= _currentIndex) {
-      _currentIndex += dataSources.length;
+      _currentIndex += sources.length;
       if (_pageController.hasClients) {
         _pageController.jumpToPage(_currentIndex);
       }
@@ -356,26 +454,14 @@ class BetterPlayerFeedController extends ChangeNotifier {
     _reindexPool();
     _pool.updatePreloads(
       currentIndex: _currentIndex,
-      dataSources: this.dataSources,
+      dataSources: dataSources,
       idGetter: (i) => _entries[i].id,
     );
     notifyListeners();
   }
 
-  /// Appends more data sources to the feed (for infinite pagination).
-  void appendDataSources(
-    List<PlayerDataSource> newSources, {
-    List<String>? ids,
-  }) {
-    insertDataSources(
-      index: _entries.length,
-      dataSources: newSources,
-      ids: ids,
-    );
-  }
-
   /// Removes the data source at [index].
-  Future<void> removeAt({required int index}) async {
+  Future<void> removeAt(int index) async {
     if (_isDisposed) {
       return;
     }
@@ -430,7 +516,7 @@ class BetterPlayerFeedController extends ChangeNotifier {
   }
 
   /// Replaces the data source at [index] with [dataSource].
-  Future<void> replaceAt({
+  Future<void> replace({
     required int index,
     required PlayerDataSource dataSource,
     String? id,

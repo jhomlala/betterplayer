@@ -130,7 +130,7 @@ class _BetterPlayerFeedItemState extends State<_BetterPlayerFeedItem> {
       return PlayerFeedErrorView(
         errorMessage: displayError,
         translations: lease?.controller.translations,
-        onRetry: () => unawaited(widget.controller.retry(index: widget.index)),
+        onRetry: () => unawaited(widget.controller.retry(widget.index)),
       );
     }
 
@@ -191,16 +191,27 @@ class _BetterPlayerFeedState extends State<BetterPlayerFeed> {
   @override
   void initState() {
     super.initState();
+    if (!widget.configuration.autoPlay && widget.controller.autoPlay) {
+      widget.controller.autoPlay = false;
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted &&
           widget.controller.entries.isNotEmpty &&
           widget.controller
-                  .getLeaseNotifier(widget.controller.currentIndex)
+                  .leaseNotifier(widget.controller.currentIndex)
                   .value ==
               null) {
         widget.controller.onIndexChanged(widget.controller.currentIndex);
       }
     });
+  }
+
+  @override
+  void didUpdateWidget(BetterPlayerFeed oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.configuration.autoPlay != widget.configuration.autoPlay) {
+      widget.controller.autoPlay = widget.configuration.autoPlay;
+    }
   }
 
   @override

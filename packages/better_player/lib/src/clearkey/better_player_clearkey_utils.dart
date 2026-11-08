@@ -1,11 +1,9 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-///ClearKey helper class to generate the key
+/// ClearKey helper class to generate the key payload.
 class BetterPlayerClearKeyUtils {
-  static final _byteMask = BigInt.from(0xff);
-
-  ///The ClearKey from a Map. The key in map should be the kid with the associated value being the key. Both values should be provide in HEX format.
+  /// Generates the ClearKey JSON from a Map of key IDs to keys in HEX format.
   static String generateKey(
     Map<String, String> keys, {
     String type = 'temporary',
@@ -28,21 +26,12 @@ class BetterPlayerClearKeyUtils {
   }
 
   static String _base64(String source) {
-    return base64
-        .encode(_encodeBigInt(BigInt.parse(source, radix: 16)))
-        .replaceAll('=', '');
-  }
-
-  static Uint8List _encodeBigInt(BigInt number) {
-    var passedNumber = number;
-    final size = (number.bitLength + 7) >> 3;
-
-    final result = Uint8List(size);
-    var pos = size - 1;
-    for (var i = 0; i < size; i++) {
-      result[pos--] = (passedNumber & _byteMask).toInt();
-      passedNumber = passedNumber >> 8;
+    final clean = source.replaceAll(' ', '');
+    final length = clean.length;
+    final bytes = Uint8List(length ~/ 2);
+    for (var i = 0; i < length; i += 2) {
+      bytes[i ~/ 2] = int.parse(clean.substring(i, i + 2), radix: 16);
     }
-    return result;
+    return base64.encode(bytes).replaceAll('=', '');
   }
 }

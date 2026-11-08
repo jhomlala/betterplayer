@@ -115,9 +115,11 @@ class BetterPlayerPool {
 
     // 1. Check if item already holds an active or preloading slot.
     for (final slot in _slots) {
-      if (slot.currentItemId == itemId &&
-          slot.currentLease != null &&
-          !slot.currentLease!.hasError) {
+      if (slot.currentItemId == itemId && slot.currentLease != null) {
+        if (slot.currentLease!.hasError) {
+          _evictSlot(slot);
+          break;
+        }
         slot.currentIndex = index;
         final wasPreload = slot.isPreloading;
         slot.isPreloading = false;
@@ -321,8 +323,11 @@ class BetterPlayerPool {
       if (slotIndex == null) {
         return slot;
       }
+      if (slotIndex == _activeIndex && targetIndex != _activeIndex) {
+        continue;
+      }
 
-      final distance = (slotIndex - targetIndex).abs();
+      final distance = (slotIndex - _activeIndex).abs();
       if (candidate == null || distance > maxDistance) {
         maxDistance = distance;
         candidate = slot;
@@ -355,9 +360,10 @@ class BetterPlayerPool {
     slot.currentIndex = null;
     slot.currentSourceUrl = null;
     slot.currentLease = null;
-    slot.bindingFuture = null;
     slot.isPreloading = false;
-    slot.isBusy = false;
+    if (slot.bindingFuture == null) {
+      slot.isBusy = false;
+    }
   }
 
   Future<PlayerPoolLease> _bindSlot({
@@ -447,7 +453,7 @@ class BetterPlayerPool {
 
       return lease;
     } finally {
-      if (slot.currentLease == lease) {
+      if (slot.currentLease == lease || slot.currentLease == null) {
         slot.isBusy = false;
         slot.bindingFuture = null;
       }

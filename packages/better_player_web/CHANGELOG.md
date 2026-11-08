@@ -1,3 +1,6 @@
+## Unreleased
+- Added: ClearKey DRM support on Web via Shaka Player `clearKeys` (supporting both standard and Base64Url JWKs and hex keys) and `servers['org.w3.clearkey']` (for license servers).
+
 ## 1.4.1
 - Updated: Modernized `analysis_options.yaml` to inherit root options and resolved static analysis lints.
 

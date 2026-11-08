@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player/src/subtitles/player_subtitle.dart';
@@ -74,9 +75,16 @@ class PlayerSubtitlesFactory {
           Uri.parse(url!),
           headers: nonNullHeaders.isEmpty ? null : nonNullHeaders,
         );
-        final data = response.body;
-        final cacheList = _parseString(data);
-        subtitles.addAll(cacheList);
+        if (response.statusCode >= 200 && response.statusCode < 300) {
+          final data = utf8.decode(response.bodyBytes, allowMalformed: true);
+          final cacheList = _parseString(data);
+          subtitles.addAll(cacheList);
+        } else {
+          PlayerLogger.warning(
+            message:
+                'Failed to load subtitles from $url: HTTP ${response.statusCode}',
+          );
+        }
       }
 
       PlayerLogger.debug(

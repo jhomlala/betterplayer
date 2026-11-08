@@ -103,14 +103,18 @@ Coordinates data sources and leases for the feed widget:
 
 #### Methods
 
-- **`insertDataSources({required int index, required List<PlayerDataSource> dataSources, List<String>? ids})`**: Inserts media sources at `index` with optional stable IDs.
-- **`appendDataSources(List<PlayerDataSource> newSources, {List<String>? ids})`**: Appends more media sources to the feed for pagination.
-- **`removeAt({required int index})`**: Removes the media source at `index` and updates active leases.
-- **`replaceAt({required int index, required PlayerDataSource dataSource, String? id})`**: Replaces the media source at `index`.
-- **`replaceAll({required List<PlayerDataSource> dataSources, List<String>? ids, int initialIndex = 0})`**: Replaces all sources in the feed, resets to `initialIndex`, and rebinds.
-- **`retry({required int index})`**: Retries loading and binding a failed feed item.
-- **`onIndexChanged(int index)`**: Triggers leasing, preloading, and distance-based recycling for a newly focused index.
-- **`getLeaseNotifier(int index)`**: Returns a `ValueNotifier<PlayerPoolLease?>` for a specific index to observe lease bindings.
+- **`play()` / `pause()` / `togglePlay()`**: Playback controls for the currently focused feed item.
+- **`jumpTo(int index)`**: Navigates directly to `index`, scrolls the view, and activates playback.
+- **`next()` / `previous()`**: Navigates forward or backward by one item.
+- **`add(PlayerDataSource dataSource, {String? id})`**: Adds a media source to the end of the feed.
+- **`addAll(List<PlayerDataSource> sources, {List<String>? ids})`**: Appends multiple media sources to the feed for pagination.
+- **`insert({required int index, required PlayerDataSource dataSource, String? id})`**: Inserts a single media source at `index`.
+- **`insertAll({required int index, required List<PlayerDataSource> sources, List<String>? ids})`**: Inserts multiple media sources at `index`.
+- **`removeAt(int index)`**: Removes the media source at `index` and updates active leases.
+- **`replace({required int index, required PlayerDataSource dataSource, String? id})`**: Replaces the media source at `index`.
+- **`replaceAll(List<PlayerDataSource> dataSources, {List<String>? ids, int initialIndex = 0})`**: Replaces all sources in the feed, resets to `initialIndex`, and rebinds.
+- **`retry([int? index])`**: Retries loading and binding a failed feed item (defaults to the active index).
+- **`leaseNotifier(int index)`**: Returns a `ValueNotifier<PlayerPoolLease?>` for a specific index to observe lease bindings.
 - **`dispose()`**: Releases all leases and disposes owned pool controllers and `PageController`.
 
 ### Error Handling & Retries

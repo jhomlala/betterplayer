@@ -398,5 +398,73 @@ void main() {
 
       pool.dispose();
     });
+
+    test(
+      're-acquiring failed itemId without manual release reuses slot without leaking',
+      () async {
+        final mockPlatform = MockBetterPlayerPlatform();
+        BetterPlayerPlatform.instance = mockPlatform;
+
+        final pool = BetterPlayerPool(
+          configuration: const PlayerPoolConfiguration(poolSize: 2),
+        );
+        final dataSource = PlayerDataSource.network(
+          'https://example.com/retry.mp4',
+        );
+
+        mockPlatform.setDataSourceFailuresRemaining = 1;
+        final lease1 = await pool.acquire(
+          itemId: 'item_retry',
+          index: 0,
+          dataSource: dataSource,
+        );
+        expect(lease1.hasError, isTrue);
+
+        final lease2 = await pool.acquire(
+          itemId: 'item_retry',
+          index: 0,
+          dataSource: dataSource,
+        );
+        expect(lease2.hasError, isFalse);
+        expect(lease2.isValid, isTrue);
+        expect(pool.leasedCount, 1);
+
+        pool.dispose();
+      },
+    );
+
+    test(
+      'eviction measures distance from activeIndex and protects activeIndex slot',
+      () async {
+        final pool = BetterPlayerPool(
+          configuration: const PlayerPoolConfiguration(poolSize: 2),
+        );
+
+        final lease0 = await pool.acquire(
+          itemId: 'item_0',
+          index: 0,
+          dataSource: PlayerDataSource.network('https://example.com/0.mp4'),
+        );
+        final lease2 = await pool.acquire(
+          itemId: 'item_2',
+          index: 2,
+          dataSource: PlayerDataSource.network('https://example.com/2.mp4'),
+        );
+
+        pool.setActiveIndex(2);
+
+        final lease1 = await pool.acquire(
+          itemId: 'item_1',
+          index: 1,
+          dataSource: PlayerDataSource.network('https://example.com/1.mp4'),
+        );
+
+        expect(lease0.isValid, isFalse);
+        expect(lease2.isValid, isTrue);
+        expect(lease1.isValid, isTrue);
+
+        pool.dispose();
+      },
+    );
   });
 }

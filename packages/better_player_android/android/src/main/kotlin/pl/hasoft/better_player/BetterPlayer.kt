@@ -170,11 +170,19 @@ class BetterPlayer(
                         ) { uuid: UUID? ->
                             try {
                                 val mediaDrm = FrameworkMediaDrm.newInstance(uuid!!)
-                                val securityLevel = drmSecurityLevel ?: "L3"
-                                BetterPlayerApi.log(1, "DRM Security level: $securityLevel")
-                                mediaDrm.setPropertyString("securityLevel", securityLevel)
+                                if (!drmSecurityLevel.isNullOrEmpty()) {
+                                    try {
+                                        BetterPlayerApi.log(1, "DRM Security level: $drmSecurityLevel")
+                                        mediaDrm.setPropertyString("securityLevel", drmSecurityLevel)
+                                    } catch (e: Exception) {
+                                        BetterPlayerApi.log(
+                                            2,
+                                            "Failed to set DRM securityLevel to $drmSecurityLevel: ${e.message}"
+                                        )
+                                    }
+                                }
                                 return@setUuidAndExoMediaDrmProvider mediaDrm
-                            } catch (e: UnsupportedDrmException) {
+                            } catch (e: Exception) {
                                 return@setUuidAndExoMediaDrmProvider DummyExoMediaDrm()
                             }
                         }

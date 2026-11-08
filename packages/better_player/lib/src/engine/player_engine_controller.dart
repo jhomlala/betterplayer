@@ -591,13 +591,11 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
 
   static Future<void> preCache(
     DataSource dataSource,
-    int preCacheSize, {
-    void Function(PreCacheProgress progress)? onProgress,
-  }) async {
+    int preCacheSize,
+  ) async {
     return _betterPlayerPlatform.preCache(
       dataSource,
       preCacheSize,
-      onProgress: onProgress,
     );
   }
 

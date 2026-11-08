@@ -1,3 +1,7 @@
+## Unreleased
+- Fixed: Pre-cache worker falsely reporting HTTP errors as completed downloads.
+- Fixed: Widevine DRM defaulting to L3 software security level when drmSecurityLevel is not specified.
+
 ## 1.11.0
 - Updated: Modernized `analysis_options.yaml` to inherit root options and resolved static analysis lints.
 

@@ -92,7 +92,6 @@ extension PlayerCacheExtension on BetterPlayerController {
       await PlayerEngineController.preCache(
         dataSource,
         cacheConfig.preCacheSize,
-        onProgress: onProgress,
       );
     } catch (error) {
       await _preCacheSubscriptions.remove(trackingKey)?.cancel();
