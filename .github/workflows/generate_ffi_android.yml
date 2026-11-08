@@ -36,6 +36,17 @@ jobs:
       - name: Install Android Dependencies
         working-directory: packages/better_player_android
         run: |
+          # Pre-fetch Gradle 9.5.0 distribution to bypass transient 504 on services.gradle.org
+          GRADLE_DIR="$HOME/.gradle/wrapper/dists/gradle-9.5.0-all/aca6g93cdtcf0oapcfka748qh"
+          mkdir -p "$GRADLE_DIR"
+          if [ ! -f "$GRADLE_DIR/gradle-9.5.0-all.zip.ok" ]; then
+            echo "Pre-fetching Gradle 9.5.0..."
+            curl -sL "https://mirrors.cloud.tencent.com/gradle/gradle-9.5.0-all.zip" -o "$GRADLE_DIR/gradle-9.5.0-all.zip" || \
+            curl -sL "https://repo.huaweicloud.com/gradle/gradle-9.5.0-all.zip" -o "$GRADLE_DIR/gradle-9.5.0-all.zip"
+            unzip -q -o "$GRADLE_DIR/gradle-9.5.0-all.zip" -d "$GRADLE_DIR"
+            touch "$GRADLE_DIR/gradle-9.5.0-all.zip.ok"
+          fi
+
           flutter pub get
           cd example_ffi
           flutter pub get
