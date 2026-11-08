@@ -1,0 +1,100 @@
+name: E2E Tizen (Build & Integration Tests)
+
+on:
+  push:
+    paths:
+      - 'packages/better_player_tizen/**'
+      - '.github/workflows/e2e_tizen.yml'
+  pull_request:
+    paths:
+      - 'packages/better_player_tizen/**'
+      - '.github/workflows/e2e_tizen.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e-tizen:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            libncurses5 gettext dbus-x11 gnome-keyring xvfb libgl1-mesa-glx
+
+      - name: Install Tizen Studio CLI
+        run: |
+          curl -sS https://download.tizen.org/sdk/Installer/tizen-sdk_10.0/web-cli_Tizen_SDK_10.0_ubuntu-64.bin -o install.bin
+          chmod a+x install.bin
+          ./install.bin --accept-license $HOME/tizen-studio
+          rm install.bin
+
+      - name: Install Tizen Studio Packages
+        run: |
+          $HOME/tizen-studio/package-manager/package-manager-cli.bin install \
+            NativeToolchain-Gcc-9.2 \
+            IOT-Headed-6.0-NativeAppDevelopment-CLI \
+            Certificate-Manager \
+            NativeCLI
+
+      - name: Create Tizen Certificate Profile
+        run: |
+          export PATH=$PATH:$HOME/tizen-studio/tools/ide/bin
+          dbus-run-session -- bash -c "
+          echo tizen | gnome-keyring-daemon --unlock &&
+          tizen certificate -a tizen -p tizen -f tizen
+          tizen security-profiles add \
+            -n tizen \
+            -a $HOME/tizen-studio-data/keystore/author/tizen.p12 \
+            -p tizen
+          "
+
+      - name: Install flutter-tizen
+        run: |
+          git clone https://github.com/flutter-tizen/flutter-tizen.git $HOME/flutter-tizen
+          echo "$HOME/flutter-tizen/bin" >> $GITHUB_PATH
+          $HOME/flutter-tizen/bin/flutter-tizen precache --tizen
+
+      - name: Fetch Workspace Dependencies
+        run: flutter pub get
+
+      - name: Run Tizen Unit Tests
+        working-directory: packages/better_player_tizen
+        run: flutter test --coverage
+
+      - name: Run Example Integration Tests
+        working-directory: packages/better_player_tizen/example
+        run: xvfb-run -a flutter test integration_test/tizen_flow_test.dart
+
+      - name: Build Tizen TPK Package
+        working-directory: packages/better_player_tizen/example
+        run: |
+          export PATH="$HOME/flutter-tizen/bin:$HOME/tizen-studio/tools/ide/bin:$PATH"
+          flutter-tizen build tpk --debug

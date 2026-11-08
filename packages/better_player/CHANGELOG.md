@@ -1,3 +1,6 @@
+## Unreleased
+- Added: Initial experimental Tizen platform implementation in `packages/better_player_tizen`.
+
 ## 1.35.0
 - Added: `BetterPlayerController.getAudioTracks()` to discover and retrieve audio tracks from both HLS/DASH manifests and native container formats (MKV, MP4, WebM).
 - Updated: Increased playback speed ceiling from `4.0` to `10.0` across `setSpeed()`.

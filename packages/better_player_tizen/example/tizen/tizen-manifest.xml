@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest package="org.tizen.better_player_tizen_example" version="1.0.0" api-version="6.0" xmlns="http://tizen.org/ns/packages">
+    <profile name="common"/>
+    <ui-application appid="org.tizen.better_player_tizen_example" exec="Runner.dll" type="dotnet" multiple="false" taskmanage="true" nodisplay="false">
+        <label>better_player_tizen_example</label>
+        <icon>ic_launcher.png</icon>
+        <metadata key="http://tizen.org/metadata/prefer_dotnet_aot" value="true"/>
+    </ui-application>
+    <feature name="http://tizen.org/feature/screen.size.all"/>
+    <privileges>
+        <privilege>http://tizen.org/privilege/internet</privilege>
+        <privilege>http://tizen.org/privilege/mediastorage</privilege>
+        <privilege>http://tizen.org/privilege/externalstorage</privilege>
+    </privileges>
+</manifest>
