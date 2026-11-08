@@ -2,7 +2,7 @@ name: Maestro Android flow
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, chore/bump-gradle-android-deps ]
   pull_request:
     branches: [ master ]
   workflow_dispatch:

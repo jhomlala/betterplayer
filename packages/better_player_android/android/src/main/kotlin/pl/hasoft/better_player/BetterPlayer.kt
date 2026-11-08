@@ -40,8 +40,6 @@ import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.extractor.DefaultExtractorsFactory
 import androidx.media3.session.MediaSession
 import androidx.media3.session.SessionToken
-import android.support.v4.media.session.MediaSessionCompat
-import android.support.v4.media.session.MediaSessionCompat.Token
 import androidx.media3.ui.PlayerNotificationManager
 import androidx.media3.ui.PlayerNotificationManager.BitmapCallback
 import androidx.media3.ui.PlayerNotificationManager.MediaDescriptionAdapter
