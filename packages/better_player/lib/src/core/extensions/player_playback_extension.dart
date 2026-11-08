@@ -21,9 +21,7 @@ extension PlayerPlaybackExtension on BetterPlayerController {
       _playbackState = _playbackState.copyWith(
         hasCurrentDataSourceStarted: true,
       );
-      _playbackState = _playbackState.copyWith(
-        wasPlayingBeforePause: false,
-      );
+      _playbackState = _playbackState.copyWith(wasPlayingBeforePause: false);
       _postEvent(PlayerEvent(PlayerEventType.play));
       _postControllerEvent(PlayerControllerEvent.play);
     }
@@ -98,10 +96,10 @@ extension PlayerPlaybackExtension on BetterPlayerController {
     );
   }
 
-  ///Set playback speed of video. Allows to set speed value between 0 and 4.
+  ///Set playback speed of video. Allows speed values between 0.0 and 10.0.
   Future<void> setSpeed(double speed) async {
-    if (speed <= 0 || speed > 4) {
-      throw ArgumentError('Speed must be between 0 and 4');
+    if (speed <= 0 || speed > 10) {
+      throw ArgumentError('Speed must be between 0 and 10');
     }
     if (_engine == null) {
       throw StateError('The data source has not been initialized');

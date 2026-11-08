@@ -76,7 +76,7 @@ void main() {
     test('setSpeed throws ArgumentError for invalid values', () {
       expect(() => controller.setSpeed(0), throwsArgumentError);
       expect(() => controller.setSpeed(-1), throwsArgumentError);
-      expect(() => controller.setSpeed(4.5), throwsArgumentError);
+      expect(() => controller.setSpeed(10.5), throwsArgumentError);
     });
   });
 

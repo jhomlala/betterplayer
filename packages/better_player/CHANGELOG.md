@@ -1,3 +1,7 @@
+## Unreleased
+- Added: `BetterPlayerController.getAudioTracks()` to discover and retrieve audio tracks from both HLS/DASH manifests and native container formats (MKV, MP4, WebM).
+- Updated: Increased playback speed ceiling from `4.0` to `10.0` across `setSpeed()`.
+
 ## 1.34.0
 - [BREAKING_CHANGE] Updated: Streamlined `BetterPlayerFeedController` collection and lease methods. Replaced `insertDataSources` with `insertAll({required int index, required List<PlayerDataSource> sources, List<String>? ids})`, replaced `replaceAt` with `replace({required int index, required PlayerDataSource dataSource, String? id})`, replaced `getLeaseNotifier(index)` with `leaseNotifier(index)`, and required named parameters on `insert({required int index, required PlayerDataSource dataSource, String? id})`. Removed unused `feedConfiguration` constructor parameter.
 - [BREAKING_CHANGE] Updated: Removed unused `onProgress` parameter from `PlayerEngineController.preCache` (all pre-cache events flow through `preCacheProgressStream`).
@@ -945,6 +949,7 @@
 
 ## 0.0.1
 * Initial release.
+
 
 
 

@@ -17,11 +17,7 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
 
   @override
   Future<void> setupLogCallback(
-    void Function({
-      required int levelIndex,
-      required String message,
-    })?
-    callback,
+    void Function({required int levelIndex, required String message})? callback,
   ) async {
     if (callback == null) {
       BetterPlayerApi.setLogCallback(null);
@@ -29,10 +25,7 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
     }
     final ffiFn = BetterPlayerLogCallback$Builder.implementAsListener(
       onLog_message_: (level, message) {
-        callback(
-          levelIndex: level,
-          message: message.toDartString(),
-        );
+        callback(levelIndex: level, message: message.toDartString());
       },
     );
     BetterPlayerApi.setLogCallback(ffiFn);
@@ -151,9 +144,7 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
   }
 
   @override
-  Future<int?> create({
-    BufferingConfiguration? bufferingConfiguration,
-  }) async {
+  Future<int?> create({BufferingConfiguration? bufferingConfiguration}) async {
     int? currentTextureId;
 
     final callback = BetterPlayerCallback$Builder.implementAsListener(
@@ -266,11 +257,7 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
         }
       },
       onError_errorMessage_errorDetails_:
-          (
-            errorCode,
-            errorMessage,
-            errorDetails,
-          ) {
+          (errorCode, errorMessage, errorDetails) {
             if (currentTextureId == null) return;
             _eventControllers[currentTextureId]?.addError(
               PlatformException(
@@ -332,9 +319,7 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
       );
     } else {
       final headers =
-          dataSource.headers?.map(
-            (key, value) => MapEntry(key, value ?? ''),
-          ) ??
+          dataSource.headers?.map((key, value) => MapEntry(key, value ?? '')) ??
           const <String, String>{};
 
       player.setDataSourceURLString(
@@ -407,13 +392,7 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
     _preCacheCallback =
         BetterPlayerPreCacheCallback$Builder.implementAsListener(
           onProgressWithUrl_cacheKey_progress_bytesDownloaded_totalBytes_:
-              (
-                url,
-                cacheKey,
-                progress,
-                bytesDownloaded,
-                totalBytes,
-              ) {
+              (url, cacheKey, progress, bytesDownloaded, totalBytes) {
                 emitPreCacheProgress(
                   PreCacheProgress(
                     url: url.toDartString(),
@@ -476,20 +455,18 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
   @override
   Future<void> showExternalPlaybackPicker({required int? textureId}) async {
     try {
-      await _channel.invokeMethod<void>(
-        'showExternalPlaybackPicker',
-        {'textureId': textureId},
-      );
+      await _channel.invokeMethod<void>('showExternalPlaybackPicker', {
+        'textureId': textureId,
+      });
     } on PlatformException catch (_) {}
   }
 
   @override
   Future<void> setScreenCaptureProtection({required bool enabled}) async {
     try {
-      await _channel.invokeMethod<void>(
-        'setScreenCaptureProtection',
-        {'enabled': enabled},
-      );
+      await _channel.invokeMethod<void>('setScreenCaptureProtection', {
+        'enabled': enabled,
+      });
     } on PlatformException catch (_) {}
   }
 
@@ -506,6 +483,20 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
       height: height ?? 0,
       bitrate: bitrate ?? 0,
     );
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getAudioTracks(int? textureId) async {
+    if (textureId == null) return const <Map<String, dynamic>>[];
+    final player = getPlayer(textureId);
+    if (player == null) return const <Map<String, dynamic>>[];
+    final jsonStr = player.getAudioTracksJson();
+    try {
+      final decoded = jsonDecode(jsonStr) as List<dynamic>;
+      return decoded.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+    } on Object catch (_) {
+      return const <Map<String, dynamic>>[];
+    }
   }
 
   @override
@@ -601,6 +592,7 @@ abstract class BetterPlayerWrapper {
     required int bitrate,
   });
   void setAudioTrack({required String name, required int index});
+  String getAudioTracksJson();
   void setTextTrack({required String name, required int index});
   void enablePictureInPicture(objc.CGRect frame);
   void disablePictureInPicture();
@@ -689,6 +681,9 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
   @override
   void setAudioTrack({required String name, required int index}) =>
       _player.setAudioTrackWithName(name.toNSString(), index: index);
+
+  @override
+  String getAudioTracksJson() => _player.getAudioTracksJson().toDartString();
 
   @override
   void setTextTrack({required String name, required int index}) =>

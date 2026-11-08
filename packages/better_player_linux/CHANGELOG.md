@@ -1,3 +1,7 @@
+## Unreleased
+- Added: `getAudioTracks` implementation to query container and stream audio tracks from mpv `track-list`.
+- Updated: Increased playback speed ceiling from `4.0` to `10.0` in `setSpeed`.
+
 ## 1.0.2
 - Updated: Modernized `analysis_options.yaml` to inherit root options and resolved static analysis lints.
 

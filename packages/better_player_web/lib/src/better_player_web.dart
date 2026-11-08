@@ -155,6 +155,10 @@ class BetterPlayerWeb extends BetterPlayerPlatform {
   }
 
   @override
+  Future<List<Map<String, dynamic>>> getAudioTracks(int? textureId) async =>
+      _getPlayer(textureId).getAudioTracks();
+
+  @override
   Future<void> setAudioTrack(int? textureId, String? name, int? index) async =>
       _getPlayer(textureId).setAudioTrack(language: name, index: index);
 

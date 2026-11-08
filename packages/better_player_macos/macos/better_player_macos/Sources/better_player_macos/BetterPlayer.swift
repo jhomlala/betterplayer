@@ -746,7 +746,7 @@ private var externalPlaybackActiveContext = 0
     ///   - speed: The playback speed.
     @objc public func setSpeed(_ speed: Double) {
         BetterPlayerApi.log(0, "setSpeed: \(speed)")
-        guard speed >= 0, speed <= 4.0 else { return }
+        guard speed >= 0, speed <= 10.0 else { return }
         playerRate = Float(speed == 0.0 ? 1.0 : speed)
         if isPlaying {
             applyPlayerRate()
@@ -871,6 +871,32 @@ private var externalPlaybackActiveContext = 0
     }
 
     // MARK: - Audio & Tracks
+
+    /// Returns a JSON string of available audio tracks.
+    @objc public func getAudioTracksJson() -> String {
+        guard let group = player.currentItem?.asset.mediaSelectionGroup(forMediaCharacteristic: AVMediaCharacteristic.audible) else {
+            return "[]"
+        }
+        var tracks: [[String: Any]] = []
+        let options = group.options
+        for (index, option) in options.enumerated() {
+            let metas = AVMetadataItem.metadataItems(from: option.commonMetadata, withKey: AVMetadataKey.commonKeyTitle as (NSCopying & NSObjectProtocol), keySpace: .common)
+            let title = metas.first?.stringValue ?? ""
+            let displayName = option.displayName
+            let lang = option.extendedLanguageTag ?? option.locale?.identifier ?? "und"
+            let label = !title.isEmpty ? title : (!displayName.isEmpty ? displayName : "Track \(index)")
+            tracks.append([
+                "index": index,
+                "label": label,
+                "language": lang
+            ])
+        }
+        if let data = try? JSONSerialization.data(withJSONObject: tracks, options: []),
+           let jsonString = String(data: data, encoding: .utf8) {
+            return jsonString
+        }
+        return "[]"
+    }
 
     /// Sets the audio track by name and index.
     /// - Parameters:

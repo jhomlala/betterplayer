@@ -26,6 +26,7 @@ abstract class BetterPlayerLinuxPlayer {
     required int bitrate,
   });
   Future<void> setAudioTrack({required String name, required int index});
+  Future<List<Map<String, dynamic>>> getAudioTracks();
   Future<void> setTextTrack({required String name, required int index});
 }
 
@@ -291,10 +292,7 @@ class MpvPlayer implements BetterPlayerLinuxPlayer {
             _completedEmitted = true;
             _log(message: 'PlaybackState: ENDED');
             _eventController.add(
-              VideoEvent(
-                eventType: VideoEventType.completed,
-                key: _currentKey,
-              ),
+              VideoEvent(eventType: VideoEventType.completed, key: _currentKey),
             );
           }
         }
@@ -610,7 +608,7 @@ class MpvPlayer implements BetterPlayerLinuxPlayer {
   Future<void> setSpeed(double speed) async {
     if (_isDisposed) return;
     _log(message: 'setSpeed: $speed', levelIndex: 0);
-    _setPropertyDouble(name: 'speed', value: speed.clamp(0.01, 4.0));
+    _setPropertyDouble(name: 'speed', value: speed.clamp(0.01, 10.0));
   }
 
   @override
@@ -727,6 +725,36 @@ class MpvPlayer implements BetterPlayerLinuxPlayer {
       }
     }
     return null;
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getAudioTracks() async {
+    if (_isDisposed) return const <Map<String, dynamic>>[];
+    final count = _getIntProperty('track-list/count');
+    final tracks = <Map<String, dynamic>>[];
+    var audioIndex = 0;
+    for (var i = 0; i < count; i++) {
+      final type = _getStringProperty('track-list/$i/type');
+      if (type == 'audio') {
+        final title = _getStringProperty('track-list/$i/title');
+        final lang = _getStringProperty('track-list/$i/lang');
+        final codec = _getStringProperty('track-list/$i/codec');
+        final bitrate = _getIntProperty('track-list/$i/demux-bitrate');
+        final channels = _getIntProperty('track-list/$i/demux-channel-count');
+        tracks.add(<String, dynamic>{
+          'index': audioIndex,
+          'label':
+              title ??
+              (lang != null ? lang.toUpperCase() : 'Track $audioIndex'),
+          'language': lang ?? 'und',
+          'mimeType': codec != null ? 'audio/$codec' : null,
+          'bitrate': bitrate,
+          'channelCount': channels,
+        });
+        audioIndex++;
+      }
+    }
+    return tracks;
   }
 
   @override

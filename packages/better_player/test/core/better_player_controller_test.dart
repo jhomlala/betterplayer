@@ -19,1323 +19,1302 @@ void main() {
 
   setUpAll(BetterPlayerTestUtils.setupMockPlatform);
 
-  group(
-    'BetterPlayerController tests',
-    () {
-      setUp(() {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMethodCallHandler(
-              mockMethodChannel.channel,
-              mockMethodChannel.handle,
-            );
-      });
-
-      test('Create controller without data source', () {
-        final betterPlayerMockController = BetterPlayerMockController(
-          const PlayerConfiguration(),
-        );
-        expect(betterPlayerMockController.betterPlayerDataSource, null);
-        expect(betterPlayerMockController.isEngineReady, false);
-        expect(betterPlayerMockController.eventListeners.isEmpty, true);
-      });
-
-      test('Add and remove event listener', () {
-        final betterPlayerMockController = BetterPlayerMockController(
-          const PlayerConfiguration(),
-        );
-        void listener(PlayerEvent event) {}
-        betterPlayerMockController.addEventsListener(listener);
-        expect(betterPlayerMockController.eventListeners.length, 1);
-        betterPlayerMockController.removeEventsListener(listener);
-        expect(betterPlayerMockController.eventListeners.isEmpty, true);
-      });
-
-      test('PiP events are posted correctly on engine state change', () async {
-        final engineController = MockPlayerEngineController();
-        final betterPlayerMockController = BetterPlayerMockController(
-          const PlayerConfiguration(),
-          playerEngineController: engineController,
-        );
-
-        final events = <PlayerEventType>[];
-        betterPlayerMockController.addEventsListener((event) {
-          events.add(event.betterPlayerEventType);
-        });
-
-        engineController.emitInitialized();
-
-        engineController.value = engineController.value.copyWith(isPip: true);
-        engineController.notifyListeners();
-
-        engineController.value = engineController.value.copyWith(isPip: false);
-        engineController.notifyListeners();
-
-        expect(events, contains(PlayerEventType.pipStart));
-        expect(events, contains(PlayerEventType.pipStop));
-      });
-
-      test('setSpeed changes speed', () async {
-        final engineController = MockPlayerEngineController();
-        final betterPlayerMockController = BetterPlayerMockController(
-          const PlayerConfiguration(),
-          playerEngineController: engineController,
-        );
-
-        await betterPlayerMockController.setSpeed(1.5);
-        expect(engineController.speed, 1.5);
-      });
-
-      test('setVolume changes volume', () async {
-        final engineController = MockPlayerEngineController();
-        final betterPlayerMockController = BetterPlayerMockController(
-          const PlayerConfiguration(),
-          playerEngineController: engineController,
-        );
-
-        await betterPlayerMockController.setVolume(0.8);
-        expect(engineController.volume, 0.8);
-      });
-
-      test('setLooping changes looping', () async {
-        final engineController = MockPlayerEngineController();
-        final betterPlayerMockController = BetterPlayerMockController(
-          const PlayerConfiguration(),
-          playerEngineController: engineController,
-        );
-
-        await betterPlayerMockController.setLooping(true);
-        expect(engineController.isLoopingState, true);
-      });
-
-      test('isLiveStream returns true for live stream source', () async {
-        final betterPlayerMockController = BetterPlayerMockController(
-          const PlayerConfiguration(),
-        );
-        await betterPlayerMockController.setupDataSource(
-          PlayerDataSource.network('url', liveStream: true),
-        );
-        expect(betterPlayerMockController.isLiveStream(), true);
-      });
-
-      test('isVideoInitialized returns correct value', () async {
-        final betterPlayerMockController = BetterPlayerMockController(
-          const PlayerConfiguration(),
-        );
-        expect(
-          betterPlayerMockController.isVideoInitialized,
-          throwsStateError,
-        );
-
-        final engineController = MockPlayerEngineController();
-        final betterPlayerMockControllerWithEngine = BetterPlayerMockController(
-          const PlayerConfiguration(),
-          playerEngineController: engineController,
-        );
-
-        expect(
-          betterPlayerMockControllerWithEngine.isVideoInitialized(),
-          false,
-        );
-        engineController.emitInitialized();
-        expect(betterPlayerMockControllerWithEngine.isVideoInitialized(), true);
-      });
-
-      test('Setup data source in controller', () async {
-        final betterPlayerMockController = BetterPlayerMockController(
-          const PlayerConfiguration(),
-        );
-        await betterPlayerMockController.setupDataSource(
-          PlayerDataSource.network(
-            BetterPlayerTestUtils.forBiggerBlazesUrl,
-          ),
-        );
-        expect(betterPlayerMockController.betterPlayerDataSource != null, true);
-        expect(betterPlayerMockController.isEngineReady, true);
-      });
-
-      test(
-        'play should change isPlaying flag',
-        () async {
-          final engineController =
-              BetterPlayerTestUtils.setupMockPlayerEngineController();
-          final BetterPlayerController betterPlayerController =
-              BetterPlayerTestUtils.setupBetterPlayerMockController(
-                controller: engineController,
-              );
-          await Future<void>.delayed(const Duration(seconds: 1), () {});
-          await betterPlayerController.play();
-          expect(betterPlayerController.isPlaying(), true);
-        },
-      );
-
-      test(
-        'pause should change isPlaying flag',
-        () async {
-          final engineController =
-              BetterPlayerTestUtils.setupMockPlayerEngineController();
-          final BetterPlayerController betterPlayerController =
-              BetterPlayerTestUtils.setupBetterPlayerMockController(
-                controller: engineController,
-              );
-          await Future<void>.delayed(const Duration(seconds: 1), () {});
-          await betterPlayerController.play();
-          expect(betterPlayerController.isPlaying(), true);
-          await betterPlayerController.pause();
-          expect(betterPlayerController.isPlaying(), false);
-        },
-      );
-
-      test(
-        'seekTo should change player position',
-        () async {
-          final engineController =
-              BetterPlayerTestUtils.setupMockPlayerEngineController();
-          engineController.setDuration(const Duration(seconds: 100));
-          final BetterPlayerController betterPlayerController =
-              BetterPlayerTestUtils.setupBetterPlayerMockController(
-                controller: engineController,
-              );
-          await betterPlayerController.seekTo(const Duration(seconds: 5));
-          var position = await betterPlayerController.position;
-          expect(position, const Duration(seconds: 5));
-          await betterPlayerController.seekTo(const Duration(seconds: 30));
-          position = await betterPlayerController.position;
-          expect(position, const Duration(seconds: 30));
-        },
-      );
-
-      test(
-        'seekTo should send event',
-        () async {
-          final engineController =
-              BetterPlayerTestUtils.setupMockPlayerEngineController();
-          engineController.setDuration(const Duration(seconds: 100));
-          final BetterPlayerController betterPlayerController =
-              BetterPlayerTestUtils.setupBetterPlayerMockController(
-                controller: engineController,
-              );
-
-          var seekEventCalls = 0;
-          var finishEventCalls = 0;
-          betterPlayerController.addEventsListener(
-            (event) {
-              if (event.betterPlayerEventType == PlayerEventType.seekTo) {
-                seekEventCalls += 1;
-              }
-              if (event.betterPlayerEventType == PlayerEventType.finished) {
-                finishEventCalls += 1;
-              }
-            },
+  group('BetterPlayerController tests', () {
+    setUp(() {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+            mockMethodChannel.channel,
+            mockMethodChannel.handle,
           );
-          await betterPlayerController.seekTo(const Duration(seconds: 5));
-          await Future<void>.delayed(const Duration(milliseconds: 100), () {});
-          expect(seekEventCalls, 1);
-          await betterPlayerController.seekTo(const Duration(seconds: 150));
-          await Future<void>.delayed(const Duration(milliseconds: 100), () {});
-          expect(seekEventCalls, 2);
-          expect(finishEventCalls, 1);
-        },
+    });
+
+    test('Create controller without data source', () {
+      final betterPlayerMockController = BetterPlayerMockController(
+        const PlayerConfiguration(),
+      );
+      expect(betterPlayerMockController.betterPlayerDataSource, null);
+      expect(betterPlayerMockController.isEngineReady, false);
+      expect(betterPlayerMockController.eventListeners.isEmpty, true);
+    });
+
+    test('Add and remove event listener', () {
+      final betterPlayerMockController = BetterPlayerMockController(
+        const PlayerConfiguration(),
+      );
+      void listener(PlayerEvent event) {}
+      betterPlayerMockController.addEventsListener(listener);
+      expect(betterPlayerMockController.eventListeners.length, 1);
+      betterPlayerMockController.removeEventsListener(listener);
+      expect(betterPlayerMockController.eventListeners.isEmpty, true);
+    });
+
+    test('PiP events are posted correctly on engine state change', () async {
+      final engineController = MockPlayerEngineController();
+      final betterPlayerMockController = BetterPlayerMockController(
+        const PlayerConfiguration(),
+        playerEngineController: engineController,
       );
 
-      test('full screen and auto play should work', () async {
-        final betterPlayerMockController = BetterPlayerMockController(
-          const PlayerConfiguration(
-            fullScreenByDefault: true,
-            autoPlay: true,
-          ),
-          playerEngineController: MockPlayerEngineController(),
-        );
-        await betterPlayerMockController.setupDataSource(
-          PlayerDataSource.network(
-            BetterPlayerTestUtils.forBiggerBlazesUrl,
-          ),
-        );
-        await Future<void>.delayed(const Duration(seconds: 1), () {});
-        expect(betterPlayerMockController.isFullScreen, true);
-        expect(betterPlayerMockController.isPlaying(), true);
+      final events = <PlayerEventType>[];
+      betterPlayerMockController.addEventsListener((event) {
+        events.add(event.betterPlayerEventType);
       });
 
-      test('exitFullScreen should exit full screen', () async {
-        final betterPlayerMockController =
-            BetterPlayerTestUtils.setupBetterPlayerMockController(
-              controller: MockPlayerEngineController(),
-            );
-        expect(betterPlayerMockController.isFullScreen, false);
-        betterPlayerMockController.exitFullScreen();
-        expect(betterPlayerMockController.isFullScreen, false);
+      engineController.emitInitialized();
+
+      engineController.value = engineController.value.copyWith(isPip: true);
+      engineController.notifyListeners();
+
+      engineController.value = engineController.value.copyWith(isPip: false);
+      engineController.notifyListeners();
+
+      expect(events, contains(PlayerEventType.pipStart));
+      expect(events, contains(PlayerEventType.pipStop));
+    });
+
+    test('setSpeed changes speed', () async {
+      final engineController = MockPlayerEngineController();
+      final betterPlayerMockController = BetterPlayerMockController(
+        const PlayerConfiguration(),
+        playerEngineController: engineController,
+      );
+
+      await betterPlayerMockController.setSpeed(1.5);
+      expect(engineController.speed, 1.5);
+    });
+
+    test('setVolume changes volume', () async {
+      final engineController = MockPlayerEngineController();
+      final betterPlayerMockController = BetterPlayerMockController(
+        const PlayerConfiguration(),
+        playerEngineController: engineController,
+      );
+
+      await betterPlayerMockController.setVolume(0.8);
+      expect(engineController.volume, 0.8);
+    });
+
+    test('setLooping changes looping', () async {
+      final engineController = MockPlayerEngineController();
+      final betterPlayerMockController = BetterPlayerMockController(
+        const PlayerConfiguration(),
+        playerEngineController: engineController,
+      );
+
+      await betterPlayerMockController.setLooping(true);
+      expect(engineController.isLoopingState, true);
+    });
+
+    test('isLiveStream returns true for live stream source', () async {
+      final betterPlayerMockController = BetterPlayerMockController(
+        const PlayerConfiguration(),
+      );
+      await betterPlayerMockController.setupDataSource(
+        PlayerDataSource.network('url', liveStream: true),
+      );
+      expect(betterPlayerMockController.isLiveStream(), true);
+    });
+
+    test('isVideoInitialized returns correct value', () async {
+      final betterPlayerMockController = BetterPlayerMockController(
+        const PlayerConfiguration(),
+      );
+      expect(betterPlayerMockController.isVideoInitialized, throwsStateError);
+
+      final engineController = MockPlayerEngineController();
+      final betterPlayerMockControllerWithEngine = BetterPlayerMockController(
+        const PlayerConfiguration(),
+        playerEngineController: engineController,
+      );
+
+      expect(betterPlayerMockControllerWithEngine.isVideoInitialized(), false);
+      engineController.emitInitialized();
+      expect(betterPlayerMockControllerWithEngine.isVideoInitialized(), true);
+    });
+
+    test('Setup data source in controller', () async {
+      final betterPlayerMockController = BetterPlayerMockController(
+        const PlayerConfiguration(),
+      );
+      await betterPlayerMockController.setupDataSource(
+        PlayerDataSource.network(BetterPlayerTestUtils.forBiggerBlazesUrl),
+      );
+      expect(betterPlayerMockController.betterPlayerDataSource != null, true);
+      expect(betterPlayerMockController.isEngineReady, true);
+    });
+
+    test('play should change isPlaying flag', () async {
+      final engineController =
+          BetterPlayerTestUtils.setupMockPlayerEngineController();
+      final BetterPlayerController betterPlayerController =
+          BetterPlayerTestUtils.setupBetterPlayerMockController(
+            controller: engineController,
+          );
+      await Future<void>.delayed(const Duration(seconds: 1), () {});
+      await betterPlayerController.play();
+      expect(betterPlayerController.isPlaying(), true);
+    });
+
+    test('pause should change isPlaying flag', () async {
+      final engineController =
+          BetterPlayerTestUtils.setupMockPlayerEngineController();
+      final BetterPlayerController betterPlayerController =
+          BetterPlayerTestUtils.setupBetterPlayerMockController(
+            controller: engineController,
+          );
+      await Future<void>.delayed(const Duration(seconds: 1), () {});
+      await betterPlayerController.play();
+      expect(betterPlayerController.isPlaying(), true);
+      await betterPlayerController.pause();
+      expect(betterPlayerController.isPlaying(), false);
+    });
+
+    test('seekTo should change player position', () async {
+      final engineController =
+          BetterPlayerTestUtils.setupMockPlayerEngineController();
+      engineController.setDuration(const Duration(seconds: 100));
+      final BetterPlayerController betterPlayerController =
+          BetterPlayerTestUtils.setupBetterPlayerMockController(
+            controller: engineController,
+          );
+      await betterPlayerController.seekTo(const Duration(seconds: 5));
+      var position = await betterPlayerController.position;
+      expect(position, const Duration(seconds: 5));
+      await betterPlayerController.seekTo(const Duration(seconds: 30));
+      position = await betterPlayerController.position;
+      expect(position, const Duration(seconds: 30));
+    });
+
+    test('seekTo should send event', () async {
+      final engineController =
+          BetterPlayerTestUtils.setupMockPlayerEngineController();
+      engineController.setDuration(const Duration(seconds: 100));
+      final BetterPlayerController betterPlayerController =
+          BetterPlayerTestUtils.setupBetterPlayerMockController(
+            controller: engineController,
+          );
+
+      var seekEventCalls = 0;
+      var finishEventCalls = 0;
+      betterPlayerController.addEventsListener((event) {
+        if (event.betterPlayerEventType == PlayerEventType.seekTo) {
+          seekEventCalls += 1;
+        }
+        if (event.betterPlayerEventType == PlayerEventType.finished) {
+          finishEventCalls += 1;
+        }
       });
+      await betterPlayerController.seekTo(const Duration(seconds: 5));
+      await Future<void>.delayed(const Duration(milliseconds: 100), () {});
+      expect(seekEventCalls, 1);
+      await betterPlayerController.seekTo(const Duration(seconds: 150));
+      await Future<void>.delayed(const Duration(milliseconds: 100), () {});
+      expect(seekEventCalls, 2);
+      expect(finishEventCalls, 1);
+    });
 
-      test('enterFullScreen should enter full screen', () async {
-        final betterPlayerMockController =
-            BetterPlayerTestUtils.setupBetterPlayerMockController();
-        await betterPlayerMockController.setupDataSource(
-          PlayerDataSource.network(
-            BetterPlayerTestUtils.forBiggerBlazesUrl,
-          ),
-        );
-        expect(betterPlayerMockController.isFullScreen, false);
-        betterPlayerMockController.enterFullScreen();
-        expect(betterPlayerMockController.isFullScreen, true);
+    test('full screen and auto play should work', () async {
+      final betterPlayerMockController = BetterPlayerMockController(
+        const PlayerConfiguration(fullScreenByDefault: true, autoPlay: true),
+        playerEngineController: MockPlayerEngineController(),
+      );
+      await betterPlayerMockController.setupDataSource(
+        PlayerDataSource.network(BetterPlayerTestUtils.forBiggerBlazesUrl),
+      );
+      await Future<void>.delayed(const Duration(seconds: 1), () {});
+      expect(betterPlayerMockController.isFullScreen, true);
+      expect(betterPlayerMockController.isPlaying(), true);
+    });
+
+    test('exitFullScreen should exit full screen', () async {
+      final betterPlayerMockController =
+          BetterPlayerTestUtils.setupBetterPlayerMockController(
+            controller: MockPlayerEngineController(),
+          );
+      expect(betterPlayerMockController.isFullScreen, false);
+      betterPlayerMockController.exitFullScreen();
+      expect(betterPlayerMockController.isFullScreen, false);
+    });
+
+    test('enterFullScreen should enter full screen', () async {
+      final betterPlayerMockController =
+          BetterPlayerTestUtils.setupBetterPlayerMockController();
+      await betterPlayerMockController.setupDataSource(
+        PlayerDataSource.network(BetterPlayerTestUtils.forBiggerBlazesUrl),
+      );
+      expect(betterPlayerMockController.isFullScreen, false);
+      betterPlayerMockController.enterFullScreen();
+      expect(betterPlayerMockController.isFullScreen, true);
+    });
+
+    test('toggleFullScreen should change full screen state', () async {
+      final betterPlayerMockController =
+          BetterPlayerTestUtils.setupBetterPlayerMockController();
+      await betterPlayerMockController.setupDataSource(
+        PlayerDataSource.network(BetterPlayerTestUtils.forBiggerBlazesUrl),
+      );
+
+      expect(betterPlayerMockController.isFullScreen, false);
+      betterPlayerMockController.toggleFullScreen();
+      expect(betterPlayerMockController.isFullScreen, true);
+      betterPlayerMockController.toggleFullScreen();
+      expect(betterPlayerMockController.isFullScreen, false);
+    });
+
+    test('setLooping changes looping state', () async {
+      final mockPlayerEngineController = MockPlayerEngineController();
+      final betterPlayerMockController =
+          BetterPlayerTestUtils.setupBetterPlayerMockController(
+            controller: mockPlayerEngineController,
+          );
+      await mockPlayerEngineController.setNetworkDataSource(
+        BetterPlayerTestUtils.bugBuckBunnyVideoUrl,
+      );
+      expect(mockPlayerEngineController.isLoopingState, false);
+      await betterPlayerMockController.setLooping(true);
+      expect(mockPlayerEngineController.isLoopingState, true);
+      await betterPlayerMockController.setLooping(false);
+      expect(mockPlayerEngineController.isLoopingState, false);
+    });
+
+    test('setControlsVisibility updates controlVisiblityStream', () async {
+      final betterPlayerMockController =
+          BetterPlayerTestUtils.setupBetterPlayerMockController();
+      var showCalls = 0;
+      var hideCalls = 0;
+      betterPlayerMockController.controlsVisibilityStream.listen((event) {
+        if (event) {
+          showCalls += 1;
+        } else {
+          hideCalls += 1;
+        }
       });
+      betterPlayerMockController.setControlsVisibility(false);
+      betterPlayerMockController.setControlsVisibility(false);
+      betterPlayerMockController.setControlsVisibility(true);
+      betterPlayerMockController.setControlsVisibility(true);
+      betterPlayerMockController.setControlsVisibility(false);
+      await Future<void>.delayed(const Duration(milliseconds: 100), () {});
+      expect(hideCalls, 3);
+      expect(showCalls, 2);
+    });
 
-      test('toggleFullScreen should change full screen state', () async {
-        final betterPlayerMockController =
-            BetterPlayerTestUtils.setupBetterPlayerMockController();
-        await betterPlayerMockController.setupDataSource(
-          PlayerDataSource.network(
-            BetterPlayerTestUtils.forBiggerBlazesUrl,
-          ),
-        );
+    test('setControlsEnabled updates values correctly', () async {
+      final betterPlayerMockController =
+          BetterPlayerTestUtils.setupBetterPlayerMockController();
+      final visibilityEvents = <bool>[];
+      betterPlayerMockController.controlsVisibilityStream.listen(
+        visibilityEvents.add,
+      );
+      betterPlayerMockController.setControlsEnabled(false);
+      betterPlayerMockController.setControlsEnabled(false);
+      await Future<void>.delayed(const Duration(milliseconds: 100), () {});
+      expect(visibilityEvents, [false, false]);
+      expect(betterPlayerMockController.controlsEnabled, false);
+      expect(betterPlayerMockController.isControlsVisible, false);
 
-        expect(betterPlayerMockController.isFullScreen, false);
-        betterPlayerMockController.toggleFullScreen();
-        expect(betterPlayerMockController.isFullScreen, true);
-        betterPlayerMockController.toggleFullScreen();
-        expect(betterPlayerMockController.isFullScreen, false);
+      // setControlsVisibility(true) is ignored while controls are disabled
+      betterPlayerMockController.setControlsVisibility(true);
+      await Future<void>.delayed(const Duration(milliseconds: 50), () {});
+      expect(visibilityEvents, [false, false]);
+      expect(betterPlayerMockController.isControlsVisible, false);
+
+      betterPlayerMockController.setControlsEnabled(true);
+      await Future<void>.delayed(const Duration(milliseconds: 100), () {});
+      expect(betterPlayerMockController.controlsEnabled, true);
+      expect(betterPlayerMockController.isControlsVisible, true);
+      expect(visibilityEvents, [false, false, true]);
+    });
+
+    test('toggleControlsVisibility sends correct events', () async {
+      final betterPlayerMockController =
+          BetterPlayerTestUtils.setupBetterPlayerMockController();
+      var controlsVisibleEventCount = 0;
+      var controlsHiddenEventCount = 0;
+      betterPlayerMockController.addEventsListener((event) {
+        if (event.betterPlayerEventType == PlayerEventType.controlsVisible) {
+          controlsVisibleEventCount += 1;
+        }
+        if (event.betterPlayerEventType == PlayerEventType.controlsHiddenEnd) {
+          controlsHiddenEventCount += 1;
+        }
       });
+      betterPlayerMockController.toggleControlsVisibility(false);
+      betterPlayerMockController.toggleControlsVisibility(true);
+      betterPlayerMockController.toggleControlsVisibility(true);
+      await Future<void>.delayed(const Duration(milliseconds: 100), () {});
+      expect(controlsVisibleEventCount, 2);
+      expect(controlsHiddenEventCount, 1);
+    });
 
-      test('setLooping changes looping state', () async {
-        final mockPlayerEngineController = MockPlayerEngineController();
-        final betterPlayerMockController =
-            BetterPlayerTestUtils.setupBetterPlayerMockController(
-              controller: mockPlayerEngineController,
-            );
-        await mockPlayerEngineController.setNetworkDataSource(
-          BetterPlayerTestUtils.bugBuckBunnyVideoUrl,
-        );
-        expect(mockPlayerEngineController.isLoopingState, false);
-        await betterPlayerMockController.setLooping(true);
-        expect(mockPlayerEngineController.isLoopingState, true);
-        await betterPlayerMockController.setLooping(false);
-        expect(mockPlayerEngineController.isLoopingState, false);
-      });
-
-      test('setControlsVisibility updates controlVisiblityStream', () async {
-        final betterPlayerMockController =
-            BetterPlayerTestUtils.setupBetterPlayerMockController();
-        var showCalls = 0;
-        var hideCalls = 0;
-        betterPlayerMockController.controlsVisibilityStream.listen(
-          (event) {
-            if (event) {
-              showCalls += 1;
-            } else {
-              hideCalls += 1;
-            }
-          },
-        );
-        betterPlayerMockController.setControlsVisibility(false);
-        betterPlayerMockController.setControlsVisibility(false);
-        betterPlayerMockController.setControlsVisibility(true);
-        betterPlayerMockController.setControlsVisibility(true);
-        betterPlayerMockController.setControlsVisibility(false);
-        await Future<void>.delayed(const Duration(milliseconds: 100), () {});
-        expect(hideCalls, 3);
-        expect(showCalls, 2);
-      });
-
-      test('setControlsEnabled updates values correctly', () async {
+    test(
+      'toggleControlsVisibility updates isControlsVisible and emits to controlsVisibilityStream',
+      () async {
         final betterPlayerMockController =
             BetterPlayerTestUtils.setupBetterPlayerMockController();
         final visibilityEvents = <bool>[];
         betterPlayerMockController.controlsVisibilityStream.listen(
           visibilityEvents.add,
         );
-        betterPlayerMockController.setControlsEnabled(false);
-        betterPlayerMockController.setControlsEnabled(false);
-        await Future<void>.delayed(const Duration(milliseconds: 100), () {});
-        expect(visibilityEvents, [false, false]);
-        expect(betterPlayerMockController.controlsEnabled, false);
+
         expect(betterPlayerMockController.isControlsVisible, false);
 
-        // setControlsVisibility(true) is ignored while controls are disabled
-        betterPlayerMockController.setControlsVisibility(true);
-        await Future<void>.delayed(const Duration(milliseconds: 50), () {});
-        expect(visibilityEvents, [false, false]);
-        expect(betterPlayerMockController.isControlsVisible, false);
-
-        betterPlayerMockController.setControlsEnabled(true);
-        await Future<void>.delayed(const Duration(milliseconds: 100), () {});
-        expect(betterPlayerMockController.controlsEnabled, true);
+        betterPlayerMockController.toggleControlsVisibility(true);
         expect(betterPlayerMockController.isControlsVisible, true);
-        expect(visibilityEvents, [false, false, true]);
-      });
 
-      test('toggleControlsVisibility sends correct events', () async {
-        final betterPlayerMockController =
-            BetterPlayerTestUtils.setupBetterPlayerMockController();
-        var controlsVisibleEventCount = 0;
-        var controlsHiddenEventCount = 0;
-        betterPlayerMockController.addEventsListener(
-          (event) {
-            if (event.betterPlayerEventType ==
-                PlayerEventType.controlsVisible) {
-              controlsVisibleEventCount += 1;
-            }
-            if (event.betterPlayerEventType ==
-                PlayerEventType.controlsHiddenEnd) {
-              controlsHiddenEventCount += 1;
-            }
-          },
-        );
+        // Duplicate call with same state should not emit duplicate stream event
+        betterPlayerMockController.toggleControlsVisibility(true);
+
         betterPlayerMockController.toggleControlsVisibility(false);
-        betterPlayerMockController.toggleControlsVisibility(true);
-        betterPlayerMockController.toggleControlsVisibility(true);
+        expect(betterPlayerMockController.isControlsVisible, false);
+
         await Future<void>.delayed(const Duration(milliseconds: 100), () {});
-        expect(controlsVisibleEventCount, 2);
-        expect(controlsHiddenEventCount, 1);
+        expect(visibilityEvents, [true, false]);
+      },
+    );
+
+    test('postEvent sends events to listeners', () async {
+      final betterPlayerMockController =
+          BetterPlayerTestUtils.setupBetterPlayerMockController();
+
+      var firstEventCounter = 0;
+      var secondEventCounter = 0;
+
+      betterPlayerMockController.addEventsListener((event) {
+        firstEventCounter++;
       });
-
-      test(
-        'toggleControlsVisibility updates isControlsVisible and emits to controlsVisibilityStream',
-        () async {
-          final betterPlayerMockController =
-              BetterPlayerTestUtils.setupBetterPlayerMockController();
-          final visibilityEvents = <bool>[];
-          betterPlayerMockController.controlsVisibilityStream.listen(
-            visibilityEvents.add,
-          );
-
-          expect(betterPlayerMockController.isControlsVisible, false);
-
-          betterPlayerMockController.toggleControlsVisibility(true);
-          expect(betterPlayerMockController.isControlsVisible, true);
-
-          // Duplicate call with same state should not emit duplicate stream event
-          betterPlayerMockController.toggleControlsVisibility(true);
-
-          betterPlayerMockController.toggleControlsVisibility(false);
-          expect(betterPlayerMockController.isControlsVisible, false);
-
-          await Future<void>.delayed(const Duration(milliseconds: 100), () {});
-          expect(visibilityEvents, [true, false]);
-        },
+      betterPlayerMockController.addEventsListener((event) {
+        secondEventCounter++;
+      });
+      betterPlayerMockController.postEvent(PlayerEvent(PlayerEventType.play));
+      betterPlayerMockController.postEvent(
+        PlayerEvent(PlayerEventType.progress),
       );
 
-      test('postEvent sends events to listeners', () async {
-        final betterPlayerMockController =
-            BetterPlayerTestUtils.setupBetterPlayerMockController();
+      betterPlayerMockController.postEvent(PlayerEvent(PlayerEventType.pause));
+      await Future<void>.delayed(const Duration(milliseconds: 100), () {});
+      expect(firstEventCounter, 3);
+      expect(secondEventCounter, 3);
+    });
 
-        var firstEventCounter = 0;
-        var secondEventCounter = 0;
+    test('addEventsListener update list of event listener', () async {
+      final betterPlayerMockController =
+          BetterPlayerTestUtils.setupBetterPlayerMockController();
+      betterPlayerMockController.addEventsListener((event) {});
+      betterPlayerMockController.addEventsListener((event) {});
+      expect(betterPlayerMockController.eventListeners.length, 2);
+    });
 
-        betterPlayerMockController.addEventsListener(
-          (event) {
-            firstEventCounter++;
-          },
-        );
-        betterPlayerMockController.addEventsListener(
-          (event) {
-            secondEventCounter++;
-          },
-        );
-        betterPlayerMockController.postEvent(
-          PlayerEvent(PlayerEventType.play),
-        );
-        betterPlayerMockController.postEvent(
-          PlayerEvent(PlayerEventType.progress),
-        );
+    void dummyEventListener(PlayerEvent event) {}
 
-        betterPlayerMockController.postEvent(
-          PlayerEvent(PlayerEventType.pause),
-        );
-        await Future<void>.delayed(const Duration(milliseconds: 100), () {});
-        expect(firstEventCounter, 3);
-        expect(secondEventCounter, 3);
+    test('removeEventsListener update list of event listener', () async {
+      final betterPlayerMockController =
+          BetterPlayerTestUtils.setupBetterPlayerMockController();
+      betterPlayerMockController.addEventsListener(dummyEventListener);
+      betterPlayerMockController.addEventsListener((event) {});
+      expect(betterPlayerMockController.eventListeners.length, 2);
+      betterPlayerMockController.removeEventsListener(dummyEventListener);
+      expect(betterPlayerMockController.eventListeners.length, 1);
+    });
+
+    test('setVolume changes volume', () async {
+      final mockPlayerEngineController = MockPlayerEngineController();
+      final betterPlayerMockController =
+          BetterPlayerTestUtils.setupBetterPlayerMockController(
+            controller: mockPlayerEngineController,
+          );
+      await mockPlayerEngineController.setNetworkDataSource(
+        BetterPlayerTestUtils.bugBuckBunnyVideoUrl,
+      );
+      await betterPlayerMockController.setVolume(1);
+      expect(mockPlayerEngineController.volume, 1);
+      await betterPlayerMockController.setVolume(0.5);
+      expect(mockPlayerEngineController.volume, 0.5);
+    });
+
+    test('setVolume should send event', () async {
+      final engineController =
+          BetterPlayerTestUtils.setupMockPlayerEngineController();
+      final BetterPlayerController betterPlayerMockController =
+          BetterPlayerTestUtils.setupBetterPlayerMockController(
+            controller: engineController,
+          );
+
+      var setVolumeCalls = 0;
+      betterPlayerMockController.addEventsListener((event) {
+        if (event.betterPlayerEventType == PlayerEventType.setVolume) {
+          setVolumeCalls += 1;
+        }
+      });
+      await betterPlayerMockController.setVolume(1);
+      await Future<void>.delayed(const Duration(milliseconds: 100), () {});
+      expect(setVolumeCalls, 1);
+      await betterPlayerMockController.setVolume(1);
+      await Future<void>.delayed(const Duration(milliseconds: 100), () {});
+      expect(setVolumeCalls, 2);
+    });
+
+    test('setSpeed changes speed', () async {
+      final mockPlayerEngineController = MockPlayerEngineController();
+      final betterPlayerMockController =
+          BetterPlayerTestUtils.setupBetterPlayerMockController(
+            controller: mockPlayerEngineController,
+          );
+      await mockPlayerEngineController.setNetworkDataSource(
+        BetterPlayerTestUtils.bugBuckBunnyVideoUrl,
+      );
+      await betterPlayerMockController.setSpeed(1.1);
+      expect(mockPlayerEngineController.speed, 1.1);
+      await betterPlayerMockController.setSpeed(0.5);
+      expect(mockPlayerEngineController.speed, 0.5);
+      await betterPlayerMockController.setSpeed(2.5);
+      expect(mockPlayerEngineController.speed, 2.5);
+      await betterPlayerMockController.setSpeed(10);
+      expect(mockPlayerEngineController.speed, 10);
+      expect(
+        betterPlayerMockController.setSpeed(10.1),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(mockPlayerEngineController.speed, 10);
+      expect(
+        betterPlayerMockController.setSpeed(0),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(mockPlayerEngineController.speed, 10.0);
+    });
+
+    test('setSpeed should send event', () async {
+      final engineController =
+          BetterPlayerTestUtils.setupMockPlayerEngineController();
+      final BetterPlayerController betterPlayerMockController =
+          BetterPlayerTestUtils.setupBetterPlayerMockController(
+            controller: engineController,
+          );
+
+      var setSpeedCalls = 0;
+      betterPlayerMockController.addEventsListener((event) {
+        if (event.betterPlayerEventType == PlayerEventType.setSpeed) {
+          setSpeedCalls += 1;
+        }
+      });
+      await betterPlayerMockController.setSpeed(1.5);
+      await Future<void>.delayed(const Duration(milliseconds: 100), () {});
+      expect(setSpeedCalls, 1);
+      await betterPlayerMockController.setSpeed(1);
+      await Future<void>.delayed(const Duration(milliseconds: 100), () {});
+      expect(setSpeedCalls, 2);
+    });
+
+    test('isBuffering returns valid value', () async {
+      final engineController =
+          BetterPlayerTestUtils.setupMockPlayerEngineController();
+      final BetterPlayerController betterPlayerMockController =
+          BetterPlayerTestUtils.setupBetterPlayerMockController(
+            controller: engineController,
+          );
+      engineController.setBuffering(false);
+      expect(betterPlayerMockController.isBuffering(), false);
+      engineController.setBuffering(true);
+      expect(betterPlayerMockController.isBuffering(), true);
+    });
+
+    test('isLiveStream returns valid value', () async {
+      final engineController =
+          BetterPlayerTestUtils.setupMockPlayerEngineController();
+      final BetterPlayerController betterPlayerMockController =
+          BetterPlayerTestUtils.setupBetterPlayerMockController(
+            controller: engineController,
+          );
+      await betterPlayerMockController.setupDataSource(
+        PlayerDataSource(
+          DataSourceType.network,
+          BetterPlayerTestUtils.forBiggerBlazesUrl,
+          liveStream: true,
+        ),
+      );
+      expect(betterPlayerMockController.isLiveStream(), true);
+    });
+
+    test('isVideoInitalized returns valid value', () async {
+      final engineController =
+          BetterPlayerTestUtils.setupMockPlayerEngineController();
+      final BetterPlayerController betterPlayerMockController =
+          BetterPlayerTestUtils.setupBetterPlayerMockController(
+            controller: engineController,
+          );
+      engineController.setDuration(const Duration(seconds: 1));
+      expect(betterPlayerMockController.isVideoInitialized(), true);
+    });
+
+    test('startNextVideoTimer starts next video timer', () async {
+      final BetterPlayerController betterPlayerMockController =
+          BetterPlayerMockController(
+            const PlayerConfiguration(),
+            betterPlayerPlaylistConfiguration:
+                const PlayerPlaylistConfiguration(
+                  nextVideoDelay: Duration(seconds: 2),
+                ),
+          );
+      var eventCount = 0;
+      betterPlayerMockController.nextVideoTimeStream.listen((event) {
+        eventCount += 1;
+      });
+      betterPlayerMockController.startNextVideoTimer();
+      await Future<void>.delayed(const Duration(milliseconds: 2500), () {});
+      expect(eventCount, 3);
+    });
+
+    test('setOverriddenAspectRatio updates aspect ratio', () {
+      final controller =
+          BetterPlayerTestUtils.setupBetterPlayerMockController();
+      controller.setOverriddenAspectRatio(16 / 9);
+      expect(controller.getAspectRatio(), 16 / 9);
+    });
+
+    test('getAspectRatio priority order: overridden aspect ratio', () {
+      final mockPlayerEngineController = MockPlayerEngineController();
+      mockPlayerEngineController.setAspectRatio(2);
+      final controller = BetterPlayerMockController(
+        const PlayerConfiguration(aspectRatio: 1),
+        playerEngineController: mockPlayerEngineController,
+      );
+
+      controller.setOverriddenAspectRatio(16 / 9);
+      expect(controller.getAspectRatio(), 16 / 9);
+    });
+
+    test('getAspectRatio priority order: configuration aspect ratio', () {
+      final mockPlayerEngineController = MockPlayerEngineController();
+      mockPlayerEngineController.setAspectRatio(2);
+      final controller = BetterPlayerMockController(
+        const PlayerConfiguration(aspectRatio: 16 / 9),
+        playerEngineController: mockPlayerEngineController,
+      );
+
+      expect(controller.getAspectRatio(), 16 / 9);
+    });
+
+    test('getAspectRatio priority order: video player aspect ratio', () {
+      final mockPlayerEngineController = MockPlayerEngineController();
+      mockPlayerEngineController.setAspectRatio(16 / 9);
+      final controller = BetterPlayerMockController(
+        const PlayerConfiguration(),
+        playerEngineController: mockPlayerEngineController,
+      );
+
+      expect(controller.getAspectRatio(), 16 / 9);
+    });
+
+    test('getAspectRatio returns null when size is null and no override', () {
+      final mockPlayerEngineController = MockPlayerEngineController();
+      final controller = BetterPlayerMockController(
+        const PlayerConfiguration(),
+        playerEngineController: mockPlayerEngineController,
+      );
+
+      expect(controller.getAspectRatio(), null);
+    });
+
+    test('setOverriddenFit updates fit', () {
+      final controller =
+          BetterPlayerTestUtils.setupBetterPlayerMockController();
+      controller.setOverriddenFit(BoxFit.fitWidth);
+      expect(controller.getFit(), BoxFit.fitWidth);
+    });
+
+    test('setupTranslations sets correct translations', () {
+      final controller =
+          BetterPlayerTestUtils.setupBetterPlayerMockController();
+      controller.setupTranslations(const Locale('pl'));
+      expect(controller.translations.languageCode, 'pl');
+      controller.setupTranslations(const Locale('en'));
+      expect(controller.translations.languageCode, 'en');
+    });
+
+    test('addEventsListener and removeEventsListener work correctly', () {
+      final controller =
+          BetterPlayerTestUtils.setupBetterPlayerMockController();
+      var eventCount = 0;
+      void listener(PlayerEvent event) => eventCount++;
+
+      controller.addEventsListener(listener);
+      controller.postEvent(PlayerEvent(PlayerEventType.play));
+      expect(eventCount, 1);
+
+      controller.removeEventsListener(listener);
+      controller.postEvent(PlayerEvent(PlayerEventType.pause));
+      expect(eventCount, 1);
+    });
+
+    test('setControlsAlwaysVisible updates stream', () async {
+      final controller =
+          BetterPlayerTestUtils.setupBetterPlayerMockController();
+      bool? lastValue;
+      controller.controlsVisibilityStream.listen((value) => lastValue = value);
+
+      controller.setControlsAlwaysVisible(true);
+      await Future<void>.delayed(Duration.zero);
+      expect(lastValue, true);
+      expect(controller.controlsAlwaysVisible, true);
+    });
+
+    test('setMixWithOthers calls engineController', () async {
+      final mockPlayerEngineController = MockPlayerEngineController();
+      final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
+        controller: mockPlayerEngineController,
+      );
+
+      // Since we can't easily verify the call without adding a flag to mock,
+      // we just ensure it doesn't crash.
+      controller.setMixWithOthers(true);
+    });
+
+    test('setTrack sends event', () async {
+      final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
+        controller: MockPlayerEngineController(),
+      );
+      PlayerEvent? lastEvent;
+      controller.addEventsListener((event) => lastEvent = event);
+
+      const track = PlayerAsmsTrack(
+        '1',
+        1920,
+        1080,
+        5000,
+        30,
+        'avc1',
+        'video/mp4',
+      );
+      controller.setTrack(track);
+
+      expect(lastEvent?.betterPlayerEventType, PlayerEventType.changedTrack);
+      expect(lastEvent?.parameters?['width'], 1920);
+      expect(controller.betterPlayerAsmsTrack, track);
+    });
+
+    test('setAudioTrack updates state', () {
+      final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
+        controller: MockPlayerEngineController(),
+      );
+
+      final audioTrack = PlayerAsmsAudioTrack(
+        id: 1,
+        label: 'English',
+        language: 'en',
+      );
+      controller.setAudioTrack(audioTrack);
+
+      expect(controller.betterPlayerAsmsAudioTrack, audioTrack);
+    });
+
+    test('DRM configuration adds token to headers', () async {
+      final dataSource = PlayerDataSource.network(
+        'https://example.com/video.mp4',
+        drmConfiguration: const DrmConfiguration(
+          drmType: DrmType.token,
+          token: 'Bearer test_token',
+        ),
+      );
+      final mockPlayerEngineController = MockPlayerEngineController();
+      final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
+        controller: mockPlayerEngineController,
+      );
+
+      await controller.setupDataSource(dataSource);
+
+      expect(
+        mockPlayerEngineController.headers?['Authorization'],
+        'Bearer test_token',
+      );
+    });
+
+    test('setResolution changes data source and seeks', () async {
+      final mockPlayerEngineController = MockPlayerEngineController();
+      mockPlayerEngineController.setDuration(const Duration(seconds: 100));
+      await mockPlayerEngineController.seekTo(const Duration(seconds: 50));
+      final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
+        controller: mockPlayerEngineController,
+      );
+
+      await controller.setupDataSource(
+        PlayerDataSource.network('https://example.com/video_720p.mp4'),
+      );
+
+      PlayerEvent? resolutionEvent;
+      controller.addEventsListener((event) {
+        if (event.betterPlayerEventType == PlayerEventType.changedResolution) {
+          resolutionEvent = event;
+        }
       });
 
-      test('addEventsListener update list of event listener', () async {
-        final betterPlayerMockController =
-            BetterPlayerTestUtils.setupBetterPlayerMockController();
-        betterPlayerMockController.addEventsListener((event) {});
-        betterPlayerMockController.addEventsListener((event) {});
-        expect(betterPlayerMockController.eventListeners.length, 2);
-      });
+      await controller.setResolution('https://example.com/video_1080p.mp4');
 
-      void dummyEventListener(PlayerEvent event) {}
+      expect(
+        resolutionEvent?.betterPlayerEventType,
+        PlayerEventType.changedResolution,
+      );
+      expect(
+        resolutionEvent?.parameters?['url'],
+        'https://example.com/video_1080p.mp4',
+      );
+      expect(
+        controller.betterPlayerDataSource?.url,
+        'https://example.com/video_1080p.mp4',
+      );
+      // Verify seek back to 50s
+      expect(await controller.position, const Duration(seconds: 50));
+    });
 
-      test('removeEventsListener update list of event listener', () async {
-        final betterPlayerMockController =
-            BetterPlayerTestUtils.setupBetterPlayerMockController();
-        betterPlayerMockController.addEventsListener(dummyEventListener);
-        betterPlayerMockController.addEventsListener((event) {});
-        expect(betterPlayerMockController.eventListeners.length, 2);
-        betterPlayerMockController.removeEventsListener(dummyEventListener);
-        expect(betterPlayerMockController.eventListeners.length, 1);
-      });
+    test('setResolution does not throw when engine position is null', () async {
+      final mockPlayerEngineController = _NullPositionPlayerEngineController();
+      final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
+        controller: mockPlayerEngineController,
+      );
 
-      test('setVolume changes volume', () async {
-        final mockPlayerEngineController = MockPlayerEngineController();
-        final betterPlayerMockController =
-            BetterPlayerTestUtils.setupBetterPlayerMockController(
-              controller: mockPlayerEngineController,
-            );
-        await mockPlayerEngineController.setNetworkDataSource(
-          BetterPlayerTestUtils.bugBuckBunnyVideoUrl,
-        );
-        await betterPlayerMockController.setVolume(1);
-        expect(mockPlayerEngineController.volume, 1);
-        await betterPlayerMockController.setVolume(0.5);
-        expect(mockPlayerEngineController.volume, 0.5);
-      });
+      await controller.setupDataSource(
+        PlayerDataSource.network('https://example.com/video_720p.mp4'),
+      );
 
-      test(
-        'setVolume should send event',
-        () async {
-          final engineController =
-              BetterPlayerTestUtils.setupMockPlayerEngineController();
-          final BetterPlayerController betterPlayerMockController =
-              BetterPlayerTestUtils.setupBetterPlayerMockController(
-                controller: engineController,
-              );
+      await expectLater(
+        controller.setResolution('https://example.com/video_1080p.mp4'),
+        completes,
+      );
+      expect(
+        controller.betterPlayerDataSource?.url,
+        'https://example.com/video_1080p.mp4',
+      );
+    });
 
-          var setVolumeCalls = 0;
-          betterPlayerMockController.addEventsListener(
-            (event) {
-              if (event.betterPlayerEventType == PlayerEventType.setVolume) {
-                setVolumeCalls += 1;
-              }
+    test('onPlayerVisibilityChanged handles play/pause', () async {
+      final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
+        controller: MockPlayerEngineController(),
+      );
+      await controller.setupDataSource(
+        PlayerDataSource.network(BetterPlayerTestUtils.forBiggerBlazesUrl),
+      );
+      await controller.play();
+      expect(controller.isPlaying(), true);
+
+      expect(controller.isPlaying(), true);
+
+      await controller.onPlayerVisibilityChanged(0);
+      expect(controller.isPlaying(), false);
+
+      await controller.onPlayerVisibilityChanged(1);
+      expect(controller.isPlaying(), true);
+    });
+
+    test(
+      'onPlayerVisibilityChanged invokes playerVisibilityChangedBehavior when handleLifecycle is false',
+      () async {
+        double? reportedFraction;
+        final controller = BetterPlayerMockController(
+          PlayerConfiguration(
+            handleLifecycle: false,
+            playerVisibilityChangedBehavior: (fraction) {
+              reportedFraction = fraction;
             },
-          );
-          await betterPlayerMockController.setVolume(1);
-          await Future<void>.delayed(const Duration(milliseconds: 100), () {});
-          expect(setVolumeCalls, 1);
-          await betterPlayerMockController.setVolume(1);
-          await Future<void>.delayed(const Duration(milliseconds: 100), () {});
-          expect(setVolumeCalls, 2);
-        },
+          ),
+          playerEngineController: MockPlayerEngineController(),
+        );
+
+        await controller.onPlayerVisibilityChanged(0.5);
+        expect(reportedFraction, 0.5);
+      },
+    );
+
+    test('setAppLifecycleState handles play/pause', () async {
+      final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
+        controller: MockPlayerEngineController(),
+      );
+      await controller.setupDataSource(
+        PlayerDataSource.network(BetterPlayerTestUtils.forBiggerBlazesUrl),
+      );
+      await controller.play();
+      expect(controller.isPlaying(), true);
+
+      controller.setAppLifecycleState(AppLifecycleState.paused);
+      expect(controller.isPlaying(), false);
+
+      controller.setAppLifecycleState(AppLifecycleState.resumed);
+      expect(controller.isPlaying(), true);
+    });
+
+    test('toggleFullScreen changes state', () {
+      final controller =
+          BetterPlayerTestUtils.setupBetterPlayerMockController();
+      expect(controller.isFullScreen, false);
+      controller.toggleFullScreen();
+      expect(controller.isFullScreen, true);
+      controller.toggleFullScreen();
+      expect(controller.isFullScreen, false);
+    });
+
+    test('setLooping updates state', () async {
+      final mockPlayerEngineController = MockPlayerEngineController();
+      final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
+        controller: mockPlayerEngineController,
+      );
+      await controller.setLooping(true);
+      expect(mockPlayerEngineController.isLoopingState, true);
+    });
+
+    test('dispose clears resources', () async {
+      final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
+        controller: MockPlayerEngineController(),
+      );
+      controller.dispose(forceDispose: true);
+    });
+
+    test('postEvent sends event to all listeners', () {
+      final controller =
+          BetterPlayerTestUtils.setupBetterPlayerMockController();
+      var eventCount1 = 0;
+      var eventCount2 = 0;
+      controller.addEventsListener((_) => eventCount1++);
+      controller.addEventsListener((_) => eventCount2++);
+
+      controller.postEvent(PlayerEvent(PlayerEventType.play));
+      expect(eventCount1, 1);
+      expect(eventCount2, 1);
+    });
+
+    test('removeEventsListener removes listener', () {
+      final controller =
+          BetterPlayerTestUtils.setupBetterPlayerMockController();
+      var eventCount = 0;
+      void listener(PlayerEvent event) => eventCount++;
+      controller.addEventsListener(listener);
+      controller.removeEventsListener(listener);
+
+      controller.postEvent(PlayerEvent(PlayerEventType.play));
+      expect(eventCount, 0);
+    });
+
+    test(
+      'listener can remove itself within event callback without ConcurrentModificationError',
+      () {
+        final controller =
+            BetterPlayerTestUtils.setupBetterPlayerMockController();
+        late void Function(PlayerEvent) listener;
+        listener = (event) {
+          controller.removeEventsListener(listener);
+        };
+        controller.addEventsListener(listener);
+
+        expect(
+          () => controller.postEvent(PlayerEvent(PlayerEventType.play)),
+          returnsNormally,
+        );
+      },
+    );
+
+    test('controllerEventStream emits events', () async {
+      final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
+        controller: MockPlayerEngineController(),
       );
 
-      test('setSpeed changes speed', () async {
-        final mockPlayerEngineController = MockPlayerEngineController();
-        final betterPlayerMockController =
-            BetterPlayerTestUtils.setupBetterPlayerMockController(
-              controller: mockPlayerEngineController,
-            );
-        await mockPlayerEngineController.setNetworkDataSource(
-          BetterPlayerTestUtils.bugBuckBunnyVideoUrl,
-        );
-        await betterPlayerMockController.setSpeed(1.1);
-        expect(mockPlayerEngineController.speed, 1.1);
-        await betterPlayerMockController.setSpeed(0.5);
-        expect(mockPlayerEngineController.speed, 0.5);
-        await betterPlayerMockController.setSpeed(2.5);
-        expect(mockPlayerEngineController.speed, 2.5);
-        expect(
-          betterPlayerMockController.setSpeed(4.1),
-          throwsA(isA<ArgumentError>()),
-        );
-        expect(mockPlayerEngineController.speed, 2.5);
-        expect(
-          betterPlayerMockController.setSpeed(0),
-          throwsA(isA<ArgumentError>()),
-        );
-        expect(mockPlayerEngineController.speed, 2.5);
-      });
+      final events = <PlayerControllerEvent>[];
+      controller.controllerEventStream.listen(events.add);
 
-      test(
-        'setSpeed should send event',
-        () async {
-          final engineController =
-              BetterPlayerTestUtils.setupMockPlayerEngineController();
-          final BetterPlayerController betterPlayerMockController =
-              BetterPlayerTestUtils.setupBetterPlayerMockController(
-                controller: engineController,
-              );
+      await controller.setupDataSource(PlayerDataSource.network('url'));
+      await controller.play();
+      controller.enterFullScreen();
+      controller.exitFullScreen();
 
-          var setSpeedCalls = 0;
-          betterPlayerMockController.addEventsListener(
-            (event) {
-              if (event.betterPlayerEventType == PlayerEventType.setSpeed) {
-                setSpeedCalls += 1;
-              }
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+
+      expect(events.contains(PlayerControllerEvent.setupDataSource), true);
+      expect(events.contains(PlayerControllerEvent.play), true);
+      expect(events.contains(PlayerControllerEvent.openFullscreen), true);
+      expect(events.contains(PlayerControllerEvent.hideFullscreen), true);
+    });
+
+    test('setupDataSource emits exception for DASH on iOS', () async {
+      final previousPlatform = debugDefaultTargetPlatformOverride;
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      final previousInstance = BetterPlayerPlatform.instance;
+      BetterPlayerPlatform.instance = _MockIOSBetterPlayerPlatform();
+      try {
+        final controller = BetterPlayerMockController(
+          const PlayerConfiguration(),
+        );
+        PlayerEvent? exceptionEvent;
+        controller.addEventsListener((event) {
+          if (event.betterPlayerEventType == PlayerEventType.exception) {
+            exceptionEvent = event;
+          }
+        });
+
+        await controller.setupDataSource(
+          PlayerDataSource.network('https://example.com/video.mpd'),
+        );
+
+        expect(exceptionEvent != null, true);
+        expect(
+          exceptionEvent?.parameters?['exception'],
+          'DASH streams are not supported on iOS platform. Please use HLS instead.',
+        );
+        expect(controller.isEngineReady, true);
+      } finally {
+        debugDefaultTargetPlatformOverride = previousPlatform;
+        BetterPlayerPlatform.instance = previousInstance;
+      }
+    });
+
+    test('setupDataSource emits exception for RTSP on iOS', () async {
+      final previousPlatform = debugDefaultTargetPlatformOverride;
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      try {
+        final controller = BetterPlayerMockController(
+          const PlayerConfiguration(),
+        );
+        PlayerEvent? exceptionEvent;
+        controller.addEventsListener((event) {
+          if (event.betterPlayerEventType == PlayerEventType.exception) {
+            exceptionEvent = event;
+          }
+        });
+
+        await controller.setupDataSource(
+          PlayerDataSource.network('rtsp://example.com/video.mp4'),
+        );
+
+        expect(exceptionEvent != null, true);
+        expect(
+          exceptionEvent?.parameters?['exception'],
+          'Exception: RTSP is not supported on this platform.',
+        );
+        expect(controller.isEngineReady, false);
+      } finally {
+        debugDefaultTargetPlatformOverride = previousPlatform;
+      }
+    });
+
+    test('setupDataSource allows RTSP on Android', () async {
+      final previousPlatform = debugDefaultTargetPlatformOverride;
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      try {
+        final controller = BetterPlayerMockController(
+          const PlayerConfiguration(),
+        );
+        PlayerEvent? exceptionEvent;
+        controller.addEventsListener((event) {
+          if (event.betterPlayerEventType == PlayerEventType.exception) {
+            exceptionEvent = event;
+          }
+        });
+
+        await controller.setupDataSource(
+          PlayerDataSource.network('rtsp://example.com/video.mp4'),
+        );
+
+        expect(exceptionEvent == null, true);
+        expect(
+          controller.betterPlayerDataSource?.url,
+          'rtsp://example.com/video.mp4',
+        );
+      } finally {
+        debugDefaultTargetPlatformOverride = previousPlatform;
+      }
+    });
+
+    test('setupDataSource allows RTSP on Windows', () async {
+      final previousPlatform = debugDefaultTargetPlatformOverride;
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      try {
+        final controller = BetterPlayerMockController(
+          const PlayerConfiguration(),
+        );
+        PlayerEvent? exceptionEvent;
+        controller.addEventsListener((event) {
+          if (event.betterPlayerEventType == PlayerEventType.exception) {
+            exceptionEvent = event;
+          }
+        });
+
+        await controller.setupDataSource(
+          PlayerDataSource.network('rtsp://example.com/video.mp4'),
+        );
+
+        expect(exceptionEvent == null, true);
+        expect(
+          controller.betterPlayerDataSource?.url,
+          'rtsp://example.com/video.mp4',
+        );
+      } finally {
+        debugDefaultTargetPlatformOverride = previousPlatform;
+      }
+    });
+
+    test('setupDataSource allows RTSP on Linux', () async {
+      final previousPlatform = debugDefaultTargetPlatformOverride;
+      debugDefaultTargetPlatformOverride = TargetPlatform.linux;
+      try {
+        final controller = BetterPlayerMockController(
+          const PlayerConfiguration(),
+        );
+        PlayerEvent? exceptionEvent;
+        controller.addEventsListener((event) {
+          if (event.betterPlayerEventType == PlayerEventType.exception) {
+            exceptionEvent = event;
+          }
+        });
+
+        await controller.setupDataSource(
+          PlayerDataSource.network('rtsp://example.com/video.mp4'),
+        );
+
+        expect(exceptionEvent == null, true);
+        expect(
+          controller.betterPlayerDataSource?.url,
+          'rtsp://example.com/video.mp4',
+        );
+      } finally {
+        debugDefaultTargetPlatformOverride = previousPlatform;
+      }
+    });
+
+    testWidgets('BetterPlayerController.of(context) works', (tester) async {
+      final controller =
+          BetterPlayerTestUtils.setupBetterPlayerMockController();
+      await tester.pumpWidget(
+        BetterPlayerControllerProvider(
+          controller: controller,
+          child: Builder(
+            builder: (context) {
+              final found = BetterPlayerController.of(context);
+              expect(found, controller);
+              return const SizedBox();
             },
-          );
-          await betterPlayerMockController.setSpeed(1.5);
-          await Future<void>.delayed(const Duration(milliseconds: 100), () {});
-          expect(setSpeedCalls, 1);
-          await betterPlayerMockController.setSpeed(1);
-          await Future<void>.delayed(const Duration(milliseconds: 100), () {});
-          expect(setSpeedCalls, 2);
-        },
+          ),
+        ),
+      );
+    });
+
+    test('setupDataSource passes drmSecurityLevel to engine', () async {
+      final engineController = MockPlayerEngineController();
+      final betterPlayerMockController = BetterPlayerMockController(
+        const PlayerConfiguration(),
+        playerEngineController: engineController,
       );
 
-      test('isBuffering returns valid value', () async {
+      final dataSource = PlayerDataSource.network(
+        'https://example.com/video.mp4',
+        drmConfiguration: const DrmConfiguration(
+          drmType: DrmType.widevine,
+          licenseUrl: 'https://license.com',
+          drmSecurityLevel: DrmSecurityLevel.l1,
+        ),
+      );
+
+      await betterPlayerMockController.setupDataSource(dataSource);
+      expect(engineController.drmSecurityLevel, DrmSecurityLevel.l1);
+    });
+
+    test(
+      'setPlayerSubtitlesConfiguration updates configuration and emits event',
+      () async {
+        final controller =
+            BetterPlayerTestUtils.setupBetterPlayerMockController();
+        final events = <PlayerControllerEvent>[];
+        final sub = controller.controllerEventStream.listen(events.add);
+
+        const newSubtitlesConfig = PlayerSubtitlesConfiguration(
+          fontSize: 24,
+          fontColor: Colors.yellow,
+          backgroundColor: Colors.black54,
+        );
+        controller.setPlayerSubtitlesConfiguration(newSubtitlesConfig);
+        await Future<void>.delayed(Duration.zero);
+
+        expect(
+          controller.betterPlayerSubtitlesConfiguration,
+          newSubtitlesConfig,
+        );
+        expect(
+          events,
+          contains(PlayerControllerEvent.changeSubtitlesConfiguration),
+        );
+        await sub.cancel();
+      },
+    );
+
+    test(
+      'runtime videoEventStreamController error emits PlayerEventType.exception',
+      () async {
         final engineController =
             BetterPlayerTestUtils.setupMockPlayerEngineController();
-        final BetterPlayerController betterPlayerMockController =
+        final controller =
             BetterPlayerTestUtils.setupBetterPlayerMockController(
               controller: engineController,
             );
-        engineController.setBuffering(false);
-        expect(betterPlayerMockController.isBuffering(), false);
-        engineController.setBuffering(true);
-        expect(betterPlayerMockController.isBuffering(), true);
-      });
-
-      test('isLiveStream returns valid value', () async {
-        final engineController =
-            BetterPlayerTestUtils.setupMockPlayerEngineController();
-        final BetterPlayerController betterPlayerMockController =
-            BetterPlayerTestUtils.setupBetterPlayerMockController(
-              controller: engineController,
-            );
-        await betterPlayerMockController.setupDataSource(
+        await controller.setupDataSource(
           PlayerDataSource(
             DataSourceType.network,
             BetterPlayerTestUtils.forBiggerBlazesUrl,
-            liveStream: true,
           ),
         );
-        expect(betterPlayerMockController.isLiveStream(), true);
-      });
 
-      test('isVideoInitalized returns valid value', () async {
+        PlayerEvent? receivedExceptionEvent;
+        controller.addEventsListener((event) {
+          if (event.betterPlayerEventType == PlayerEventType.exception) {
+            receivedExceptionEvent = event;
+          }
+        });
+
+        engineController.videoEventStreamController.addError(
+          Exception('Playback error'),
+        );
+        await Future<void>.delayed(Duration.zero);
+
+        expect(receivedExceptionEvent, isNotNull);
+        expect(
+          receivedExceptionEvent!.parameters!['exception'],
+          contains('Playback error'),
+        );
+      },
+    );
+
+    testWidgets(
+      'PlayerFullScreenVideo uses controlsConfiguration.backgroundColor',
+      (tester) async {
+        final controller = BetterPlayerMockController(
+          const PlayerConfiguration(
+            controlsConfiguration: PlayerControlsConfiguration(
+              backgroundColor: Colors.blue,
+            ),
+          ),
+        );
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: PlayerFullScreenVideo(
+              controllerProvider: BetterPlayerControllerProvider(
+                controller: controller,
+                child: const SizedBox(),
+              ),
+            ),
+          ),
+        );
+
+        final scaffold = tester.widget<Scaffold>(find.byType(Scaffold));
+        expect(scaffold.backgroundColor, Colors.blue);
+      },
+    );
+
+    test(
+      'enterFullScreen does not emit duplicate openFullscreen event when already in fullscreen',
+      () async {
+        final controller =
+            BetterPlayerTestUtils.setupBetterPlayerMockController();
+        final events = <PlayerControllerEvent>[];
+        final sub = controller.controllerEventStream.listen(events.add);
+
+        controller.enterFullScreen();
+        controller.enterFullScreen();
+        await Future<void>.delayed(Duration.zero);
+
+        expect(
+          events.where((e) => e == PlayerControllerEvent.openFullscreen),
+          hasLength(1),
+        );
+        await sub.cancel();
+      },
+    );
+
+    testWidgets(
+      'BetterPlayer widget stays in fullscreen when enterFullScreen is called repeatedly and exits on exitFullScreen',
+      (tester) async {
+        VisibilityDetectorController.instance.updateInterval = Duration.zero;
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(
+              SystemChannels.platform,
+              (methodCall) async => null,
+            );
         final engineController =
             BetterPlayerTestUtils.setupMockPlayerEngineController();
-        final BetterPlayerController betterPlayerMockController =
-            BetterPlayerTestUtils.setupBetterPlayerMockController(
-              controller: engineController,
-            );
-        engineController.setDuration(const Duration(seconds: 1));
-        expect(betterPlayerMockController.isVideoInitialized(), true);
-      });
-
-      test('startNextVideoTimer starts next video timer', () async {
-        final BetterPlayerController betterPlayerMockController =
-            BetterPlayerMockController(
-              const PlayerConfiguration(),
-              betterPlayerPlaylistConfiguration:
-                  const PlayerPlaylistConfiguration(
-                    nextVideoDelay: Duration(seconds: 2),
-                  ),
-            );
-        var eventCount = 0;
-        betterPlayerMockController.nextVideoTimeStream.listen(
-          (event) {
-            eventCount += 1;
-          },
-        );
-        betterPlayerMockController.startNextVideoTimer();
-        await Future<void>.delayed(const Duration(milliseconds: 2500), () {});
-        expect(eventCount, 3);
-      });
-
-      test('setOverriddenAspectRatio updates aspect ratio', () {
-        final controller =
-            BetterPlayerTestUtils.setupBetterPlayerMockController();
-        controller.setOverriddenAspectRatio(16 / 9);
-        expect(controller.getAspectRatio(), 16 / 9);
-      });
-
-      test('getAspectRatio priority order: overridden aspect ratio', () {
-        final mockPlayerEngineController = MockPlayerEngineController();
-        mockPlayerEngineController.setAspectRatio(2);
         final controller = BetterPlayerMockController(
-          const PlayerConfiguration(aspectRatio: 1),
-          playerEngineController: mockPlayerEngineController,
-        );
-
-        controller.setOverriddenAspectRatio(16 / 9);
-        expect(controller.getAspectRatio(), 16 / 9);
-      });
-
-      test('getAspectRatio priority order: configuration aspect ratio', () {
-        final mockPlayerEngineController = MockPlayerEngineController();
-        mockPlayerEngineController.setAspectRatio(2);
-        final controller = BetterPlayerMockController(
-          const PlayerConfiguration(aspectRatio: 16 / 9),
-          playerEngineController: mockPlayerEngineController,
-        );
-
-        expect(controller.getAspectRatio(), 16 / 9);
-      });
-
-      test('getAspectRatio priority order: video player aspect ratio', () {
-        final mockPlayerEngineController = MockPlayerEngineController();
-        mockPlayerEngineController.setAspectRatio(16 / 9);
-        final controller = BetterPlayerMockController(
-          const PlayerConfiguration(),
-          playerEngineController: mockPlayerEngineController,
-        );
-
-        expect(controller.getAspectRatio(), 16 / 9);
-      });
-
-      test('getAspectRatio returns null when size is null and no override', () {
-        final mockPlayerEngineController = MockPlayerEngineController();
-        final controller = BetterPlayerMockController(
-          const PlayerConfiguration(),
-          playerEngineController: mockPlayerEngineController,
-        );
-
-        expect(controller.getAspectRatio(), null);
-      });
-
-      test('setOverriddenFit updates fit', () {
-        final controller =
-            BetterPlayerTestUtils.setupBetterPlayerMockController();
-        controller.setOverriddenFit(BoxFit.fitWidth);
-        expect(controller.getFit(), BoxFit.fitWidth);
-      });
-
-      test('setupTranslations sets correct translations', () {
-        final controller =
-            BetterPlayerTestUtils.setupBetterPlayerMockController();
-        controller.setupTranslations(const Locale('pl'));
-        expect(controller.translations.languageCode, 'pl');
-        controller.setupTranslations(const Locale('en'));
-        expect(controller.translations.languageCode, 'en');
-      });
-
-      test('addEventsListener and removeEventsListener work correctly', () {
-        final controller =
-            BetterPlayerTestUtils.setupBetterPlayerMockController();
-        var eventCount = 0;
-        void listener(PlayerEvent event) => eventCount++;
-
-        controller.addEventsListener(listener);
-        controller.postEvent(PlayerEvent(PlayerEventType.play));
-        expect(eventCount, 1);
-
-        controller.removeEventsListener(listener);
-        controller.postEvent(PlayerEvent(PlayerEventType.pause));
-        expect(eventCount, 1);
-      });
-
-      test('setControlsAlwaysVisible updates stream', () async {
-        final controller =
-            BetterPlayerTestUtils.setupBetterPlayerMockController();
-        bool? lastValue;
-        controller.controlsVisibilityStream.listen(
-          (value) => lastValue = value,
-        );
-
-        controller.setControlsAlwaysVisible(true);
-        await Future<void>.delayed(Duration.zero);
-        expect(lastValue, true);
-        expect(controller.controlsAlwaysVisible, true);
-      });
-
-      test('setMixWithOthers calls engineController', () async {
-        final mockPlayerEngineController = MockPlayerEngineController();
-        final controller =
-            BetterPlayerTestUtils.setupBetterPlayerMockController(
-              controller: mockPlayerEngineController,
-            );
-
-        // Since we can't easily verify the call without adding a flag to mock,
-        // we just ensure it doesn't crash.
-        controller.setMixWithOthers(true);
-      });
-
-      test('setTrack sends event', () async {
-        final controller =
-            BetterPlayerTestUtils.setupBetterPlayerMockController(
-              controller: MockPlayerEngineController(),
-            );
-        PlayerEvent? lastEvent;
-        controller.addEventsListener((event) => lastEvent = event);
-
-        const track = PlayerAsmsTrack(
-          '1',
-          1920,
-          1080,
-          5000,
-          30,
-          'avc1',
-          'video/mp4',
-        );
-        controller.setTrack(track);
-
-        expect(
-          lastEvent?.betterPlayerEventType,
-          PlayerEventType.changedTrack,
-        );
-        expect(lastEvent?.parameters?['width'], 1920);
-        expect(controller.betterPlayerAsmsTrack, track);
-      });
-
-      test('setAudioTrack updates state', () {
-        final controller =
-            BetterPlayerTestUtils.setupBetterPlayerMockController(
-              controller: MockPlayerEngineController(),
-            );
-
-        final audioTrack = PlayerAsmsAudioTrack(
-          id: 1,
-          label: 'English',
-          language: 'en',
-        );
-        controller.setAudioTrack(audioTrack);
-
-        expect(controller.betterPlayerAsmsAudioTrack, audioTrack);
-      });
-
-      test('DRM configuration adds token to headers', () async {
-        final dataSource = PlayerDataSource.network(
-          'https://example.com/video.mp4',
-          drmConfiguration: const DrmConfiguration(
-            drmType: DrmType.token,
-            token: 'Bearer test_token',
-          ),
-        );
-        final mockPlayerEngineController = MockPlayerEngineController();
-        final controller =
-            BetterPlayerTestUtils.setupBetterPlayerMockController(
-              controller: mockPlayerEngineController,
-            );
-
-        await controller.setupDataSource(dataSource);
-
-        expect(
-          mockPlayerEngineController.headers?['Authorization'],
-          'Bearer test_token',
-        );
-      });
-
-      test('setResolution changes data source and seeks', () async {
-        final mockPlayerEngineController = MockPlayerEngineController();
-        mockPlayerEngineController.setDuration(const Duration(seconds: 100));
-        await mockPlayerEngineController.seekTo(const Duration(seconds: 50));
-        final controller =
-            BetterPlayerTestUtils.setupBetterPlayerMockController(
-              controller: mockPlayerEngineController,
-            );
-
-        await controller.setupDataSource(
-          PlayerDataSource.network(
-            'https://example.com/video_720p.mp4',
-          ),
-        );
-
-        PlayerEvent? resolutionEvent;
-        controller.addEventsListener(
-          (event) {
-            if (event.betterPlayerEventType ==
-                PlayerEventType.changedResolution) {
-              resolutionEvent = event;
-            }
-          },
-        );
-
-        await controller.setResolution('https://example.com/video_1080p.mp4');
-
-        expect(
-          resolutionEvent?.betterPlayerEventType,
-          PlayerEventType.changedResolution,
-        );
-        expect(
-          resolutionEvent?.parameters?['url'],
-          'https://example.com/video_1080p.mp4',
-        );
-        expect(
-          controller.betterPlayerDataSource?.url,
-          'https://example.com/video_1080p.mp4',
-        );
-        // Verify seek back to 50s
-        expect(
-          await controller.position,
-          const Duration(seconds: 50),
-        );
-      });
-
-      test(
-        'setResolution does not throw when engine position is null',
-        () async {
-          final mockPlayerEngineController =
-              _NullPositionPlayerEngineController();
-          final controller =
-              BetterPlayerTestUtils.setupBetterPlayerMockController(
-                controller: mockPlayerEngineController,
-              );
-
-          await controller.setupDataSource(
-            PlayerDataSource.network('https://example.com/video_720p.mp4'),
-          );
-
-          await expectLater(
-            controller.setResolution('https://example.com/video_1080p.mp4'),
-            completes,
-          );
-          expect(
-            controller.betterPlayerDataSource?.url,
-            'https://example.com/video_1080p.mp4',
-          );
-        },
-      );
-
-      test('onPlayerVisibilityChanged handles play/pause', () async {
-        final controller =
-            BetterPlayerTestUtils.setupBetterPlayerMockController(
-              controller: MockPlayerEngineController(),
-            );
-        await controller.setupDataSource(
-          PlayerDataSource.network(
-            BetterPlayerTestUtils.forBiggerBlazesUrl,
-          ),
-        );
-        await controller.play();
-        expect(controller.isPlaying(), true);
-
-        expect(controller.isPlaying(), true);
-
-        await controller.onPlayerVisibilityChanged(0);
-        expect(controller.isPlaying(), false);
-
-        await controller.onPlayerVisibilityChanged(1);
-        expect(controller.isPlaying(), true);
-      });
-
-      test(
-        'onPlayerVisibilityChanged invokes playerVisibilityChangedBehavior when handleLifecycle is false',
-        () async {
-          double? reportedFraction;
-          final controller = BetterPlayerMockController(
-            PlayerConfiguration(
-              handleLifecycle: false,
-              playerVisibilityChangedBehavior: (fraction) {
-                reportedFraction = fraction;
-              },
-            ),
-            playerEngineController: MockPlayerEngineController(),
-          );
-
-          await controller.onPlayerVisibilityChanged(0.5);
-          expect(reportedFraction, 0.5);
-        },
-      );
-
-      test('setAppLifecycleState handles play/pause', () async {
-        final controller =
-            BetterPlayerTestUtils.setupBetterPlayerMockController(
-              controller: MockPlayerEngineController(),
-            );
-        await controller.setupDataSource(
-          PlayerDataSource.network(
-            BetterPlayerTestUtils.forBiggerBlazesUrl,
-          ),
-        );
-        await controller.play();
-        expect(controller.isPlaying(), true);
-
-        controller.setAppLifecycleState(AppLifecycleState.paused);
-        expect(controller.isPlaying(), false);
-
-        controller.setAppLifecycleState(AppLifecycleState.resumed);
-        expect(controller.isPlaying(), true);
-      });
-
-      test('toggleFullScreen changes state', () {
-        final controller =
-            BetterPlayerTestUtils.setupBetterPlayerMockController();
-        expect(controller.isFullScreen, false);
-        controller.toggleFullScreen();
-        expect(controller.isFullScreen, true);
-        controller.toggleFullScreen();
-        expect(controller.isFullScreen, false);
-      });
-
-      test('setLooping updates state', () async {
-        final mockPlayerEngineController = MockPlayerEngineController();
-        final controller =
-            BetterPlayerTestUtils.setupBetterPlayerMockController(
-              controller: mockPlayerEngineController,
-            );
-        await controller.setLooping(true);
-        expect(mockPlayerEngineController.isLoopingState, true);
-      });
-
-      test('dispose clears resources', () async {
-        final controller =
-            BetterPlayerTestUtils.setupBetterPlayerMockController(
-              controller: MockPlayerEngineController(),
-            );
-        controller.dispose(forceDispose: true);
-      });
-
-      test('postEvent sends event to all listeners', () {
-        final controller =
-            BetterPlayerTestUtils.setupBetterPlayerMockController();
-        var eventCount1 = 0;
-        var eventCount2 = 0;
-        controller.addEventsListener((_) => eventCount1++);
-        controller.addEventsListener((_) => eventCount2++);
-
-        controller.postEvent(PlayerEvent(PlayerEventType.play));
-        expect(eventCount1, 1);
-        expect(eventCount2, 1);
-      });
-
-      test('removeEventsListener removes listener', () {
-        final controller =
-            BetterPlayerTestUtils.setupBetterPlayerMockController();
-        var eventCount = 0;
-        void listener(PlayerEvent event) => eventCount++;
-        controller.addEventsListener(listener);
-        controller.removeEventsListener(listener);
-
-        controller.postEvent(PlayerEvent(PlayerEventType.play));
-        expect(eventCount, 0);
-      });
-
-      test(
-        'listener can remove itself within event callback without ConcurrentModificationError',
-        () {
-          final controller =
-              BetterPlayerTestUtils.setupBetterPlayerMockController();
-          late void Function(PlayerEvent) listener;
-          listener = (event) {
-            controller.removeEventsListener(listener);
-          };
-          controller.addEventsListener(listener);
-
-          expect(
-            () => controller.postEvent(PlayerEvent(PlayerEventType.play)),
-            returnsNormally,
-          );
-        },
-      );
-
-      test('controllerEventStream emits events', () async {
-        final controller =
-            BetterPlayerTestUtils.setupBetterPlayerMockController(
-              controller: MockPlayerEngineController(),
-            );
-
-        final events = <PlayerControllerEvent>[];
-        controller.controllerEventStream.listen(events.add);
-
-        await controller.setupDataSource(
-          PlayerDataSource.network('url'),
-        );
-        await controller.play();
-        controller.enterFullScreen();
-        controller.exitFullScreen();
-
-        await Future<void>.delayed(const Duration(milliseconds: 100));
-
-        expect(
-          events.contains(PlayerControllerEvent.setupDataSource),
-          true,
-        );
-        expect(events.contains(PlayerControllerEvent.play), true);
-        expect(
-          events.contains(PlayerControllerEvent.openFullscreen),
-          true,
-        );
-        expect(
-          events.contains(PlayerControllerEvent.hideFullscreen),
-          true,
-        );
-      });
-
-      test('setupDataSource emits exception for DASH on iOS', () async {
-        final previousPlatform = debugDefaultTargetPlatformOverride;
-        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-        final previousInstance = BetterPlayerPlatform.instance;
-        BetterPlayerPlatform.instance = _MockIOSBetterPlayerPlatform();
-        try {
-          final controller = BetterPlayerMockController(
-            const PlayerConfiguration(),
-          );
-          PlayerEvent? exceptionEvent;
-          controller.addEventsListener((event) {
-            if (event.betterPlayerEventType == PlayerEventType.exception) {
-              exceptionEvent = event;
-            }
-          });
-
-          await controller.setupDataSource(
-            PlayerDataSource.network('https://example.com/video.mpd'),
-          );
-
-          expect(exceptionEvent != null, true);
-          expect(
-            exceptionEvent?.parameters?['exception'],
-            'DASH streams are not supported on iOS platform. Please use HLS instead.',
-          );
-          expect(controller.isEngineReady, true);
-        } finally {
-          debugDefaultTargetPlatformOverride = previousPlatform;
-          BetterPlayerPlatform.instance = previousInstance;
-        }
-      });
-
-      test('setupDataSource emits exception for RTSP on iOS', () async {
-        final previousPlatform = debugDefaultTargetPlatformOverride;
-        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-        try {
-          final controller = BetterPlayerMockController(
-            const PlayerConfiguration(),
-          );
-          PlayerEvent? exceptionEvent;
-          controller.addEventsListener((event) {
-            if (event.betterPlayerEventType == PlayerEventType.exception) {
-              exceptionEvent = event;
-            }
-          });
-
-          await controller.setupDataSource(
-            PlayerDataSource.network('rtsp://example.com/video.mp4'),
-          );
-
-          expect(exceptionEvent != null, true);
-          expect(
-            exceptionEvent?.parameters?['exception'],
-            'Exception: RTSP is not supported on this platform.',
-          );
-          expect(controller.isEngineReady, false);
-        } finally {
-          debugDefaultTargetPlatformOverride = previousPlatform;
-        }
-      });
-
-      test('setupDataSource allows RTSP on Android', () async {
-        final previousPlatform = debugDefaultTargetPlatformOverride;
-        debugDefaultTargetPlatformOverride = TargetPlatform.android;
-        try {
-          final controller = BetterPlayerMockController(
-            const PlayerConfiguration(),
-          );
-          PlayerEvent? exceptionEvent;
-          controller.addEventsListener((event) {
-            if (event.betterPlayerEventType == PlayerEventType.exception) {
-              exceptionEvent = event;
-            }
-          });
-
-          await controller.setupDataSource(
-            PlayerDataSource.network('rtsp://example.com/video.mp4'),
-          );
-
-          expect(exceptionEvent == null, true);
-          expect(
-            controller.betterPlayerDataSource?.url,
-            'rtsp://example.com/video.mp4',
-          );
-        } finally {
-          debugDefaultTargetPlatformOverride = previousPlatform;
-        }
-      });
-
-      test('setupDataSource allows RTSP on Windows', () async {
-        final previousPlatform = debugDefaultTargetPlatformOverride;
-        debugDefaultTargetPlatformOverride = TargetPlatform.windows;
-        try {
-          final controller = BetterPlayerMockController(
-            const PlayerConfiguration(),
-          );
-          PlayerEvent? exceptionEvent;
-          controller.addEventsListener((event) {
-            if (event.betterPlayerEventType == PlayerEventType.exception) {
-              exceptionEvent = event;
-            }
-          });
-
-          await controller.setupDataSource(
-            PlayerDataSource.network('rtsp://example.com/video.mp4'),
-          );
-
-          expect(exceptionEvent == null, true);
-          expect(
-            controller.betterPlayerDataSource?.url,
-            'rtsp://example.com/video.mp4',
-          );
-        } finally {
-          debugDefaultTargetPlatformOverride = previousPlatform;
-        }
-      });
-
-      test('setupDataSource allows RTSP on Linux', () async {
-        final previousPlatform = debugDefaultTargetPlatformOverride;
-        debugDefaultTargetPlatformOverride = TargetPlatform.linux;
-        try {
-          final controller = BetterPlayerMockController(
-            const PlayerConfiguration(),
-          );
-          PlayerEvent? exceptionEvent;
-          controller.addEventsListener((event) {
-            if (event.betterPlayerEventType == PlayerEventType.exception) {
-              exceptionEvent = event;
-            }
-          });
-
-          await controller.setupDataSource(
-            PlayerDataSource.network('rtsp://example.com/video.mp4'),
-          );
-
-          expect(exceptionEvent == null, true);
-          expect(
-            controller.betterPlayerDataSource?.url,
-            'rtsp://example.com/video.mp4',
-          );
-        } finally {
-          debugDefaultTargetPlatformOverride = previousPlatform;
-        }
-      });
-
-      testWidgets('BetterPlayerController.of(context) works', (
-        tester,
-      ) async {
-        final controller =
-            BetterPlayerTestUtils.setupBetterPlayerMockController();
-        await tester.pumpWidget(
-          BetterPlayerControllerProvider(
-            controller: controller,
-            child: Builder(
-              builder: (context) {
-                final found = BetterPlayerController.of(context);
-                expect(found, controller);
-                return const SizedBox();
-              },
+          const PlayerConfiguration(
+            controlsConfiguration: PlayerControlsConfiguration(
+              showControls: false,
             ),
           ),
-        );
-      });
-
-      test('setupDataSource passes drmSecurityLevel to engine', () async {
-        final engineController = MockPlayerEngineController();
-        final betterPlayerMockController = BetterPlayerMockController(
-          const PlayerConfiguration(),
           playerEngineController: engineController,
         );
 
-        final dataSource = PlayerDataSource.network(
-          'https://example.com/video.mp4',
-          drmConfiguration: const DrmConfiguration(
-            drmType: DrmType.widevine,
-            licenseUrl: 'https://license.com',
-            drmSecurityLevel: DrmSecurityLevel.l1,
+        final playerEvents = <PlayerEventType>[];
+        controller.addEventsListener(
+          (event) => playerEvents.add(event.betterPlayerEventType),
+        );
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(body: BetterPlayer(controller: controller)),
           ),
         );
 
-        await betterPlayerMockController.setupDataSource(dataSource);
-        expect(engineController.drmSecurityLevel, DrmSecurityLevel.l1);
-      });
+        expect(find.byType(PlayerFullScreenVideo), findsNothing);
+        expect(controller.isFullScreen, isFalse);
 
-      test(
-        'setPlayerSubtitlesConfiguration updates configuration and emits event',
-        () async {
-          final controller =
-              BetterPlayerTestUtils.setupBetterPlayerMockController();
-          final events = <PlayerControllerEvent>[];
-          final sub = controller.controllerEventStream.listen(events.add);
+        // First enterFullScreen pushes fullscreen route
+        controller.enterFullScreen();
+        await tester.pump();
+        await tester.pump();
+        await tester.pumpAndSettle();
 
-          const newSubtitlesConfig = PlayerSubtitlesConfiguration(
-            fontSize: 24,
-            fontColor: Colors.yellow,
-            backgroundColor: Colors.black54,
-          );
-          controller.setPlayerSubtitlesConfiguration(newSubtitlesConfig);
-          await Future<void>.delayed(Duration.zero);
+        expect(
+          playerEvents.where((e) => e == PlayerEventType.openFullscreen),
+          hasLength(1),
+        );
+        expect(find.byType(PlayerFullScreenVideo), findsOneWidget);
+        expect(controller.isFullScreen, isTrue);
 
-          expect(
-            controller.betterPlayerSubtitlesConfiguration,
-            newSubtitlesConfig,
-          );
-          expect(
-            events,
-            contains(PlayerControllerEvent.changeSubtitlesConfiguration),
-          );
-          await sub.cancel();
-        },
-      );
+        // Calling enterFullScreen again while in fullscreen must NOT pop the route
+        controller.enterFullScreen();
+        await tester.pump();
+        await tester.pump();
+        await tester.pumpAndSettle();
 
-      test(
-        'runtime videoEventStreamController error emits PlayerEventType.exception',
-        () async {
-          final engineController =
-              BetterPlayerTestUtils.setupMockPlayerEngineController();
-          final controller =
-              BetterPlayerTestUtils.setupBetterPlayerMockController(
-                controller: engineController,
-              );
-          await controller.setupDataSource(
-            PlayerDataSource(
-              DataSourceType.network,
-              BetterPlayerTestUtils.forBiggerBlazesUrl,
-            ),
-          );
+        expect(find.byType(PlayerFullScreenVideo), findsOneWidget);
+        expect(controller.isFullScreen, isTrue);
+        expect(
+          playerEvents.where((e) => e == PlayerEventType.openFullscreen),
+          hasLength(1),
+        );
+        expect(
+          playerEvents.where((e) => e == PlayerEventType.hideFullscreen),
+          isEmpty,
+        );
 
-          PlayerEvent? receivedExceptionEvent;
-          controller.addEventsListener((event) {
-            if (event.betterPlayerEventType == PlayerEventType.exception) {
-              receivedExceptionEvent = event;
-            }
-          });
+        // Exiting fullscreen pops the route cleanly
+        controller.exitFullScreen();
+        await tester.pump();
+        await tester.pump();
+        await tester.pumpAndSettle();
 
-          engineController.videoEventStreamController.addError(
-            Exception('Playback error'),
-          );
-          await Future<void>.delayed(Duration.zero);
+        expect(find.byType(PlayerFullScreenVideo), findsNothing);
+        expect(controller.isFullScreen, isFalse);
+        expect(
+          playerEvents.where((e) => e == PlayerEventType.hideFullscreen),
+          hasLength(1),
+        );
+      },
+    );
 
-          expect(receivedExceptionEvent, isNotNull);
-          expect(
-            receivedExceptionEvent!.parameters!['exception'],
-            contains('Playback error'),
-          );
-        },
-      );
-
-      testWidgets(
-        'PlayerFullScreenVideo uses controlsConfiguration.backgroundColor',
-        (tester) async {
-          final controller = BetterPlayerMockController(
-            const PlayerConfiguration(
-              controlsConfiguration: PlayerControlsConfiguration(
-                backgroundColor: Colors.blue,
-              ),
-            ),
-          );
-
-          await tester.pumpWidget(
-            MaterialApp(
-              home: PlayerFullScreenVideo(
-                controllerProvider: BetterPlayerControllerProvider(
-                  controller: controller,
-                  child: const SizedBox(),
-                ),
-              ),
-            ),
-          );
-
-          final scaffold = tester.widget<Scaffold>(find.byType(Scaffold));
-          expect(scaffold.backgroundColor, Colors.blue);
-        },
-      );
-
-      test(
-        'enterFullScreen does not emit duplicate openFullscreen event when already in fullscreen',
-        () async {
-          final controller =
-              BetterPlayerTestUtils.setupBetterPlayerMockController();
-          final events = <PlayerControllerEvent>[];
-          final sub = controller.controllerEventStream.listen(events.add);
-
-          controller.enterFullScreen();
-          controller.enterFullScreen();
-          await Future<void>.delayed(Duration.zero);
-
-          expect(
-            events.where((e) => e == PlayerControllerEvent.openFullscreen),
-            hasLength(1),
-          );
-          await sub.cancel();
-        },
-      );
-
-      testWidgets(
-        'BetterPlayer widget stays in fullscreen when enterFullScreen is called repeatedly and exits on exitFullScreen',
-        (tester) async {
+    testWidgets(
+      'BetterPlayer widget keeps fullscreen route open when entering and exiting PiP from fullscreen on Android',
+      (tester) async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.android;
+        try {
           VisibilityDetectorController.instance.updateInterval = Duration.zero;
           TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
               .setMockMethodCallHandler(
                 SystemChannels.platform,
                 (methodCall) async => null,
               );
-          final engineController =
-              BetterPlayerTestUtils.setupMockPlayerEngineController();
+          final engineController = MockPlayerEngineController()
+            ..isPipSupported = true;
           final controller = BetterPlayerMockController(
             const PlayerConfiguration(
               controlsConfiguration: PlayerControlsConfiguration(
@@ -1344,470 +1323,364 @@ void main() {
             ),
             playerEngineController: engineController,
           );
-
-          final playerEvents = <PlayerEventType>[];
-          controller.addEventsListener(
-            (event) => playerEvents.add(event.betterPlayerEventType),
-          );
+          engineController.emitInitialized();
 
           await tester.pumpWidget(
             MaterialApp(
-              home: Scaffold(
-                body: BetterPlayer(controller: controller),
-              ),
+              home: Scaffold(body: BetterPlayer(controller: controller)),
             ),
           );
 
-          expect(find.byType(PlayerFullScreenVideo), findsNothing);
-          expect(controller.isFullScreen, isFalse);
-
-          // First enterFullScreen pushes fullscreen route
+          // Enter fullscreen first
           controller.enterFullScreen();
           await tester.pump();
           await tester.pump();
           await tester.pumpAndSettle();
+          expect(find.byType(PlayerFullScreenVideo), findsOneWidget);
 
-          expect(
-            playerEvents.where((e) => e == PlayerEventType.openFullscreen),
-            hasLength(1),
-          );
+          // Trigger PiP on Android while already in fullscreen
+          await controller.enablePictureInPicture(GlobalKey());
+          engineController.value = engineController.value.copyWith(isPip: true);
+          engineController.notifyListeners();
+          await tester.pump();
+          await tester.pump();
+          await tester.pumpAndSettle();
+
+          // Fullscreen route must still be on screen
           expect(find.byType(PlayerFullScreenVideo), findsOneWidget);
           expect(controller.isFullScreen, isTrue);
 
-          // Calling enterFullScreen again while in fullscreen must NOT pop the route
-          controller.enterFullScreen();
+          // Stop PiP -> fullscreen route must remain on screen
+          engineController.value = engineController.value.copyWith(
+            isPip: false,
+          );
+          engineController.notifyListeners();
           await tester.pump();
           await tester.pump();
           await tester.pumpAndSettle();
 
           expect(find.byType(PlayerFullScreenVideo), findsOneWidget);
           expect(controller.isFullScreen, isTrue);
-          expect(
-            playerEvents.where((e) => e == PlayerEventType.openFullscreen),
-            hasLength(1),
-          );
-          expect(
-            playerEvents.where((e) => e == PlayerEventType.hideFullscreen),
-            isEmpty,
-          );
 
-          // Exiting fullscreen pops the route cleanly
+          // Clean up fullscreen route before test finishes
           controller.exitFullScreen();
           await tester.pump();
           await tester.pump();
           await tester.pumpAndSettle();
+        } finally {
+          debugDefaultTargetPlatformOverride = null;
+        }
+      },
+    );
 
-          expect(find.byType(PlayerFullScreenVideo), findsNothing);
-          expect(controller.isFullScreen, isFalse);
+    test(
+      'enablePictureInPicture on Android while already in fullscreen preserves fullscreen during and after PiP',
+      () async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.android;
+        try {
+          final engineController = MockPlayerEngineController()
+            ..isPipSupported = true;
+          final controller = BetterPlayerMockController(
+            const PlayerConfiguration(),
+            playerEngineController: engineController,
+          );
+          engineController.emitInitialized();
+
+          final controllerEvents = <PlayerControllerEvent>[];
+          final sub = controller.controllerEventStream.listen(
+            controllerEvents.add,
+          );
+
+          // Start in fullscreen
+          controller.enterFullScreen();
+          await Future<void>.delayed(Duration.zero);
+          expect(controller.isFullScreen, isTrue);
           expect(
-            playerEvents.where((e) => e == PlayerEventType.hideFullscreen),
+            controllerEvents.where(
+              (e) => e == PlayerControllerEvent.openFullscreen,
+            ),
             hasLength(1),
           );
-        },
-      );
 
-      testWidgets(
-        'BetterPlayer widget keeps fullscreen route open when entering and exiting PiP from fullscreen on Android',
-        (tester) async {
-          debugDefaultTargetPlatformOverride = TargetPlatform.android;
-          try {
-            VisibilityDetectorController.instance.updateInterval =
-                Duration.zero;
-            TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-                .setMockMethodCallHandler(
-                  SystemChannels.platform,
-                  (methodCall) async => null,
-                );
-            final engineController = MockPlayerEngineController()
-              ..isPipSupported = true;
-            final controller = BetterPlayerMockController(
-              const PlayerConfiguration(
-                controlsConfiguration: PlayerControlsConfiguration(
-                  showControls: false,
-                ),
-              ),
-              playerEngineController: engineController,
-            );
-            engineController.emitInitialized();
+          // Enter PiP while already in fullscreen
+          await controller.enablePictureInPicture(GlobalKey());
+          engineController.value = engineController.value.copyWith(isPip: true);
+          engineController.notifyListeners();
+          await Future<void>.delayed(Duration.zero);
 
-            await tester.pumpWidget(
-              MaterialApp(
-                home: Scaffold(
-                  body: BetterPlayer(controller: controller),
-                ),
-              ),
-            );
-
-            // Enter fullscreen first
-            controller.enterFullScreen();
-            await tester.pump();
-            await tester.pump();
-            await tester.pumpAndSettle();
-            expect(find.byType(PlayerFullScreenVideo), findsOneWidget);
-
-            // Trigger PiP on Android while already in fullscreen
-            await controller.enablePictureInPicture(GlobalKey());
-            engineController.value = engineController.value.copyWith(
-              isPip: true,
-            );
-            engineController.notifyListeners();
-            await tester.pump();
-            await tester.pump();
-            await tester.pumpAndSettle();
-
-            // Fullscreen route must still be on screen
-            expect(find.byType(PlayerFullScreenVideo), findsOneWidget);
-            expect(controller.isFullScreen, isTrue);
-
-            // Stop PiP -> fullscreen route must remain on screen
-            engineController.value = engineController.value.copyWith(
-              isPip: false,
-            );
-            engineController.notifyListeners();
-            await tester.pump();
-            await tester.pump();
-            await tester.pumpAndSettle();
-
-            expect(find.byType(PlayerFullScreenVideo), findsOneWidget);
-            expect(controller.isFullScreen, isTrue);
-
-            // Clean up fullscreen route before test finishes
-            controller.exitFullScreen();
-            await tester.pump();
-            await tester.pump();
-            await tester.pumpAndSettle();
-          } finally {
-            debugDefaultTargetPlatformOverride = null;
-          }
-        },
-      );
-
-      test(
-        'enablePictureInPicture on Android while already in fullscreen preserves fullscreen during and after PiP',
-        () async {
-          debugDefaultTargetPlatformOverride = TargetPlatform.android;
-          try {
-            final engineController = MockPlayerEngineController()
-              ..isPipSupported = true;
-            final controller = BetterPlayerMockController(
-              const PlayerConfiguration(),
-              playerEngineController: engineController,
-            );
-            engineController.emitInitialized();
-
-            final controllerEvents = <PlayerControllerEvent>[];
-            final sub = controller.controllerEventStream.listen(
-              controllerEvents.add,
-            );
-
-            // Start in fullscreen
-            controller.enterFullScreen();
-            await Future<void>.delayed(Duration.zero);
-            expect(controller.isFullScreen, isTrue);
-            expect(
-              controllerEvents.where(
-                (e) => e == PlayerControllerEvent.openFullscreen,
-              ),
-              hasLength(1),
-            );
-
-            // Enter PiP while already in fullscreen
-            await controller.enablePictureInPicture(GlobalKey());
-            engineController.value = engineController.value.copyWith(
-              isPip: true,
-            );
-            engineController.notifyListeners();
-            await Future<void>.delayed(Duration.zero);
-
-            expect(controller.isFullScreen, isTrue);
-            expect(controller.controlsEnabled, isFalse);
-            // No second openFullscreen event emitted
-            expect(
-              controllerEvents.where(
-                (e) => e == PlayerControllerEvent.openFullscreen,
-              ),
-              hasLength(1),
-            );
-
-            // Exit PiP -> should stay in fullscreen because wasInFullScreenBeforePiP was true
-            engineController.value = engineController.value.copyWith(
-              isPip: false,
-            );
-            engineController.notifyListeners();
-            await Future<void>.delayed(Duration.zero);
-
-            expect(controller.isFullScreen, isTrue);
-            expect(controller.controlsEnabled, isTrue);
-            expect(
-              controllerEvents.where(
-                (e) => e == PlayerControllerEvent.hideFullscreen,
-              ),
-              isEmpty,
-            );
-
-            await sub.cancel();
-          } finally {
-            debugDefaultTargetPlatformOverride = null;
-          }
-        },
-      );
-
-      test(
-        'enablePictureInPicture on Android when not in fullscreen enters fullscreen during PiP and exits after PiP',
-        () async {
-          debugDefaultTargetPlatformOverride = TargetPlatform.android;
-          try {
-            final engineController = MockPlayerEngineController()
-              ..isPipSupported = true;
-            final controller = BetterPlayerMockController(
-              const PlayerConfiguration(),
-              playerEngineController: engineController,
-            );
-            engineController.emitInitialized();
-
-            expect(controller.isFullScreen, isFalse);
-
-            await controller.enablePictureInPicture(GlobalKey());
-            engineController.value = engineController.value.copyWith(
-              isPip: true,
-            );
-            engineController.notifyListeners();
-            await Future<void>.delayed(Duration.zero);
-
-            expect(controller.isFullScreen, isTrue);
-            expect(controller.controlsEnabled, isFalse);
-
-            // Exit PiP -> should exit fullscreen since wasInFullScreenBeforePiP was false
-            engineController.value = engineController.value.copyWith(
-              isPip: false,
-            );
-            engineController.notifyListeners();
-            await Future<void>.delayed(Duration.zero);
-
-            expect(controller.isFullScreen, isFalse);
-            expect(controller.controlsEnabled, isTrue);
-          } finally {
-            debugDefaultTargetPlatformOverride = null;
-          }
-        },
-      );
-
-      test(
-        'returning from PiP on Android via AppLifecycleState.resumed restores controls and visibility',
-        () async {
-          debugDefaultTargetPlatformOverride = TargetPlatform.android;
-          try {
-            final engineController = MockPlayerEngineController()
-              ..isPipSupported = true;
-            final controller = BetterPlayerMockController(
-              const PlayerConfiguration(),
-              playerEngineController: engineController,
-            );
-            engineController.emitInitialized();
-
-            final visibilityStates = <bool>[];
-            final sub = controller.controlsVisibilityStream.listen(
-              visibilityStates.add,
-            );
-
-            await controller.enablePictureInPicture(GlobalKey());
-            engineController.value = engineController.value.copyWith(
-              isPip: true,
-            );
-            engineController.notifyListeners();
-            await Future<void>.delayed(Duration.zero);
-
-            expect(controller.isFullScreen, isTrue);
-            expect(controller.controlsEnabled, isFalse);
-            expect(visibilityStates.last, isFalse);
-
-            // Simulate Android Activity returning from PiP to resumed state
-            controller.setAppLifecycleState(AppLifecycleState.resumed);
-            await Future<void>.delayed(Duration.zero);
-
-            expect(engineController.value.isPip, isFalse);
-            expect(controller.isFullScreen, isFalse);
-            expect(controller.controlsEnabled, isTrue);
-            expect(visibilityStates.last, isTrue);
-
-            await sub.cancel();
-          } finally {
-            debugDefaultTargetPlatformOverride = null;
-          }
-        },
-      );
-
-      testWidgets(
-        'enablePictureInPicture on macOS invokes engine.enablePictureInPicture with RenderBox coordinates',
-        (tester) async {
-          debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
-          try {
-            final engineController = MockPlayerEngineController()
-              ..isPipSupported = true;
-            final controller = BetterPlayerMockController(
-              const PlayerConfiguration(),
-              playerEngineController: engineController,
-            );
-            engineController.emitInitialized();
-
-            final key = GlobalKey();
-            await tester.pumpWidget(
-              MaterialApp(
-                home: Scaffold(
-                  body: SizedBox(
-                    key: key,
-                    width: 320,
-                    height: 180,
-                  ),
-                ),
-              ),
-            );
-
-            await controller.enablePictureInPicture(key);
-
-            expect(engineController.enablePipCalled, isTrue);
-            expect(engineController.lastPipWidth, 320.0);
-            expect(engineController.lastPipHeight, 180.0);
-            expect(controller.controlsEnabled, isFalse);
-          } finally {
-            debugDefaultTargetPlatformOverride = null;
-          }
-        },
-      );
-
-      test(
-        'enablePictureInPicture on macOS does not disable controls when RenderBox is null',
-        () async {
-          debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
-          try {
-            final engineController = MockPlayerEngineController()
-              ..isPipSupported = true;
-            final controller = BetterPlayerMockController(
-              const PlayerConfiguration(),
-              playerEngineController: engineController,
-            );
-            engineController.emitInitialized();
-
-            final unmountedKey = GlobalKey();
-            await controller.enablePictureInPicture(unmountedKey);
-
-            expect(engineController.enablePipCalled, isFalse);
-            expect(controller.controlsEnabled, isTrue);
-          } finally {
-            debugDefaultTargetPlatformOverride = null;
-          }
-        },
-      );
-
-      test(
-        'enablePictureInPicture on iOS does not disable controls when RenderBox is null',
-        () async {
-          debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-          try {
-            final engineController = MockPlayerEngineController()
-              ..isPipSupported = true;
-            final controller = BetterPlayerMockController(
-              const PlayerConfiguration(),
-              playerEngineController: engineController,
-            );
-            engineController.emitInitialized();
-
-            final unmountedKey = GlobalKey();
-            await controller.enablePictureInPicture(unmountedKey);
-
-            expect(engineController.enablePipCalled, isFalse);
-            expect(controller.controlsEnabled, isTrue);
-          } finally {
-            debugDefaultTargetPlatformOverride = null;
-          }
-        },
-      );
-
-      test(
-        'enablePictureInPicture on unsupported platform does not disable controls',
-        () async {
-          debugDefaultTargetPlatformOverride = TargetPlatform.windows;
-          try {
-            final engineController = MockPlayerEngineController()
-              ..isPipSupported = false;
-            final controller = BetterPlayerMockController(
-              const PlayerConfiguration(),
-              playerEngineController: engineController,
-            );
-            engineController.emitInitialized();
-
-            final key = GlobalKey();
-            await controller.enablePictureInPicture(key);
-
-            expect(engineController.enablePipCalled, isFalse);
-            expect(controller.controlsEnabled, isTrue);
-          } finally {
-            debugDefaultTargetPlatformOverride = null;
-          }
-        },
-      );
-
-      test(
-        'isPictureInPictureSupported returns false when engine is null instead of throwing',
-        () async {
-          final controller = BetterPlayerController(
-            const PlayerConfiguration(),
+          expect(controller.isFullScreen, isTrue);
+          expect(controller.controlsEnabled, isFalse);
+          // No second openFullscreen event emitted
+          expect(
+            controllerEvents.where(
+              (e) => e == PlayerControllerEvent.openFullscreen,
+            ),
+            hasLength(1),
           );
-          final isSupported = await controller.isPictureInPictureSupported();
-          expect(isSupported, isFalse);
-        },
-      );
 
-      test(
-        'setAudioTrack selects track when id is provided even if language is null',
-        () {
-          final engineController = MockPlayerEngineController();
+          // Exit PiP -> should stay in fullscreen because wasInFullScreenBeforePiP was true
+          engineController.value = engineController.value.copyWith(
+            isPip: false,
+          );
+          engineController.notifyListeners();
+          await Future<void>.delayed(Duration.zero);
+
+          expect(controller.isFullScreen, isTrue);
+          expect(controller.controlsEnabled, isTrue);
+          expect(
+            controllerEvents.where(
+              (e) => e == PlayerControllerEvent.hideFullscreen,
+            ),
+            isEmpty,
+          );
+
+          await sub.cancel();
+        } finally {
+          debugDefaultTargetPlatformOverride = null;
+        }
+      },
+    );
+
+    test(
+      'enablePictureInPicture on Android when not in fullscreen enters fullscreen during PiP and exits after PiP',
+      () async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.android;
+        try {
+          final engineController = MockPlayerEngineController()
+            ..isPipSupported = true;
           final controller = BetterPlayerMockController(
             const PlayerConfiguration(),
             playerEngineController: engineController,
           );
+          engineController.emitInitialized();
 
-          final audioTrack = PlayerAsmsAudioTrack(
-            id: 0,
-            mimeType: 'audio/mp4',
+          expect(controller.isFullScreen, isFalse);
+
+          await controller.enablePictureInPicture(GlobalKey());
+          engineController.value = engineController.value.copyWith(isPip: true);
+          engineController.notifyListeners();
+          await Future<void>.delayed(Duration.zero);
+
+          expect(controller.isFullScreen, isTrue);
+          expect(controller.controlsEnabled, isFalse);
+
+          // Exit PiP -> should exit fullscreen since wasInFullScreenBeforePiP was false
+          engineController.value = engineController.value.copyWith(
+            isPip: false,
           );
-          controller.setAudioTrack(audioTrack);
-          expect(controller.betterPlayerAsmsAudioTrack, equals(audioTrack));
-        },
-      );
+          engineController.notifyListeners();
+          await Future<void>.delayed(Duration.zero);
 
-      test(
-        'currentVideoSize resolves from runtime size and prefers valid ASMS track dimensions',
-        () {
-          final engineController = MockPlayerEngineController();
+          expect(controller.isFullScreen, isFalse);
+          expect(controller.controlsEnabled, isTrue);
+        } finally {
+          debugDefaultTargetPlatformOverride = null;
+        }
+      },
+    );
+
+    test(
+      'returning from PiP on Android via AppLifecycleState.resumed restores controls and visibility',
+      () async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.android;
+        try {
+          final engineController = MockPlayerEngineController()
+            ..isPipSupported = true;
           final controller = BetterPlayerMockController(
             const PlayerConfiguration(),
             playerEngineController: engineController,
           );
+          engineController.emitInitialized();
 
-          engineController.value = engineController.value.copyWith(
-            size: Size.zero,
+          final visibilityStates = <bool>[];
+          final sub = controller.controlsVisibilityStream.listen(
+            visibilityStates.add,
           );
-          expect(controller.currentVideoSize, Size.zero);
 
-          engineController.value = engineController.value.copyWith(
-            size: const Size(1920, 1080),
-          );
-          expect(controller.currentVideoSize, const Size(1920, 1080));
+          await controller.enablePictureInPicture(GlobalKey());
+          engineController.value = engineController.value.copyWith(isPip: true);
+          engineController.notifyListeners();
+          await Future<void>.delayed(Duration.zero);
 
-          controller.setTrack(
-            const PlayerAsmsTrack('0', 1280, 720, 2000000, 30, '', ''),
-          );
-          expect(controller.currentVideoSize, const Size(1280, 720));
+          expect(controller.isFullScreen, isTrue);
+          expect(controller.controlsEnabled, isFalse);
+          expect(visibilityStates.last, isFalse);
 
-          controller.setTrack(
-            const PlayerAsmsTrack('0', 0, 0, 2000000, 0, '', ''),
+          // Simulate Android Activity returning from PiP to resumed state
+          controller.setAppLifecycleState(AppLifecycleState.resumed);
+          await Future<void>.delayed(Duration.zero);
+
+          expect(engineController.value.isPip, isFalse);
+          expect(controller.isFullScreen, isFalse);
+          expect(controller.controlsEnabled, isTrue);
+          expect(visibilityStates.last, isTrue);
+
+          await sub.cancel();
+        } finally {
+          debugDefaultTargetPlatformOverride = null;
+        }
+      },
+    );
+
+    testWidgets(
+      'enablePictureInPicture on macOS invokes engine.enablePictureInPicture with RenderBox coordinates',
+      (tester) async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+        try {
+          final engineController = MockPlayerEngineController()
+            ..isPipSupported = true;
+          final controller = BetterPlayerMockController(
+            const PlayerConfiguration(),
+            playerEngineController: engineController,
           );
-          expect(controller.currentVideoSize, const Size(1920, 1080));
-        },
-      );
-    },
-  );
+          engineController.emitInitialized();
+
+          final key = GlobalKey();
+          await tester.pumpWidget(
+            MaterialApp(
+              home: Scaffold(body: SizedBox(key: key, width: 320, height: 180)),
+            ),
+          );
+
+          await controller.enablePictureInPicture(key);
+
+          expect(engineController.enablePipCalled, isTrue);
+          expect(engineController.lastPipWidth, 320.0);
+          expect(engineController.lastPipHeight, 180.0);
+          expect(controller.controlsEnabled, isFalse);
+        } finally {
+          debugDefaultTargetPlatformOverride = null;
+        }
+      },
+    );
+
+    test(
+      'enablePictureInPicture on macOS does not disable controls when RenderBox is null',
+      () async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+        try {
+          final engineController = MockPlayerEngineController()
+            ..isPipSupported = true;
+          final controller = BetterPlayerMockController(
+            const PlayerConfiguration(),
+            playerEngineController: engineController,
+          );
+          engineController.emitInitialized();
+
+          final unmountedKey = GlobalKey();
+          await controller.enablePictureInPicture(unmountedKey);
+
+          expect(engineController.enablePipCalled, isFalse);
+          expect(controller.controlsEnabled, isTrue);
+        } finally {
+          debugDefaultTargetPlatformOverride = null;
+        }
+      },
+    );
+
+    test(
+      'enablePictureInPicture on iOS does not disable controls when RenderBox is null',
+      () async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+        try {
+          final engineController = MockPlayerEngineController()
+            ..isPipSupported = true;
+          final controller = BetterPlayerMockController(
+            const PlayerConfiguration(),
+            playerEngineController: engineController,
+          );
+          engineController.emitInitialized();
+
+          final unmountedKey = GlobalKey();
+          await controller.enablePictureInPicture(unmountedKey);
+
+          expect(engineController.enablePipCalled, isFalse);
+          expect(controller.controlsEnabled, isTrue);
+        } finally {
+          debugDefaultTargetPlatformOverride = null;
+        }
+      },
+    );
+
+    test(
+      'enablePictureInPicture on unsupported platform does not disable controls',
+      () async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+        try {
+          final engineController = MockPlayerEngineController()
+            ..isPipSupported = false;
+          final controller = BetterPlayerMockController(
+            const PlayerConfiguration(),
+            playerEngineController: engineController,
+          );
+          engineController.emitInitialized();
+
+          final key = GlobalKey();
+          await controller.enablePictureInPicture(key);
+
+          expect(engineController.enablePipCalled, isFalse);
+          expect(controller.controlsEnabled, isTrue);
+        } finally {
+          debugDefaultTargetPlatformOverride = null;
+        }
+      },
+    );
+
+    test(
+      'isPictureInPictureSupported returns false when engine is null instead of throwing',
+      () async {
+        final controller = BetterPlayerController(const PlayerConfiguration());
+        final isSupported = await controller.isPictureInPictureSupported();
+        expect(isSupported, isFalse);
+      },
+    );
+
+    test(
+      'setAudioTrack selects track when id is provided even if language is null',
+      () {
+        final engineController = MockPlayerEngineController();
+        final controller = BetterPlayerMockController(
+          const PlayerConfiguration(),
+          playerEngineController: engineController,
+        );
+
+        final audioTrack = PlayerAsmsAudioTrack(id: 0, mimeType: 'audio/mp4');
+        controller.setAudioTrack(audioTrack);
+        expect(controller.betterPlayerAsmsAudioTrack, equals(audioTrack));
+      },
+    );
+
+    test(
+      'currentVideoSize resolves from runtime size and prefers valid ASMS track dimensions',
+      () {
+        final engineController = MockPlayerEngineController();
+        final controller = BetterPlayerMockController(
+          const PlayerConfiguration(),
+          playerEngineController: engineController,
+        );
+
+        engineController.value = engineController.value.copyWith(
+          size: Size.zero,
+        );
+        expect(controller.currentVideoSize, Size.zero);
+
+        engineController.value = engineController.value.copyWith(
+          size: const Size(1920, 1080),
+        );
+        expect(controller.currentVideoSize, const Size(1920, 1080));
+
+        controller.setTrack(
+          const PlayerAsmsTrack('0', 1280, 720, 2000000, 30, '', ''),
+        );
+        expect(controller.currentVideoSize, const Size(1280, 720));
+
+        controller.setTrack(
+          const PlayerAsmsTrack('0', 0, 0, 2000000, 0, '', ''),
+        );
+        expect(controller.currentVideoSize, const Size(1920, 1080));
+      },
+    );
+  });
 }
 
 class _NullPositionPlayerEngineController extends MockPlayerEngineController {

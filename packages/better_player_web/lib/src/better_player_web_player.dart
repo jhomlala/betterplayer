@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
+
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:better_player_web/src/shaka_player.dart';
 import 'package:flutter/services.dart';
@@ -535,9 +536,7 @@ class BetterPlayerWebPlayer {
           servers['org.w3.clearkey'] = drm.licenseUrl!;
         }
         if (drm.headers != null && drm.headers!.isNotEmpty) {
-          advanced['org.w3.clearkey'] = {
-            'licenseRequestHeaders': drm.headers!,
-          };
+          advanced['org.w3.clearkey'] = {'licenseRequestHeaders': drm.headers!};
         }
         if (drm.clearKey != null) {
           final parsed = _parseClearKeys(drm.clearKey!);
@@ -755,6 +754,61 @@ class BetterPlayerWebPlayer {
       );
       _shakaPlayer!.selectVariantTrack(best, true.toJS);
     }
+  }
+
+  List<Map<String, dynamic>> getAudioTracks() {
+    if (_shakaPlayer == null) return const <Map<String, dynamic>>[];
+    final jsPlayer = _shakaPlayer as JSObject?;
+    if (jsPlayer == null) return const <Map<String, dynamic>>[];
+
+    final results = <Map<String, dynamic>>[];
+    final seenLanguages = <String>{};
+
+    if (jsPlayer.has('getAudioLanguagesAndRoles')) {
+      final langs = _shakaPlayer!.getAudioLanguagesAndRoles().toDart;
+      var index = 0;
+      for (final item in langs) {
+        final lang = (item['language'] as JSString?)?.toDart ?? '';
+        final role = (item['role'] as JSString?)?.toDart ?? '';
+        final label = (item['label'] as JSString?)?.toDart;
+        final key = '$lang:$role';
+        if (lang.isNotEmpty && !seenLanguages.contains(key)) {
+          seenLanguages.add(key);
+          results.add(<String, dynamic>{
+            'index': index,
+            'label':
+                label ??
+                (role.isNotEmpty ? '$lang ($role)' : lang.toUpperCase()),
+            'language': lang,
+          });
+          index++;
+        }
+      }
+    }
+
+    if (results.isEmpty && jsPlayer.has('getVariantTracks')) {
+      final tracks = _shakaPlayer!.getVariantTracks().toDart;
+      var index = 0;
+      for (final track in tracks) {
+        final lang = (track['language'] as JSString?)?.toDart ?? '';
+        final label = (track['label'] as JSString?)?.toDart;
+        final mime =
+            (track['audioMimeType'] as JSString?)?.toDart ??
+            (track['mimeType'] as JSString?)?.toDart;
+        if (lang.isNotEmpty && !seenLanguages.contains(lang)) {
+          seenLanguages.add(lang);
+          results.add(<String, dynamic>{
+            'index': index,
+            'label': label ?? lang.toUpperCase(),
+            'language': lang,
+            'mimeType': mime,
+          });
+          index++;
+        }
+      }
+    }
+
+    return results;
   }
 
   void setAudioTrack({String? language, int? index}) {

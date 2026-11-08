@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:ffi' as ffi;
+
 import 'package:better_player_ios/better_player_ios.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:ffi/ffi.dart' as pkg_ffi;
@@ -113,6 +114,14 @@ void main() {
               mockPlayer.setTrackParameters(1920, height: 1080, bitrate: 5000),
         ).called(1);
 
+        when(
+          () => mockPlayer.getAudioTracksJson(),
+        ).thenReturn('[{"index":0,"label":"English","language":"eng"}]');
+        final tracks = await iosPlayer.getAudioTracks(1);
+        expect(tracks, hasLength(1));
+        expect(tracks.first['label'], 'English');
+        verify(() => mockPlayer.getAudioTracksJson()).called(1);
+
         await iosPlayer.setAudioTrack(1, 'eng', 1);
         verify(() => mockPlayer.setAudioTrack('eng', index: 1)).called(1);
 
@@ -135,17 +144,13 @@ void main() {
       final absPos = await iosPlayer.getAbsolutePosition(1);
       expect(absPos, DateTime.fromMillisecondsSinceEpoch(1600000000000));
 
-      when(
-        () => mockPlayer.absolutePosition(),
-      ).thenReturn(8640000000000000);
+      when(() => mockPlayer.absolutePosition()).thenReturn(8640000000000000);
       expect(
         await iosPlayer.getAbsolutePosition(1),
         DateTime.fromMillisecondsSinceEpoch(8640000000000000),
       );
 
-      when(
-        () => mockPlayer.absolutePosition(),
-      ).thenReturn(8640000000000001);
+      when(() => mockPlayer.absolutePosition()).thenReturn(8640000000000001);
       expect(await iosPlayer.getAbsolutePosition(1), isNull);
 
       when(() => mockPlayer.absolutePosition()).thenReturn(0);
@@ -500,87 +505,80 @@ void main() {
       },
     );
 
-    test(
-      'setDataSource and dispose reset initialization tracking',
-      () async {
-        final controller = StreamController<VideoEvent>.broadcast();
-        iosPlayer.setEventControllerForTesting(
-          textureId: 1,
-          controller: controller,
-        );
+    test('setDataSource and dispose reset initialization tracking', () async {
+      final controller = StreamController<VideoEvent>.broadcast();
+      iosPlayer.setEventControllerForTesting(
+        textureId: 1,
+        controller: controller,
+      );
 
-        final events = <VideoEvent>[];
-        final subscription = controller.stream.listen(events.add);
+      final events = <VideoEvent>[];
+      final subscription = controller.stream.listen(events.add);
 
-        iosPlayer.handleInitialized(
-          textureId: 1,
-          durationMs: 1000,
-          width: 1920,
-          height: 1080,
-          key: 'key1',
-        );
-        await Future<void>.delayed(Duration.zero);
-        expect(events.last.eventType, VideoEventType.initialized);
+      iosPlayer.handleInitialized(
+        textureId: 1,
+        durationMs: 1000,
+        width: 1920,
+        height: 1080,
+        key: 'key1',
+      );
+      await Future<void>.delayed(Duration.zero);
+      expect(events.last.eventType, VideoEventType.initialized);
 
-        // setDataSource resets tracking
-        await iosPlayer.setDataSource(
-          1,
-          DataSource(
-            sourceType: DataSourceType.network,
-            uri: 'https://test.com',
-          ),
-        );
+      // setDataSource resets tracking
+      await iosPlayer.setDataSource(
+        1,
+        DataSource(sourceType: DataSourceType.network, uri: 'https://test.com'),
+      );
 
-        iosPlayer.handleInitialized(
-          textureId: 1,
-          durationMs: 2000,
-          width: 1280,
-          height: 720,
-          key: 'key2',
-        );
-        await Future<void>.delayed(Duration.zero);
-        expect(events.length, 2);
-        expect(events.last.eventType, VideoEventType.initialized);
+      iosPlayer.handleInitialized(
+        textureId: 1,
+        durationMs: 2000,
+        width: 1280,
+        height: 720,
+        key: 'key2',
+      );
+      await Future<void>.delayed(Duration.zero);
+      expect(events.length, 2);
+      expect(events.last.eventType, VideoEventType.initialized);
 
-        // dispose resets tracking
-        await iosPlayer.dispose(1);
-        final freshController = StreamController<VideoEvent>.broadcast();
-        iosPlayer.setEventControllerForTesting(
-          textureId: 1,
-          controller: freshController,
-        );
-        final freshEvents = <VideoEvent>[];
-        final freshSub = freshController.stream.listen(freshEvents.add);
+      // dispose resets tracking
+      await iosPlayer.dispose(1);
+      final freshController = StreamController<VideoEvent>.broadcast();
+      iosPlayer.setEventControllerForTesting(
+        textureId: 1,
+        controller: freshController,
+      );
+      final freshEvents = <VideoEvent>[];
+      final freshSub = freshController.stream.listen(freshEvents.add);
 
-        iosPlayer.handleInitialized(
-          textureId: 1,
-          durationMs: 3000,
-          width: 640,
-          height: 360,
-          key: 'key3',
-        );
-        await Future<void>.delayed(Duration.zero);
-        expect(freshEvents.length, 1);
-        expect(freshEvents.last.eventType, VideoEventType.initialized);
+      iosPlayer.handleInitialized(
+        textureId: 1,
+        durationMs: 3000,
+        width: 640,
+        height: 360,
+        key: 'key3',
+      );
+      await Future<void>.delayed(Duration.zero);
+      expect(freshEvents.length, 1);
+      expect(freshEvents.last.eventType, VideoEventType.initialized);
 
-        await subscription.cancel();
-        await controller.close();
-        await freshSub.cancel();
-        await freshController.close();
-      },
-    );
+      await subscription.cancel();
+      await controller.close();
+      await freshSub.cancel();
+      await freshController.close();
+    });
 
     test('setScreenCaptureProtection invokes method channel', () async {
       TestWidgetsFlutterBinding.ensureInitialized();
       final methodCalls = <MethodCall>[];
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(
-            const MethodChannel('better_player_ios'),
-            (call) async {
-              methodCalls.add(call);
-              return null;
-            },
-          );
+          .setMockMethodCallHandler(const MethodChannel('better_player_ios'), (
+            call,
+          ) async {
+            methodCalls.add(call);
+            return null;
+          });
 
       await iosPlayer.setScreenCaptureProtection(enabled: true);
       await iosPlayer.setScreenCaptureProtection(enabled: false);
@@ -623,13 +621,10 @@ void main() {
       await subscription.cancel();
     });
 
-    test(
-      'cleanupOrphanedPlayers disposes players matching numeric keys',
-      () {
-        iosPlayer.cleanupOrphanedPlayers(playersOverride: {1: Object()});
-        verify(() => mockPlayer.dispose()).called(1);
-      },
-    );
+    test('cleanupOrphanedPlayers disposes players matching numeric keys', () {
+      iosPlayer.cleanupOrphanedPlayers(playersOverride: {1: Object()});
+      verify(() => mockPlayer.dispose()).called(1);
+    });
 
     test(
       'cleanupOrphanedPlayers ignores non-matching or empty player maps',
@@ -648,13 +643,12 @@ void main() {
       TestWidgetsFlutterBinding.ensureInitialized();
       final methodCalls = <MethodCall>[];
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(
-            const MethodChannel('better_player_ios'),
-            (call) async {
-              methodCalls.add(call);
-              return null;
-            },
-          );
+          .setMockMethodCallHandler(const MethodChannel('better_player_ios'), (
+            call,
+          ) async {
+            methodCalls.add(call);
+            return null;
+          });
 
       await iosPlayer.showExternalPlaybackPicker(textureId: 42);
 

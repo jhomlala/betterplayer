@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:better_player_android/better_player_android.dart';
 import 'package:better_player_android/src/better_player_android_jni.g.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
@@ -123,15 +124,21 @@ void main() {
         await androidPlayer.setLooping(1, true);
         verify(() => androidPlayer.mockPlayer.looping = true).called(1);
 
+        when(
+          () => androidPlayer.mockPlayer.getAudioTracksJson(),
+        ).thenReturn('[{"index":0,"label":"English","language":"eng"}]');
+        final tracks = await androidPlayer.getAudioTracks(1);
+        expect(tracks, hasLength(1));
+        expect(tracks.first['label'], 'English');
+        verify(() => androidPlayer.mockPlayer.getAudioTracksJson()).called(1);
+
         await androidPlayer.setAudioTrack(1, 'eng', 1);
         verify(
           () => androidPlayer.mockPlayer.setAudioTrack(any(), 1),
         ).called(1);
 
         await androidPlayer.setTextTrack(1, 'eng', 1);
-        verify(
-          () => androidPlayer.mockPlayer.setTextTrack(any(), 1),
-        ).called(1);
+        verify(() => androidPlayer.mockPlayer.setTextTrack(any(), 1)).called(1);
 
         await androidPlayer.setMixWithOthers(1, true);
         verify(() => androidPlayer.mockPlayer.mixWithOthers = true).called(1);

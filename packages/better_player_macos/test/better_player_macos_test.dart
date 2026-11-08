@@ -121,15 +121,19 @@ void main() {
           ),
         ).called(1);
 
+        when(
+          () => mockPlayer.getAudioTracksJson(),
+        ).thenReturn('[{"index":0,"label":"English","language":"eng"}]');
+        final tracks = await macosPlayer.getAudioTracks(1);
+        expect(tracks, hasLength(1));
+        expect(tracks.first['label'], 'English');
+        verify(() => mockPlayer.getAudioTracksJson()).called(1);
+
         await macosPlayer.setAudioTrack(1, 'eng', 1);
-        verify(
-          () => mockPlayer.setAudioTrack(name: 'eng', index: 1),
-        ).called(1);
+        verify(() => mockPlayer.setAudioTrack(name: 'eng', index: 1)).called(1);
 
         await macosPlayer.setTextTrack(1, 'eng', 1);
-        verify(
-          () => mockPlayer.setTextTrack(name: 'eng', index: 1),
-        ).called(1);
+        verify(() => mockPlayer.setTextTrack(name: 'eng', index: 1)).called(1);
 
         await macosPlayer.setMixWithOthers(1, true);
         verify(
@@ -149,17 +153,13 @@ void main() {
       final absPos = await macosPlayer.getAbsolutePosition(1);
       expect(absPos, DateTime.fromMillisecondsSinceEpoch(1600000000000));
 
-      when(
-        () => mockPlayer.absolutePosition(),
-      ).thenReturn(8640000000000000);
+      when(() => mockPlayer.absolutePosition()).thenReturn(8640000000000000);
       expect(
         await macosPlayer.getAbsolutePosition(1),
         DateTime.fromMillisecondsSinceEpoch(8640000000000000),
       );
 
-      when(
-        () => mockPlayer.absolutePosition(),
-      ).thenReturn(8640000000000001);
+      when(() => mockPlayer.absolutePosition()).thenReturn(8640000000000001);
       expect(await macosPlayer.getAbsolutePosition(1), isNull);
 
       when(() => mockPlayer.absolutePosition()).thenReturn(0);
@@ -207,34 +207,31 @@ void main() {
       expect(macosPlayer.setDataSource(1, dataSource), completes);
     });
 
-    test(
-      'setDataSource forwards headers to wrapper',
-      () async {
-        await macosPlayer.create();
-        await macosPlayer.setDataSource(
-          1,
-          DataSource(
-            sourceType: DataSourceType.network,
-            uri: 'https://test.com',
-            headers: {'Authorization': 'Bearer token'},
-          ),
-        );
-        verify(
-          () => mockPlayer.setDataSourceURLString(
-            url: 'https://test.com',
-            key: any(named: 'key'),
-            certificateUrl: any(named: 'certificateUrl'),
-            licenseUrl: any(named: 'licenseUrl'),
-            headers: {'Authorization': 'Bearer token'},
-            useCache: any(named: 'useCache'),
-            cacheKey: any(named: 'cacheKey'),
-            cacheManager: any(named: 'cacheManager'),
-            overriddenDuration: any(named: 'overriddenDuration'),
-            videoExtension: any(named: 'videoExtension'),
-          ),
-        ).called(1);
-      },
-    );
+    test('setDataSource forwards headers to wrapper', () async {
+      await macosPlayer.create();
+      await macosPlayer.setDataSource(
+        1,
+        DataSource(
+          sourceType: DataSourceType.network,
+          uri: 'https://test.com',
+          headers: {'Authorization': 'Bearer token'},
+        ),
+      );
+      verify(
+        () => mockPlayer.setDataSourceURLString(
+          url: 'https://test.com',
+          key: any(named: 'key'),
+          certificateUrl: any(named: 'certificateUrl'),
+          licenseUrl: any(named: 'licenseUrl'),
+          headers: {'Authorization': 'Bearer token'},
+          useCache: any(named: 'useCache'),
+          cacheKey: any(named: 'cacheKey'),
+          cacheManager: any(named: 'cacheManager'),
+          overriddenDuration: any(named: 'overriddenDuration'),
+          videoExtension: any(named: 'videoExtension'),
+        ),
+      ).called(1);
+    });
 
     test(
       'setDataSource successfully delegates network URL to wrapper',
@@ -508,75 +505,69 @@ void main() {
       },
     );
 
-    test(
-      'setDataSource and dispose reset initialization tracking',
-      () async {
-        final controller = StreamController<VideoEvent>.broadcast();
-        macosPlayer.setEventControllerForTesting(
-          textureId: 1,
-          controller: controller,
-        );
+    test('setDataSource and dispose reset initialization tracking', () async {
+      final controller = StreamController<VideoEvent>.broadcast();
+      macosPlayer.setEventControllerForTesting(
+        textureId: 1,
+        controller: controller,
+      );
 
-        final events = <VideoEvent>[];
-        final subscription = controller.stream.listen(events.add);
+      final events = <VideoEvent>[];
+      final subscription = controller.stream.listen(events.add);
 
-        macosPlayer.handleInitialized(
-          textureId: 1,
-          durationMs: 1000,
-          width: 1920,
-          height: 1080,
-          key: 'key1',
-        );
-        await Future<void>.delayed(Duration.zero);
-        expect(events.last.eventType, VideoEventType.initialized);
+      macosPlayer.handleInitialized(
+        textureId: 1,
+        durationMs: 1000,
+        width: 1920,
+        height: 1080,
+        key: 'key1',
+      );
+      await Future<void>.delayed(Duration.zero);
+      expect(events.last.eventType, VideoEventType.initialized);
 
-        // setDataSource resets tracking
-        await macosPlayer.setDataSource(
-          1,
-          DataSource(
-            sourceType: DataSourceType.network,
-            uri: 'https://test.com',
-          ),
-        );
+      // setDataSource resets tracking
+      await macosPlayer.setDataSource(
+        1,
+        DataSource(sourceType: DataSourceType.network, uri: 'https://test.com'),
+      );
 
-        macosPlayer.handleInitialized(
-          textureId: 1,
-          durationMs: 2000,
-          width: 1280,
-          height: 720,
-          key: 'key2',
-        );
-        await Future<void>.delayed(Duration.zero);
-        expect(events.length, 2);
-        expect(events.last.eventType, VideoEventType.initialized);
+      macosPlayer.handleInitialized(
+        textureId: 1,
+        durationMs: 2000,
+        width: 1280,
+        height: 720,
+        key: 'key2',
+      );
+      await Future<void>.delayed(Duration.zero);
+      expect(events.length, 2);
+      expect(events.last.eventType, VideoEventType.initialized);
 
-        // dispose resets tracking
-        await macosPlayer.dispose(1);
-        final freshController = StreamController<VideoEvent>.broadcast();
-        macosPlayer.setEventControllerForTesting(
-          textureId: 1,
-          controller: freshController,
-        );
-        final freshEvents = <VideoEvent>[];
-        final freshSub = freshController.stream.listen(freshEvents.add);
+      // dispose resets tracking
+      await macosPlayer.dispose(1);
+      final freshController = StreamController<VideoEvent>.broadcast();
+      macosPlayer.setEventControllerForTesting(
+        textureId: 1,
+        controller: freshController,
+      );
+      final freshEvents = <VideoEvent>[];
+      final freshSub = freshController.stream.listen(freshEvents.add);
 
-        macosPlayer.handleInitialized(
-          textureId: 1,
-          durationMs: 3000,
-          width: 640,
-          height: 360,
-          key: 'key3',
-        );
-        await Future<void>.delayed(Duration.zero);
-        expect(freshEvents.length, 1);
-        expect(freshEvents.last.eventType, VideoEventType.initialized);
+      macosPlayer.handleInitialized(
+        textureId: 1,
+        durationMs: 3000,
+        width: 640,
+        height: 360,
+        key: 'key3',
+      );
+      await Future<void>.delayed(Duration.zero);
+      expect(freshEvents.length, 1);
+      expect(freshEvents.last.eventType, VideoEventType.initialized);
 
-        await subscription.cancel();
-        await controller.close();
-        await freshSub.cancel();
-        await freshController.close();
-      },
-    );
+      await subscription.cancel();
+      await controller.close();
+      await freshSub.cancel();
+      await freshController.close();
+    });
 
     test(
       'dispose cleans up callbacks map and handles null textureId',
@@ -589,13 +580,10 @@ void main() {
       },
     );
 
-    test(
-      'cleanupOrphanedPlayers disposes players matching numeric keys',
-      () {
-        macosPlayer.cleanupOrphanedPlayers(playersOverride: {1: Object()});
-        verify(() => mockPlayer.dispose()).called(1);
-      },
-    );
+    test('cleanupOrphanedPlayers disposes players matching numeric keys', () {
+      macosPlayer.cleanupOrphanedPlayers(playersOverride: {1: Object()});
+      verify(() => mockPlayer.dispose()).called(1);
+    });
 
     test(
       'cleanupOrphanedPlayers ignores non-matching or empty player maps',

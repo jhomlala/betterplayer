@@ -1,4 +1,5 @@
 import 'dart:ffi' as ffi;
+
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:better_player_windows/src/mpv/mpv_ffi.dart';
 import 'package:better_player_windows/src/mpv/mpv_player.dart';
@@ -196,11 +197,7 @@ void main() {
             ),
           ),
           throwsA(
-            isA<PlatformException>().having(
-              (e) => e.code,
-              'code',
-              'MPV_ERROR',
-            ),
+            isA<PlatformException>().having((e) => e.code, 'code', 'MPV_ERROR'),
           ),
         );
 
@@ -216,11 +213,7 @@ void main() {
       expect(
         () => player.seekTo(const Duration(seconds: 10)),
         throwsA(
-          isA<PlatformException>().having(
-            (e) => e.code,
-            'code',
-            'MPV_ERROR',
-          ),
+          isA<PlatformException>().having((e) => e.code, 'code', 'MPV_ERROR'),
         ),
       );
 
@@ -251,7 +244,7 @@ void main() {
       },
     );
 
-    test('setSpeed clamps to minimum 0.01 to prevent mpv error', () async {
+    test('setSpeed clamps between 0.01 and 10.0', () async {
       final bindings = createFakeBindings();
       final player = createPlayer(bindings);
 
@@ -260,6 +253,49 @@ void main() {
 
       await player.setSpeed(2.5);
       expect(propertyDoubles['speed'], 2.5);
+
+      await player.setSpeed(10);
+      expect(propertyDoubles['speed'], 10);
+
+      await player.setSpeed(15);
+      expect(propertyDoubles['speed'], 10);
+
+      await player.dispose();
+    });
+
+    test('getAudioTracks parses audio tracks from track-list', () async {
+      final bindings = createFakeBindings();
+      final player = createPlayer(bindings);
+
+      propertyInts['track-list/count'] = 3;
+      propertyStrings['track-list/0/type'] = 'video';
+      propertyInts['track-list/0/id'] = 1;
+
+      propertyStrings['track-list/1/type'] = 'audio';
+      propertyInts['track-list/1/id'] = 2;
+      propertyStrings['track-list/1/title'] = 'Japanese';
+      propertyStrings['track-list/1/lang'] = 'ja';
+      propertyStrings['track-list/1/codec'] = 'aac';
+      propertyInts['track-list/1/demux-bitrate'] = 128000;
+      propertyInts['track-list/1/demux-channel-count'] = 2;
+
+      propertyStrings['track-list/2/type'] = 'audio';
+      propertyInts['track-list/2/id'] = 3;
+      propertyStrings['track-list/2/title'] = 'English';
+      propertyStrings['track-list/2/lang'] = 'en';
+
+      final tracks = await player.getAudioTracks();
+      expect(tracks.length, 2);
+      expect(tracks[0]['index'], 0);
+      expect(tracks[0]['label'], 'Japanese');
+      expect(tracks[0]['language'], 'ja');
+      expect(tracks[0]['mimeType'], 'audio/aac');
+      expect(tracks[0]['bitrate'], 128000);
+      expect(tracks[0]['channelCount'], 2);
+
+      expect(tracks[1]['index'], 1);
+      expect(tracks[1]['label'], 'English');
+      expect(tracks[1]['language'], 'en');
 
       await player.dispose();
     });
@@ -632,10 +668,7 @@ void main() {
         final event = await bufferFuture;
         expect(event.eventType, VideoEventType.bufferingUpdate);
         expect(event.buffered, isNotNull);
-        expect(
-          event.buffered!.first.end,
-          const Duration(milliseconds: 5500),
-        );
+        expect(event.buffered!.first.end, const Duration(milliseconds: 5500));
 
         calloc.free(cacheName);
         calloc.free(cacheData);
@@ -702,26 +735,29 @@ void main() {
       );
     });
 
-    test('headers containing commas are quoted in http-header-fields', () async {
-      final bindings = createFakeBindings();
-      final player = createPlayer(bindings);
+    test(
+      'headers containing commas are quoted in http-header-fields',
+      () async {
+        final bindings = createFakeBindings();
+        final player = createPlayer(bindings);
 
-      await player.setDataSource(
-        DataSource(
-          sourceType: DataSourceType.network,
-          uri: 'https://example.com/test.mp4',
-          headers: {
-            'Accept': 'text/html,application/xhtml+xml',
-            'User-Agent': 'Flutter,BetterPlayer',
-          },
-        ),
-      );
+        await player.setDataSource(
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'https://example.com/test.mp4',
+            headers: {
+              'Accept': 'text/html,application/xhtml+xml',
+              'User-Agent': 'Flutter,BetterPlayer',
+            },
+          ),
+        );
 
-      expect(
-        propertyStrings['http-header-fields'],
-        'Accept: "text/html,application/xhtml+xml",User-Agent: "Flutter,BetterPlayer"',
-      );
-    });
+        expect(
+          propertyStrings['http-header-fields'],
+          'Accept: "text/html,application/xhtml+xml",User-Agent: "Flutter,BetterPlayer"',
+        );
+      },
+    );
 
     test(
       'bufferingConfiguration sets demuxer-readahead-secs and demuxer-cache-wait',
@@ -935,38 +971,35 @@ void main() {
       },
     );
 
-    test(
-      'endFile ignores audio initialization failure (-14)',
-      () async {
-        final bindings = createFakeBindings();
-        final player = createPlayer(bindings);
+    test('endFile ignores audio initialization failure (-14)', () async {
+      final bindings = createFakeBindings();
+      final player = createPlayer(bindings);
 
-        final events = <VideoEvent>[];
-        var hadError = false;
-        final sub = player.events.listen(
-          events.add,
-          onError: (_) {
-            hadError = true;
-          },
-        );
+      final events = <VideoEvent>[];
+      var hadError = false;
+      final sub = player.events.listen(
+        events.add,
+        onError: (_) {
+          hadError = true;
+        },
+      );
 
-        final endFileData = calloc<MpvEventEndFile>()
-          ..ref.error = -14
-          ..ref.reason = MpvEndFileReason.error;
+      final endFileData = calloc<MpvEventEndFile>()
+        ..ref.error = -14
+        ..ref.reason = MpvEndFileReason.error;
 
-        eventQueue.add((ev) {
-          ev.ref.eventId = MpvEventId.endFile;
-          ev.ref.error = -14;
-          ev.ref.data = endFileData.cast();
-        });
+      eventQueue.add((ev) {
+        ev.ref.eventId = MpvEventId.endFile;
+        ev.ref.error = -14;
+        ev.ref.data = endFileData.cast();
+      });
 
-        await Future<void>.delayed(const Duration(milliseconds: 50));
-        expect(hadError, isFalse);
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+      expect(hadError, isFalse);
 
-        calloc.free(endFileData);
-        await sub.cancel();
-      },
-    );
+      calloc.free(endFileData);
+      await sub.cancel();
+    });
 
     test(
       'ClearKey DRM resets demuxer-lavf-o when switching to a non-DRM stream',
@@ -998,27 +1031,24 @@ void main() {
       },
     );
 
-    test(
-      'setAudioTrack matches by language code when index differs',
-      () async {
-        final bindings = createFakeBindings();
-        final player = createPlayer(bindings);
+    test('setAudioTrack matches by language code when index differs', () async {
+      final bindings = createFakeBindings();
+      final player = createPlayer(bindings);
 
-        propertyInts['track-list/count'] = 2;
-        propertyStrings['track-list/0/type'] = 'audio';
-        propertyInts['track-list/0/id'] = 2;
-        propertyStrings['track-list/0/lang'] = 'eng';
-        propertyStrings['track-list/0/title'] = 'English';
+      propertyInts['track-list/count'] = 2;
+      propertyStrings['track-list/0/type'] = 'audio';
+      propertyInts['track-list/0/id'] = 2;
+      propertyStrings['track-list/0/lang'] = 'eng';
+      propertyStrings['track-list/0/title'] = 'English';
 
-        propertyStrings['track-list/1/type'] = 'audio';
-        propertyInts['track-list/1/id'] = 7;
-        propertyStrings['track-list/1/lang'] = 'fra';
-        propertyStrings['track-list/1/title'] = 'French';
+      propertyStrings['track-list/1/type'] = 'audio';
+      propertyInts['track-list/1/id'] = 7;
+      propertyStrings['track-list/1/lang'] = 'fra';
+      propertyStrings['track-list/1/title'] = 'French';
 
-        await player.setAudioTrack(name: 'fra', index: 99);
-        expect(propertyStrings['aid'], '7');
-      },
-    );
+      await player.setAudioTrack(name: 'fra', index: 99);
+      expect(propertyStrings['aid'], '7');
+    });
 
     test(
       'endFile with non-eof reason (stop or redirect) does not emit completed',
@@ -1061,38 +1091,35 @@ void main() {
       },
     );
 
-    test(
-      'play() after completion seeks to 0.0 before unpausing',
-      () async {
-        final bindings = createFakeBindings();
-        final player = createPlayer(bindings);
+    test('play() after completion seeks to 0.0 before unpausing', () async {
+      final bindings = createFakeBindings();
+      final player = createPlayer(bindings);
 
-        final endFile = calloc<MpvEventEndFile>()
-          ..ref.reason = MpvEndFileReason.eof
-          ..ref.error = 0;
+      final endFile = calloc<MpvEventEndFile>()
+        ..ref.reason = MpvEndFileReason.eof
+        ..ref.error = 0;
 
-        final completedFuture = waitForEvent(
-          player,
-          (e) => e.eventType == VideoEventType.completed,
-        );
+      final completedFuture = waitForEvent(
+        player,
+        (e) => e.eventType == VideoEventType.completed,
+      );
 
-        eventQueue.add((ev) {
-          ev.ref.eventId = MpvEventId.endFile;
-          ev.ref.error = 0;
-          ev.ref.data = endFile.cast();
-        });
+      eventQueue.add((ev) {
+        ev.ref.eventId = MpvEventId.endFile;
+        ev.ref.error = 0;
+        ev.ref.data = endFile.cast();
+      });
 
-        await completedFuture;
-        executedCommands.clear();
+      await completedFuture;
+      executedCommands.clear();
 
-        await player.play();
-        expect(
-          executedCommands,
-          contains(equals(['seek', '0.0', 'absolute+exact'])),
-        );
+      await player.play();
+      expect(
+        executedCommands,
+        contains(equals(['seek', '0.0', 'absolute+exact'])),
+      );
 
-        calloc.free(endFile);
-      },
-    );
+      calloc.free(endFile);
+    });
   });
 }
