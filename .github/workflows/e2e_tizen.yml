@@ -101,7 +101,16 @@ jobs:
           export PATH="$HOME/flutter-tizen/bin:$HOME/tizen-studio/tools/ide/bin:$PATH"
           dbus-run-session -- bash -c "
             echo tizen | gnome-keyring-daemon --unlock &&
-            flutter-tizen build tpk --debug
+            for attempt in 1 2 3; do
+              echo \"=== Attempt \$attempt: Building TPK ===\"
+              if flutter-tizen build tpk --debug -v; then
+                echo \"=== TPK build succeeded on attempt \$attempt ===\"
+                exit 0
+              fi
+              echo \"=== TPK build failed on attempt \$attempt, retrying in 5 seconds... ===\"
+              sleep 5
+            done
+            exit 1
           "
 
       - name: Upload Tizen TPK Artifact
