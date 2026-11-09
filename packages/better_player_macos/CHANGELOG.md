@@ -1,4 +1,5 @@
 ## Unreleased
+- Added: `FlutterFramework` dependency to `Package.swift` for Swift Package Manager support (by @hellohuanlin).
 - Updated: Bumped `better_player_platform_interface` constraint to `^1.8.0` to resolve constructor compatibility during dependency lower-bound analysis.
 
 ## 1.8.0
