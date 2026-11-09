@@ -2,6 +2,9 @@ name: Generate iOS FFI
 
 on:
   push:
+    branches:
+      - '**'
+      - '!master'
     paths:
       - 'packages/better_player_ios/ios/**'
       - 'packages/better_player_ios/tool/**'
@@ -16,6 +19,7 @@ concurrency:
 
 jobs:
   generate-ios-ffi:
+    if: github.ref != 'refs/heads/master' && startsWith(github.ref, 'refs/heads/')
     runs-on: macos-latest
 
     steps:

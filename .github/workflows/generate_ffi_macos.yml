@@ -2,6 +2,9 @@ name: Generate macOS FFI
 
 on:
   push:
+    branches:
+      - '**'
+      - '!master'
     paths:
       - 'packages/better_player_macos/macos/**'
       - 'packages/better_player_macos/tool/**'
@@ -16,6 +19,7 @@ concurrency:
 
 jobs:
   generate-macos-ffi:
+    if: github.ref != 'refs/heads/master' && startsWith(github.ref, 'refs/heads/')
     runs-on: macos-latest
 
     steps:

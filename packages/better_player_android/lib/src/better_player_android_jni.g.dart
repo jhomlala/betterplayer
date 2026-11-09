@@ -156,7 +156,10 @@ extension BetterPlayerApi$Companion$$Methods on BetterPlayerApi$Companion {
   }
 
   static final _id_get$activity = BetterPlayerApi$Companion._class
-      .instanceMethodId(r'getActivity', r'()Landroid/app/Activity;');
+      .instanceMethodId(
+        r'getActivity',
+        r'()Landroid/app/Activity;',
+      );
 
   static final _get$activity =
       jni$_.ProtectedJniExtensions.lookup<
@@ -185,7 +188,10 @@ extension BetterPlayerApi$Companion$$Methods on BetterPlayerApi$Companion {
   }
 
   static final _id_set$activity = BetterPlayerApi$Companion._class
-      .instanceMethodId(r'setActivity', r'(Landroid/app/Activity;)V');
+      .instanceMethodId(
+        r'setActivity',
+        r'(Landroid/app/Activity;)V',
+      );
 
   static final _set$activity =
       jni$_.ProtectedJniExtensions.lookup<
@@ -292,7 +298,10 @@ extension BetterPlayerApi$Companion$$Methods on BetterPlayerApi$Companion {
 
   static final _id_set$screenCaptureProtection = BetterPlayerApi$Companion
       ._class
-      .instanceMethodId(r'setScreenCaptureProtection', r'(Z)V');
+      .instanceMethodId(
+        r'setScreenCaptureProtection',
+        r'(Z)V',
+      );
 
   static final _set$screenCaptureProtection =
       jni$_.ProtectedJniExtensions.lookup<
@@ -397,7 +406,9 @@ extension type BetterPlayerApi._(jni$_.JObject _$this)
       _id_Companion.get(_class, BetterPlayerApi$Companion.type)
           as BetterPlayerApi$Companion;
 
-  static final _id_new$ = _class.constructorId(r'()V');
+  static final _id_new$ = _class.constructorId(
+    r'()V',
+  );
 
   static final _new$ =
       jni$_.ProtectedJniExtensions.lookup<
@@ -563,7 +574,11 @@ extension type BetterPlayerCallback._(jni$_.JObject _$this)
   ) {
     return _$invokeMethod(
       port,
-      jni$_.MethodInvocation.fromAddresses(0, descriptor.address, args.address),
+      jni$_.MethodInvocation.fromAddresses(
+        0,
+        descriptor.address,
+        args.address,
+      ),
     );
   }
 
@@ -591,7 +606,9 @@ extension type BetterPlayerCallback._(jni$_.JObject _$this)
         return jni$_.nullptr;
       }
       if ($d == r'onCompleted(Ljava/lang/String;)V') {
-        _$impls[$p]!.onCompleted(($a![0] as jni$_.JString?));
+        _$impls[$p]!.onCompleted(
+          ($a![0] as jni$_.JString?),
+        );
         return jni$_.nullptr;
       }
       if ($d == r'onPlay()V') {
@@ -639,11 +656,15 @@ extension type BetterPlayerCallback._(jni$_.JObject _$this)
         return jni$_.nullptr;
       }
       if ($d == r'onCues(Ljava/util/List;)V') {
-        _$impls[$p]!.onCues(($a![0] as jni$_.JList<jni$_.JString>));
+        _$impls[$p]!.onCues(
+          ($a![0] as jni$_.JList<jni$_.JString>),
+        );
         return jni$_.nullptr;
       }
       if ($d == r'onCuesJson(Ljava/lang/String;)V') {
-        _$impls[$p]!.onCuesJson(($a![0] as jni$_.JString));
+        _$impls[$p]!.onCuesJson(
+          ($a![0] as jni$_.JString),
+        );
         return jni$_.nullptr;
       }
       if ($d ==
@@ -703,7 +724,9 @@ extension type BetterPlayerCallback._(jni$_.JObject _$this)
     _$impls[$a] = $impl;
   }
 
-  factory BetterPlayerCallback.implement($BetterPlayerCallback $impl) {
+  factory BetterPlayerCallback.implement(
+    $BetterPlayerCallback $impl,
+  ) {
     final $i = jni$_.JImplementer();
     implementIn($i, $impl);
     return $i.implement<BetterPlayerCallback>();
@@ -787,7 +810,9 @@ extension BetterPlayerCallback$$Methods on BetterPlayerCallback {
           >();
 
   /// from: `public fun onCompleted(key: kotlin.String?): kotlin.Unit`
-  void onCompleted(jni$_.JString? string) {
+  void onCompleted(
+    jni$_.JString? string,
+  ) {
     final _$$selfRef = reference;
     final _$string = string?.reference ?? jni$_.jNullReference;
     _onCompleted(
@@ -875,13 +900,18 @@ extension BetterPlayerCallback$$Methods on BetterPlayerCallback {
           >();
 
   /// from: `public fun onSeek(positionMs: kotlin.Long): kotlin.Unit`
-  void onSeek(core$_.int j) {
+  void onSeek(
+    core$_.int j,
+  ) {
     final _$$selfRef = reference;
     _onSeek(_$$selfRef.pointer, _id_onSeek.pointer, j).check();
   }
 
   static final _id_onBufferingStart = BetterPlayerCallback._class
-      .instanceMethodId(r'onBufferingStart', r'()V');
+      .instanceMethodId(
+        r'onBufferingStart',
+        r'()V',
+      );
 
   static final _onBufferingStart =
       jni$_.ProtectedJniExtensions.lookup<
@@ -906,7 +936,10 @@ extension BetterPlayerCallback$$Methods on BetterPlayerCallback {
   }
 
   static final _id_onBufferingEnd = BetterPlayerCallback._class
-      .instanceMethodId(r'onBufferingEnd', r'()V');
+      .instanceMethodId(
+        r'onBufferingEnd',
+        r'()V',
+      );
 
   static final _onBufferingEnd =
       jni$_.ProtectedJniExtensions.lookup<
@@ -931,7 +964,10 @@ extension BetterPlayerCallback$$Methods on BetterPlayerCallback {
   }
 
   static final _id_onBufferingUpdate = BetterPlayerCallback._class
-      .instanceMethodId(r'onBufferingUpdate', r'(J)V');
+      .instanceMethodId(
+        r'onBufferingUpdate',
+        r'(J)V',
+      );
 
   static final _onBufferingUpdate =
       jni$_.ProtectedJniExtensions.lookup<
@@ -952,7 +988,9 @@ extension BetterPlayerCallback$$Methods on BetterPlayerCallback {
           >();
 
   /// from: `public fun onBufferingUpdate(bufferedMs: kotlin.Long): kotlin.Unit`
-  void onBufferingUpdate(core$_.int j) {
+  void onBufferingUpdate(
+    core$_.int j,
+  ) {
     final _$$selfRef = reference;
     _onBufferingUpdate(
       _$$selfRef.pointer,
@@ -1043,7 +1081,11 @@ extension BetterPlayerCallback$$Methods on BetterPlayerCallback {
           >();
 
   /// from: `public fun onChangedSize(width: kotlin.Int, height: kotlin.Int, key: kotlin.String?): kotlin.Unit`
-  void onChangedSize(core$_.int i, core$_.int i1, jni$_.JString? string) {
+  void onChangedSize(
+    core$_.int i,
+    core$_.int i1,
+    jni$_.JString? string,
+  ) {
     final _$$selfRef = reference;
     final _$string = string?.reference ?? jni$_.jNullReference;
     _onChangedSize(
@@ -1079,7 +1121,9 @@ extension BetterPlayerCallback$$Methods on BetterPlayerCallback {
           >();
 
   /// from: `public fun onCues(cues: kotlin.collections.List<kotlin.String>): kotlin.Unit`
-  void onCues(jni$_.JList<jni$_.JString> list) {
+  void onCues(
+    jni$_.JList<jni$_.JString> list,
+  ) {
     final _$$selfRef = reference;
     final _$list = list.reference;
     _onCues(_$$selfRef.pointer, _id_onCues.pointer, _$list.pointer).check();
@@ -1109,7 +1153,9 @@ extension BetterPlayerCallback$$Methods on BetterPlayerCallback {
           >();
 
   /// from: `public fun onCuesJson(cuesJson: kotlin.String): kotlin.Unit`
-  void onCuesJson(jni$_.JString string) {
+  void onCuesJson(
+    jni$_.JString string,
+  ) {
     final _$$selfRef = reference;
     final _$string = string.reference;
     _onCuesJson(
@@ -1447,7 +1493,11 @@ extension type BetterPlayerLogCallback._(jni$_.JObject _$this)
   ) {
     return _$invokeMethod(
       port,
-      jni$_.MethodInvocation.fromAddresses(0, descriptor.address, args.address),
+      jni$_.MethodInvocation.fromAddresses(
+        0,
+        descriptor.address,
+        args.address,
+      ),
     );
   }
 
@@ -1498,13 +1548,17 @@ extension type BetterPlayerLogCallback._(jni$_.JObject _$this)
       r'pl.hasoft.better_player.BetterPlayerLogCallback',
       $p,
       _$invokePointer,
-      [if ($impl.onLog$async) r'onLog(ILjava/lang/String;)V'],
+      [
+        if ($impl.onLog$async) r'onLog(ILjava/lang/String;)V',
+      ],
     );
     final $a = $p.sendPort.nativePort;
     _$impls[$a] = $impl;
   }
 
-  factory BetterPlayerLogCallback.implement($BetterPlayerLogCallback $impl) {
+  factory BetterPlayerLogCallback.implement(
+    $BetterPlayerLogCallback $impl,
+  ) {
     final $i = jni$_.JImplementer();
     implementIn($i, $impl);
     return $i.implement<BetterPlayerLogCallback>();
@@ -1537,7 +1591,10 @@ extension BetterPlayerLogCallback$$Methods on BetterPlayerLogCallback {
           >();
 
   /// from: `public fun onLog(level: kotlin.Int, message: kotlin.String): kotlin.Unit`
-  void onLog(core$_.int i, jni$_.JString string) {
+  void onLog(
+    core$_.int i,
+    jni$_.JString string,
+  ) {
     final _$$selfRef = reference;
     final _$string = string.reference;
     _onLog(_$$selfRef.pointer, _id_onLog.pointer, i, _$string.pointer).check();
@@ -1599,7 +1656,11 @@ extension type BetterPlayerPreCacheCallback._(jni$_.JObject _$this)
   ) {
     return _$invokeMethod(
       port,
-      jni$_.MethodInvocation.fromAddresses(0, descriptor.address, args.address),
+      jni$_.MethodInvocation.fromAddresses(
+        0,
+        descriptor.address,
+        args.address,
+      ),
     );
   }
 
@@ -1873,7 +1934,9 @@ extension BetterPlayer$Companion$$Methods on BetterPlayer$Companion {
           >();
 
   /// from: `public fun clearCache(context: android.content.Context?): kotlin.Unit`
-  void clearCache(Context? context) {
+  void clearCache(
+    Context? context,
+  ) {
     final _$$selfRef = reference;
     final _$context = context?.reference ?? jni$_.jNullReference;
     _clearCache(
@@ -1978,7 +2041,10 @@ extension BetterPlayer$Companion$$Methods on BetterPlayer$Companion {
           >();
 
   /// from: `public fun stopPreCache(context: android.content.Context?, url: kotlin.String?): kotlin.Unit`
-  void stopPreCache(Context? context, jni$_.JString? string) {
+  void stopPreCache(
+    Context? context,
+    jni$_.JString? string,
+  ) {
     final _$$selfRef = reference;
     final _$context = context?.reference ?? jni$_.jNullReference;
     final _$string = string?.reference ?? jni$_.jNullReference;
@@ -2015,7 +2081,9 @@ extension BetterPlayer$Companion$$Methods on BetterPlayer$Companion {
           >();
 
   /// from: `public fun enablePictureInPicture(context: android.content.Context?): kotlin.Unit`
-  void enablePictureInPicture(Context? context) {
+  void enablePictureInPicture(
+    Context? context,
+  ) {
     final _$$selfRef = reference;
     final _$context = context?.reference ?? jni$_.jNullReference;
     _enablePictureInPicture(
@@ -2050,7 +2118,9 @@ extension BetterPlayer$Companion$$Methods on BetterPlayer$Companion {
           >();
 
   /// from: `public fun disablePictureInPicture(context: android.content.Context?): kotlin.Unit`
-  void disablePictureInPicture(Context? context) {
+  void disablePictureInPicture(
+    Context? context,
+  ) {
     final _$$selfRef = reference;
     final _$context = context?.reference ?? jni$_.jNullReference;
     _disablePictureInPicture(
@@ -2085,7 +2155,9 @@ extension BetterPlayer$Companion$$Methods on BetterPlayer$Companion {
           >();
 
   /// from: `public fun isPictureInPictureSupported(context: android.content.Context?): kotlin.Boolean`
-  core$_.bool isPictureInPictureSupported(Context? context) {
+  core$_.bool isPictureInPictureSupported(
+    Context? context,
+  ) {
     final _$$selfRef = reference;
     final _$context = context?.reference ?? jni$_.jNullReference;
     return _isPictureInPictureSupported(
@@ -2540,7 +2612,10 @@ extension BetterPlayer$$Methods on BetterPlayer {
   }
 
   static final _id_disposeRemoteNotifications = BetterPlayer._class
-      .instanceMethodId(r'disposeRemoteNotifications', r'()V');
+      .instanceMethodId(
+        r'disposeRemoteNotifications',
+        r'()V',
+      );
 
   static final _disposeRemoteNotifications =
       jni$_.ProtectedJniExtensions.lookup<
@@ -2591,7 +2666,9 @@ extension BetterPlayer$$Methods on BetterPlayer {
           >();
 
   /// from: `public fun sendBufferingUpdate(isFromBufferingStart: kotlin.Boolean): kotlin.Unit`
-  void sendBufferingUpdate(core$_.bool z) {
+  void sendBufferingUpdate(
+    core$_.bool z,
+  ) {
     final _$$selfRef = reference;
     _sendBufferingUpdate(
       _$$selfRef.pointer,
@@ -2600,7 +2677,10 @@ extension BetterPlayer$$Methods on BetterPlayer {
     ).check();
   }
 
-  static final _id_play = BetterPlayer._class.instanceMethodId(r'play', r'()V');
+  static final _id_play = BetterPlayer._class.instanceMethodId(
+    r'play',
+    r'()V',
+  );
 
   static final _play =
       jni$_.ProtectedJniExtensions.lookup<
@@ -2768,7 +2848,11 @@ extension BetterPlayer$$Methods on BetterPlayer {
           >();
 
   /// from: `public fun setTrackParameters(width: kotlin.Int, height: kotlin.Int, bitrate: kotlin.Int): kotlin.Unit`
-  void setTrackParameters(core$_.int i, core$_.int i1, core$_.int i2) {
+  void setTrackParameters(
+    core$_.int i,
+    core$_.int i1,
+    core$_.int i2,
+  ) {
     final _$$selfRef = reference;
     _setTrackParameters(
       _$$selfRef.pointer,
@@ -2803,7 +2887,9 @@ extension BetterPlayer$$Methods on BetterPlayer {
           >();
 
   /// from: `public fun seekTo(location: kotlin.Int): kotlin.Unit`
-  void seekTo(core$_.int i) {
+  void seekTo(
+    core$_.int i,
+  ) {
     final _$$selfRef = reference;
     _seekTo(_$$selfRef.pointer, _id_seekTo.pointer, i).check();
   }
@@ -2890,7 +2976,9 @@ extension BetterPlayer$$Methods on BetterPlayer {
 
   /// from: `public fun setupMediaSession(context: android.content.Context?): androidx.media3.session.MediaSession?`
   /// The returned object must be released after use, by calling the [release] method.
-  MediaSession? setupMediaSession(Context? context) {
+  MediaSession? setupMediaSession(
+    Context? context,
+  ) {
     final _$$selfRef = reference;
     final _$context = context?.reference ?? jni$_.jNullReference;
     return _setupMediaSession(
@@ -2901,7 +2989,10 @@ extension BetterPlayer$$Methods on BetterPlayer {
   }
 
   static final _id_onPictureInPictureStatusChanged = BetterPlayer._class
-      .instanceMethodId(r'onPictureInPictureStatusChanged', r'(Z)V');
+      .instanceMethodId(
+        r'onPictureInPictureStatusChanged',
+        r'(Z)V',
+      );
 
   static final _onPictureInPictureStatusChanged =
       jni$_.ProtectedJniExtensions.lookup<
@@ -2922,7 +3013,9 @@ extension BetterPlayer$$Methods on BetterPlayer {
           >();
 
   /// from: `public fun onPictureInPictureStatusChanged(inPip: kotlin.Boolean): kotlin.Unit`
-  void onPictureInPictureStatusChanged(core$_.bool z) {
+  void onPictureInPictureStatusChanged(
+    core$_.bool z,
+  ) {
     final _$$selfRef = reference;
     _onPictureInPictureStatusChanged(
       _$$selfRef.pointer,
@@ -2961,12 +3054,12 @@ extension BetterPlayer$$Methods on BetterPlayer {
     ).check();
   }
 
-  static final _id_getAudioTracksJson = BetterPlayer._class.instanceMethodId(
+  static final _id_get$audioTracksJson = BetterPlayer._class.instanceMethodId(
     r'getAudioTracksJson',
     r'()Ljava/lang/String;',
   );
 
-  static final _getAudioTracksJson =
+  static final _get$audioTracksJson =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JniResult Function(
@@ -2984,11 +3077,11 @@ extension BetterPlayer$$Methods on BetterPlayer {
 
   /// from: `public fun getAudioTracksJson(): kotlin.String`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JString getAudioTracksJson() {
+  jni$_.JString get audioTracksJson {
     final _$$selfRef = reference;
-    return _getAudioTracksJson(
+    return _get$audioTracksJson(
       _$$selfRef.pointer,
-      _id_getAudioTracksJson.pointer,
+      _id_get$audioTracksJson.pointer,
     ).object<jni$_.JString>();
   }
 
@@ -3017,7 +3110,10 @@ extension BetterPlayer$$Methods on BetterPlayer {
           >();
 
   /// from: `public fun setAudioTrack(name: kotlin.String, index: kotlin.Int): kotlin.Unit`
-  void setAudioTrack(jni$_.JString string, core$_.int i) {
+  void setAudioTrack(
+    jni$_.JString string,
+    core$_.int i,
+  ) {
     final _$$selfRef = reference;
     final _$string = string.reference;
     _setAudioTrack(
@@ -3053,7 +3149,10 @@ extension BetterPlayer$$Methods on BetterPlayer {
           >();
 
   /// from: `public fun setTextTrack(name: kotlin.String, index: kotlin.Int): kotlin.Unit`
-  void setTextTrack(jni$_.JString string, core$_.int i) {
+  void setTextTrack(
+    jni$_.JString string,
+    core$_.int i,
+  ) {
     final _$$selfRef = reference;
     final _$string = string.reference;
     _setTextTrack(
@@ -3148,7 +3247,9 @@ extension BetterPlayer$$Methods on BetterPlayer {
           >();
 
   /// from: `public operator fun equals(other: kotlin.Any?): kotlin.Boolean`
-  core$_.bool equals(jni$_.JObject? object) {
+  core$_.bool equals(
+    jni$_.JObject? object,
+  ) {
     final _$$selfRef = reference;
     final _$object = object?.reference ?? jni$_.jNullReference;
     return _equals(

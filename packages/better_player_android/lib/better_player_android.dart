@@ -653,7 +653,7 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
       _player.setAudioTrack(name.toJString(), index);
 
   @override
-  String getAudioTracksJson() => _player.getAudioTracksJson().toDartString();
+  String getAudioTracksJson() => _player.audioTracksJson.toDartString();
 
   @override
   void setTextTrack(String name, int index) {
