@@ -1,3 +1,6 @@
+## Unreleased
+- Fixed: Video stutters when it resumes from Picture in Picture, and a video paused from the PiP controls can resume on its own. The stall check and `updatePlayingState` no longer force `playImmediately(atRate:)` while AVKit plays or buffers in PiP, and `isPlaying` now follows the PiP play and pause controls (by @Marionetista).
+
 ## 1.8.0
 - Added: `getAudioTracks` implementation to query audible options on AVPlayer's current media asset.
 - Updated: Increased playback speed ceiling from `4.0` to `10.0` in `setSpeed`.

@@ -503,11 +503,13 @@ private var externalPlaybackActiveContext = 0
                 }
                 if player.timeControlStatus == .paused {
                     lastAvPlayerTimeControlStatus = player.timeControlStatus
+                    isPlaying = false
                     callback?.onPause(key: key)
                     return
                 }
                 if player.timeControlStatus == .playing {
                     lastAvPlayerTimeControlStatus = player.timeControlStatus
+                    isPlaying = true
                     callback?.onPlay(key: key)
                 }
             }
