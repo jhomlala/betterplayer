@@ -1,3 +1,9 @@
+## 1.37.0
+- Added: Swift Package Manager support for iOS and macOS via `FlutterFramework` dependency in `Package.swift` (by @hellohuanlin).
+- Fixed: Resolved Picture in Picture stutter on resume and synchronized playback state with native PiP controls on iOS and macOS (by @Marionetista).
+- Fixed: Resolved audio tracks JSON getter access in Android FFI wrapper.
+- Updated: Bumped federated sub-packages: `better_player_android` to `^1.13.1`, `better_player_ios` to `^1.14.0`, `better_player_linux` to `^1.1.1`, `better_player_macos` to `^1.9.0`, `better_player_web` to `^1.6.1`, and `better_player_windows` to `^1.5.1`.
+
 ## 1.36.0
 - Added: Initial **EXPERIMENTAL** Tizen platform implementation in `packages/better_player_tizen`.
 

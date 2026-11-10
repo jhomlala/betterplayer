@@ -13,7 +13,7 @@ Add `better_player` to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  better_player: ^1.36.0
+  better_player: ^1.37.0
 ```
 
 ## 2. Install Package
@@ -95,7 +95,7 @@ To target Samsung Smart TVs or Tizen devices, add `better_player_tizen` to your 
 
 ```yaml
 dependencies:
-  better_player: ^1.36.0
+  better_player: ^1.37.0
   better_player_tizen: ^1.0.0
 ```
 
