@@ -1,4 +1,5 @@
 ## Unreleased
+- Fixed: Video stutters when it resumes from Picture in Picture, and a video paused from the PiP controls can resume on its own. The stall check and `updatePlayingState` no longer force `playImmediately(atRate:)` while AVKit plays or buffers in PiP, and `isPlaying` now follows the PiP play and pause controls (by @Marionetista).
 - Added: `FlutterFramework` dependency to `Package.swift` for Swift Package Manager support (by @hellohuanlin).
 - Updated: Bumped `better_player_platform_interface` constraint to `^1.8.0` to resolve constructor compatibility during dependency lower-bound analysis.
 

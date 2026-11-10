@@ -503,11 +503,13 @@ private var externalPlaybackActiveContext = 0
                 }
                 if player.timeControlStatus == .paused {
                     lastAvPlayerTimeControlStatus = player.timeControlStatus
+                    isPlaying = false
                     callback?.onPause(key: key)
                     return
                 }
                 if player.timeControlStatus == .playing {
                     lastAvPlayerTimeControlStatus = player.timeControlStatus
+                    isPlaying = true
                     callback?.onPlay(key: key)
                 }
             }
@@ -520,7 +522,9 @@ private var externalPlaybackActiveContext = 0
                 }
             }
 
-            if player.rate == 0 && CMTimeCompare(player.currentItem?.currentTime() ?? .zero, .zero) == 1 && (player.currentItem?.duration ?? .zero).isValid && CMTimeCompare(player.currentItem?.currentTime() ?? .zero, player.currentItem?.duration ?? .zero) == -1 && isPlaying {
+            // In PiP, AVKit buffers before it resumes. A forced play() during this wait makes the video stutter.
+            let isPipActive = pipController?.isPictureInPictureActive == true
+            if !isPipActive && player.rate == 0 && CMTimeCompare(player.currentItem?.currentTime() ?? .zero, .zero) == 1 && (player.currentItem?.duration ?? .zero).isValid && CMTimeCompare(player.currentItem?.currentTime() ?? .zero, player.currentItem?.duration ?? .zero) == -1 && isPlaying {
                 handleStalled()
             }
             return
@@ -625,6 +629,10 @@ private var externalPlaybackActiveContext = 0
         }
         if !observersAdded, let current = player.currentItem { addObservers(current) }
         if isPlaying {
+            // In PiP, AVKit controls the resume. Do not force playImmediately while it plays or buffers.
+            let isPipResuming = pipController?.isPictureInPictureActive == true &&
+                (player.timeControlStatus == .playing || player.timeControlStatus == .waitingToPlayAtSpecifiedRate)
+            if isPipResuming { return }
             applyPlayerRate()
         } else {
             player.pause()
