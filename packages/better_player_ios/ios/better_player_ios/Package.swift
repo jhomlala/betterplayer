@@ -10,13 +10,15 @@ let package = Package(
         .library(name: "better-player-ios", targets: ["better_player_ios", "better_player_ios_objc"])
     ],
     dependencies: [
-        .package(url: "https://github.com/hyperoslo/Cache", from: "6.0.0")
+        .package(url: "https://github.com/hyperoslo/Cache", from: "6.0.0"),
+        .package(name: "FlutterFramework", path: "../FlutterFramework")
     ],
     targets: [
         .target(
             name: "better_player_ios",
             dependencies: [
-                .product(name: "Cache", package: "Cache")
+                .product(name: "Cache", package: "Cache"),
+                .product(name: "FlutterFramework", package: "FlutterFramework")
             ],
             path: "Sources/better_player_ios",
             resources: [
