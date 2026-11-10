@@ -1,3 +1,6 @@
+## Unreleased
+- Updated: Bumped `better_player_platform_interface` constraint to `^1.8.0` to resolve constructor compatibility during dependency lower-bound analysis.
+
 ## 1.13.0
 - Added: `getAudioTracks` implementation to query audio tracks from Media3 `trackSelector.currentMappedTrackInfo`.
 - Fixed: Improved `setAudioTrack` matching logic to resolve multi-audio tracks by index and language when container tracks lack explicit labels.
