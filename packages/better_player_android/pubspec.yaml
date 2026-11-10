@@ -19,7 +19,7 @@ environment:
   flutter: ">=3.47.0"
 
 dependencies:
-  better_player_platform_interface: ^1.6.0
+  better_player_platform_interface: ^1.8.0
   flutter:
     sdk: flutter
   jni: ^1.0.3

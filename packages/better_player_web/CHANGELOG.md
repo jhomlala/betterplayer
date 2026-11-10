@@ -1,3 +1,6 @@
+## Unreleased
+- Updated: Bumped `better_player_platform_interface` constraint to `^1.8.0` for consistency across platform packages.
+
 ## 1.6.0
 - Added: `getAudioTracks` implementation to query audio tracks from Shaka Player variant tracks and audio languages.
 
