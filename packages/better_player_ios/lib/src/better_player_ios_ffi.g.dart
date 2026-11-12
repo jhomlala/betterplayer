@@ -897,6 +897,32 @@ extension BetterPlayer$Methods on BetterPlayer {
     final $ret = _objc_msgSend_151sglz(_$$ref.pointer, _sel_view);
     return UIView.fromPointer($ret, retain: true, release: true);
   }
+
+  void disposeRemoteNotifications() {
+    final _$$ref = object$.ref;
+    _objc_msgSend_1pl9qdv(
+      _$$ref.pointer,
+      _sel_disposeRemoteNotifications,
+    );
+  }
+
+  void setupPlayerNotificationWithTitle(
+    objc.NSString title, {
+    objc.NSString? author,
+    objc.NSString? imageUrl,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = title.ref;
+    final _$$ref$2 = author?.ref;
+    final _$$ref$3 = imageUrl?.ref;
+    _objc_msgSend_setupPlayerNotification(
+      _$$ref.pointer,
+      _sel_setupPlayerNotificationWithTitle_author_imageUrl_,
+      _$$ref$1.pointer,
+      _$$ref$2?.pointer ?? ffi.nullptr,
+      _$$ref$3?.pointer ?? ffi.nullptr,
+    );
+  }
 }
 
 /// BetterPlayerApi
@@ -6560,6 +6586,34 @@ late final _sel_stopPreCacheWithUrl_cacheKey_ = objc.registerName(
   "stopPreCacheWithUrl:cacheKey:",
 );
 late final _sel_view = objc.registerName("view");
+late final _sel_disposeRemoteNotifications = objc.registerName(
+  "disposeRemoteNotifications",
+);
+late final _sel_setupPlayerNotificationWithTitle_author_imageUrl_ = objc
+    .registerName(
+      "setupPlayerNotificationWithTitle:author:imageUrl:",
+    );
+final _objc_msgSend_setupPlayerNotification = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
 
 /// better_player_ios_Swift_470
 extension better_player_ios_Swift_470 on BetterPlayer {

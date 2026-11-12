@@ -1,6 +1,9 @@
 // Better Player Swift implementation
 import AVFoundation
 import AVKit
+#if canImport(MediaPlayer)
+import MediaPlayer
+#endif
 #if canImport(Flutter)
 import Flutter
 #else
@@ -75,6 +78,15 @@ private var externalPlaybackActiveContext = 0
 
     /// Whether the player is currently playing.
     public private(set) var isPlaying: Bool = false
+
+    // MARK: - Remote Notification & Now Playing State
+    private var showNotification = false
+    private var notificationTitle: String?
+    private var notificationAuthor: String?
+    private var notificationImageUrl: String?
+    private var notificationTimeObserver: Any?
+    private static var artworkCache: [String: MPMediaItemArtwork] = [:]
+    private static var remoteCommandsConfigured = false
 
     /// Whether a seek operation is currently in progress.
     public private(set) var isSeeking: Bool = false
@@ -719,6 +731,9 @@ private var externalPlaybackActiveContext = 0
             height: Double(height),
             key: key
         )
+        if showNotification && BetterPlayerApi.activeNotificationPlayer === self {
+            updateNowPlayingInfo()
+        }
     }
 
     /// Starts playback.
@@ -727,6 +742,11 @@ private var externalPlaybackActiveContext = 0
         stalledCount = 0
         isStalledCheckStarted = false
         isPlaying = true
+        if showNotification {
+            BetterPlayerApi.activeNotificationPlayer = self
+            setupNotificationTimeObserver()
+            updateNowPlayingInfo()
+        }
         updatePlayingState()
     }
 
@@ -734,6 +754,9 @@ private var externalPlaybackActiveContext = 0
     @objc public func pause() {
         BetterPlayerApi.log(1, "pause()")
         isPlaying = false
+        if showNotification && BetterPlayerApi.activeNotificationPlayer === self {
+            updateNowPlayingInfo()
+        }
         updatePlayingState()
     }
 
@@ -780,6 +803,9 @@ private var externalPlaybackActiveContext = 0
         ) { [weak self] finished in
             guard let self = self else { return }
             self.isSeeking = false
+            if self.showNotification && BetterPlayerApi.activeNotificationPlayer === self {
+                self.updateNowPlayingInfo()
+            }
             // Only resume if this seek actually completed (not cancelled by a subsequent one)
             if finished && wasPlaying { self.applyPlayerRate() }
         }
@@ -1045,11 +1071,184 @@ private var externalPlaybackActiveContext = 0
 
     
 
+    // MARK: - Remote Notification & Now Playing Controls
+
+    @objc(setupPlayerNotificationWithTitle:author:imageUrl:)
+    public func setupPlayerNotification(title: String, author: String?, imageUrl: String?) {
+        BetterPlayerApi.log(1, "setupPlayerNotification: title=\(title), author=\(author ?? "")")
+        showNotification = true
+        notificationTitle = title
+        notificationAuthor = author
+        notificationImageUrl = imageUrl
+        BetterPlayerApi.activeNotificationPlayer = self
+
+        try? AVAudioSession.sharedInstance().setActive(true)
+        UIApplication.shared.beginReceivingRemoteControlEvents()
+
+        BetterPlayer.ensureRemoteCommandsConfigured()
+        setupNotificationTimeObserver()
+        updateNowPlayingInfo()
+    }
+
+    @objc(disposeRemoteNotifications)
+    public func disposeRemoteNotifications() {
+        BetterPlayerApi.log(1, "disposeRemoteNotifications()")
+        showNotification = false
+        notificationTitle = nil
+        notificationAuthor = nil
+        notificationImageUrl = nil
+        removeNotificationTimeObserver()
+
+        if BetterPlayerApi.activeNotificationPlayer === self {
+            BetterPlayerApi.activeNotificationPlayer = nil
+            #if canImport(MediaPlayer)
+            MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
+            #endif
+            UIApplication.shared.endReceivingRemoteControlEvents()
+        }
+    }
+
+    private func setupNotificationTimeObserver() {
+        removeNotificationTimeObserver()
+        let interval = CMTimeMake(value: 1, timescale: 1)
+        notificationTimeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] _ in
+            guard let self = self, !self.disposed, self.showNotification, BetterPlayerApi.activeNotificationPlayer === self else {
+                return
+            }
+            self.updateNowPlayingInfo()
+        }
+    }
+
+    private func removeNotificationTimeObserver() {
+        if let observer = notificationTimeObserver {
+            player.removeTimeObserver(observer)
+            notificationTimeObserver = nil
+        }
+    }
+
+    private func updateNowPlayingInfo() {
+        guard showNotification, BetterPlayerApi.activeNotificationPlayer === self else { return }
+
+        let positionSeconds = Double(position()) / 1000.0
+        let durationSeconds = Double(duration()) / 1000.0
+        let rate = isPlaying ? (playerRate > 0 ? playerRate : 1.0) : 0.0
+
+        var nowPlayingInfo: [String: Any] = [
+            MPMediaItemPropertyTitle: notificationTitle ?? "",
+            MPMediaItemPropertyArtist: notificationAuthor ?? "",
+            MPNowPlayingInfoPropertyElapsedPlaybackTime: NSNumber(value: positionSeconds),
+            MPMediaItemPropertyPlaybackDuration: NSNumber(value: max(0.0, durationSeconds)),
+            MPNowPlayingInfoPropertyPlaybackRate: NSNumber(value: rate),
+            MPNowPlayingInfoPropertyDefaultPlaybackRate: NSNumber(value: 1.0)
+        ]
+
+        if let imageUrl = notificationImageUrl, !imageUrl.isEmpty {
+            if let cachedArtwork = BetterPlayer.artworkCache[imageUrl] {
+                nowPlayingInfo[MPMediaItemPropertyArtwork] = cachedArtwork
+                MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+            } else {
+                MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+                loadArtwork(from: imageUrl)
+            }
+        } else {
+            MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+        }
+    }
+
+    private func loadArtwork(from imageUrl: String) {
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            guard let self = self, !self.disposed else { return }
+            var image: UIImage?
+            if imageUrl.hasPrefix("http://") || imageUrl.hasPrefix("https://") {
+                if let url = URL(string: imageUrl), let data = try? Data(contentsOf: url) {
+                    image = UIImage(data: data)
+                }
+            } else {
+                let path = imageUrl.hasPrefix("file://") ? String(imageUrl.dropFirst(7)) : imageUrl
+                image = UIImage(contentsOfFile: path)
+            }
+
+            guard let loadedImage = image else { return }
+            let artwork = MPMediaItemArtwork(boundsSize: loadedImage.size) { _ in loadedImage }
+
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self, !self.disposed, self.showNotification, self.notificationImageUrl == imageUrl else { return }
+                BetterPlayer.artworkCache[imageUrl] = artwork
+                if BetterPlayerApi.activeNotificationPlayer === self {
+                    var current = MPNowPlayingInfoCenter.default().nowPlayingInfo ?? [:]
+                    current[MPMediaItemPropertyArtwork] = artwork
+                    MPNowPlayingInfoCenter.default().nowPlayingInfo = current
+                }
+            }
+        }
+    }
+
+    private static func ensureRemoteCommandsConfigured() {
+        guard !remoteCommandsConfigured else { return }
+        remoteCommandsConfigured = true
+
+        let commandCenter = MPRemoteCommandCenter.shared()
+
+        commandCenter.togglePlayPauseCommand.isEnabled = true
+        commandCenter.togglePlayPauseCommand.addTarget { _ in
+            guard let player = BetterPlayerApi.activeNotificationPlayer, !player.disposed else {
+                return .commandFailed
+            }
+            if player.isPlaying {
+                player.pause()
+                player.callback?.onPause(key: player.key)
+            } else {
+                player.play()
+                player.callback?.onPlay(key: player.key)
+            }
+            player.updateNowPlayingInfo()
+            return .success
+        }
+
+        commandCenter.playCommand.isEnabled = true
+        commandCenter.playCommand.addTarget { _ in
+            guard let player = BetterPlayerApi.activeNotificationPlayer, !player.disposed else {
+                return .commandFailed
+            }
+            player.play()
+            player.callback?.onPlay(key: player.key)
+            player.updateNowPlayingInfo()
+            return .success
+        }
+
+        commandCenter.pauseCommand.isEnabled = true
+        commandCenter.pauseCommand.addTarget { _ in
+            guard let player = BetterPlayerApi.activeNotificationPlayer, !player.disposed else {
+                return .commandFailed
+            }
+            player.pause()
+            player.callback?.onPause(key: player.key)
+            player.updateNowPlayingInfo()
+            return .success
+        }
+
+        if #available(iOS 9.1, *) {
+            commandCenter.changePlaybackPositionCommand.isEnabled = true
+            commandCenter.changePlaybackPositionCommand.addTarget { event in
+                guard let player = BetterPlayerApi.activeNotificationPlayer, !player.disposed,
+                      let playbackEvent = event as? MPChangePlaybackPositionCommandEvent else {
+                    return .commandFailed
+                }
+                let millis = Int64(playbackEvent.positionTime * 1000.0)
+                player.seekTo(Int(millis))
+                player.callback?.onSeek(positionMs: millis, key: player.key)
+                player.updateNowPlayingInfo()
+                return .success
+            }
+        }
+    }
+
     // MARK: - Disposal
 
     /// Clears the player state.
     @objc public func clear() {
         BetterPlayerApi.log(1, "clear()")
+        disposeRemoteNotifications()
         isInitialized = false
         isPlaying = false
         failedCount = 0
@@ -1070,6 +1269,7 @@ private var externalPlaybackActiveContext = 0
         disposed = true
         callback = nil
         BetterPlayerApi.log(1, "dispose()")
+        disposeRemoteNotifications()
         pause()
         removeObservers()
         for view in attachedViews.allObjects {
