@@ -1,4 +1,4 @@
-## Unreleased
+## 1.6.1
 - Updated: Bumped `better_player_platform_interface` constraint to `^1.8.0` for consistency across platform packages.
 
 ## 1.6.0

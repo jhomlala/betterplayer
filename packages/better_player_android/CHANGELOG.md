@@ -1,4 +1,5 @@
-## Unreleased
+## 1.13.1
+- Fixed: Resolved audio tracks JSON getter access in FFI wrapper.
 - Updated: Bumped `better_player_platform_interface` constraint to `^1.8.0` to resolve constructor compatibility during dependency lower-bound analysis.
 
 ## 1.13.0
