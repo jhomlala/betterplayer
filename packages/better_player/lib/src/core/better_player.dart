@@ -108,15 +108,17 @@ class _BetterPlayerState extends State<BetterPlayer>
     ///full screen is on, then full screen route must be pop and return to normal
     ///state.
     if (_isFullScreen) {
-      unawaited(WakelockPlus.disable());
       _navigatorState.maybePop();
-      SystemChrome.setEnabledSystemUIMode(
-        SystemUiMode.manual,
-        overlays: _betterPlayerConfiguration.systemOverlaysAfterFullScreen,
-      );
-      SystemChrome.setPreferredOrientations(
-        _betterPlayerConfiguration.deviceOrientationsAfterFullScreen,
-      );
+      if (!widget.controller.isFullScreenForPip) {
+        unawaited(WakelockPlus.disable());
+        SystemChrome.setEnabledSystemUIMode(
+          SystemUiMode.manual,
+          overlays: _betterPlayerConfiguration.systemOverlaysAfterFullScreen,
+        );
+        SystemChrome.setPreferredOrientations(
+          _betterPlayerConfiguration.deviceOrientationsAfterFullScreen,
+        );
+      }
     }
 
     WidgetsBinding.instance.removeObserver(this);
@@ -209,6 +211,17 @@ class _BetterPlayerState extends State<BetterPlayer>
         );
       },
     );
+
+    // A full screen entered for Android PiP only fills the PiP window. The
+    // activity is being pinned, and an orientation, system UI or wakelock
+    // request landing inside that transition wedges the PiP window on
+    // Android 17, so push the route without them and restore nothing.
+    if (widget.controller.isFullScreenForPip) {
+      await navigator.push(route);
+      _isFullScreen = false;
+      widget.controller.exitFullScreen();
+      return;
+    }
 
     await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 

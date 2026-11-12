@@ -358,6 +358,10 @@ class BetterPlayerController {
   /// Returns true if the player is currently rendered in full screen mode, false otherwise.
   bool get isFullScreen => _viewState.isFullScreen;
 
+  /// Returns true if the current full screen was entered for Android
+  /// Picture-in-Picture rather than by the user.
+  bool get isFullScreenForPip => _viewState.isFullScreenForPip;
+
   /// Returns the actively configured data source detailing the media URL, DRM, and format.
   /// Returns null if no data source has been established yet.
   PlayerDataSource? get betterPlayerDataSource => _betterPlayerDataSource;
