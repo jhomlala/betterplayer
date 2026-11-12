@@ -1,3 +1,6 @@
+## Unreleased
+- Fixed: `PlayerDataSource.file` now accepts `videoExtension` and forwards it to the platform, so local files without an extension can play on iOS and macOS (by @Henry-Hiles).
+
 ## 1.37.0
 - Added: Swift Package Manager support for iOS and macOS via `FlutterFramework` dependency in `Package.swift` (by @hellohuanlin).
 - Fixed: Resolved Picture in Picture stutter on resume and synchronized playback state with native PiP controls on iOS and macOS (by @Marionetista).

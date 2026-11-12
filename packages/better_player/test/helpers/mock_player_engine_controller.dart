@@ -103,6 +103,7 @@ class MockPlayerEngineController extends PlayerEngineController {
   @override
   Future<void> setFileDataSource(
     String filePath, {
+    String? videoExtension,
     bool? showNotification,
     String? title,
     String? author,
