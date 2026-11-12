@@ -687,5 +687,57 @@ void main() {
       expect(events, [true, false]);
       await subscription.cancel();
     });
+
+    test(
+      'setDataSource with showNotification: true calls setupPlayerNotification',
+      () async {
+        await iosPlayer.setDataSource(
+          1,
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'https://example.com/video.mp4',
+            notificationConfiguration: const NotificationConfiguration(
+              showNotification: true,
+              title: 'Test Title',
+              author: 'Test Author',
+              imageUrl: 'https://example.com/cover.jpg',
+            ),
+          ),
+        );
+
+        verify(
+          () => mockPlayer.setupPlayerNotification(
+            'Test Title',
+            author: 'Test Author',
+            imageUrl: 'https://example.com/cover.jpg',
+          ),
+        ).called(1);
+      },
+    );
+
+    test(
+      'setDataSource with showNotification: false calls disposeRemoteNotifications',
+      () async {
+        await iosPlayer.setDataSource(
+          1,
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'https://example.com/video.mp4',
+            notificationConfiguration: const NotificationConfiguration(
+              showNotification: false,
+            ),
+          ),
+        );
+
+        verify(() => mockPlayer.disposeRemoteNotifications()).called(1);
+      },
+    );
+
+    test('dispose calls disposeRemoteNotifications', () async {
+      await iosPlayer.dispose(1);
+
+      verify(() => mockPlayer.disposeRemoteNotifications()).called(1);
+      verify(() => mockPlayer.dispose()).called(1);
+    });
   });
 }

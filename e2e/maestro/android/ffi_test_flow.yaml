@@ -209,3 +209,22 @@ appId: pl.hasoft.example
 - assertVisible:
     id: "ffi_test_status_clearCache"
     text: ".*success=true.*"
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_status_setupNotification"
+    direction: DOWN
+- tapOn:
+    id: "ffi_test_button_setupNotification"
+- assertVisible:
+    id: "ffi_test_status_setupNotification"
+    text: ".*success=true.*"
+
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_status_clearNotification"
+    direction: DOWN
+- tapOn:
+    id: "ffi_test_button_clearNotification"
+- assertVisible:
+    id: "ffi_test_status_clearNotification"
+    text: ".*success=true.*"
