@@ -316,6 +316,32 @@ class _FFITestPageState extends State<FFITestPage> {
                   name: 'clearCache',
                   action: () async => _betterPlayerController.clearCache(),
                 ),
+                _buildTestButton(
+                  name: 'setupNotification',
+                  action: () async => _betterPlayerController.setupDataSource(
+                    PlayerDataSource(
+                      DataSourceType.network,
+                      E2ELocalMediaServer.mp4Url,
+                      notificationConfiguration:
+                          const NotificationConfiguration(
+                            showNotification: true,
+                            title: 'Elephant Dream Test',
+                            author: 'Blender Foundation',
+                          ),
+                    ),
+                  ),
+                ),
+                _buildTestButton(
+                  name: 'clearNotification',
+                  action: () async => _betterPlayerController.setupDataSource(
+                    PlayerDataSource(
+                      DataSourceType.network,
+                      E2ELocalMediaServer.mp4Url,
+                      notificationConfiguration:
+                          const NotificationConfiguration(),
+                    ),
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 100),
