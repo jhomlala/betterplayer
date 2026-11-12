@@ -16,6 +16,7 @@ class PlayerSubtitlesConfiguration {
     this.bottomPadding = 20.0,
     this.alignment = Alignment.center,
     this.backgroundColor = Colors.transparent,
+    this.textBackgroundHorizontalPadding = 0.0,
   });
 
   ///Subtitle font size
@@ -50,4 +51,8 @@ class PlayerSubtitlesConfiguration {
 
   ///Background color of the subtitle
   final Color backgroundColor;
+
+  ///Horizontal padding between the subtitle text and the edges of its
+  ///[backgroundColor] box
+  final double textBackgroundHorizontalPadding;
 }

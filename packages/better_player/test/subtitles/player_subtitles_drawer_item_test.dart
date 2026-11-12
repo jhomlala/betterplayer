@@ -47,4 +47,52 @@ void main() {
       expect(find.text('HTML Subtitle', findRichText: true), findsNWidgets(2));
     },
   );
+  group('textBackgroundHorizontalPadding', () {
+    double backgroundOverhang(WidgetTester tester) {
+      final background = tester.getSize(
+        find.descendant(
+          of: find.byType(PlayerSubtitlesDrawerItem),
+          matching: find.byType(ColoredBox),
+        ),
+      );
+      final text = tester.getSize(
+        find.text('Padded Subtitle', findRichText: true),
+      );
+
+      return background.width - text.width;
+    }
+
+    testWidgets('pads the text inside the background box', (tester) async {
+      await tester.pumpWidget(
+        wrapWidget(
+          const PlayerSubtitlesDrawerItem(
+            subtitleText: 'Padded Subtitle',
+            configuration: PlayerSubtitlesConfiguration(
+              outlineEnabled: false,
+              textBackgroundHorizontalPadding: 8,
+            ),
+            innerTextStyle: TextStyle(),
+          ),
+        ),
+      );
+
+      expect(backgroundOverhang(tester), 16);
+    });
+
+    testWidgets('defaults to no padding', (tester) async {
+      await tester.pumpWidget(
+        wrapWidget(
+          const PlayerSubtitlesDrawerItem(
+            subtitleText: 'Padded Subtitle',
+            configuration: PlayerSubtitlesConfiguration(
+              outlineEnabled: false,
+            ),
+            innerTextStyle: TextStyle(),
+          ),
+        ),
+      );
+
+      expect(backgroundOverhang(tester), 0);
+    });
+  });
 }

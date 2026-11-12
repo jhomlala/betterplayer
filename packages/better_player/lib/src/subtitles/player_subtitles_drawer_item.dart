@@ -41,34 +41,39 @@ class PlayerSubtitlesDrawerItem extends StatelessWidget {
             alignment: effectiveAlignment,
             child: ColoredBox(
               color: configuration.backgroundColor,
-              child: configuration.outlineEnabled
-                  ? Stack(
-                      children: [
-                        RichText(
-                          textAlign: textAlign,
-                          text: WebVttInlineParser.parse(
-                            rawText: subtitleText,
-                            baseStyle: innerTextStyle.copyWith(
-                              foreground: outlinePaint,
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: configuration.textBackgroundHorizontalPadding,
+                ),
+                child: configuration.outlineEnabled
+                    ? Stack(
+                        children: [
+                          RichText(
+                            textAlign: textAlign,
+                            text: WebVttInlineParser.parse(
+                              rawText: subtitleText,
+                              baseStyle: innerTextStyle.copyWith(
+                                foreground: outlinePaint,
+                              ),
                             ),
                           ),
-                        ),
-                        RichText(
-                          textAlign: textAlign,
-                          text: WebVttInlineParser.parse(
-                            rawText: subtitleText,
-                            baseStyle: innerTextStyle,
+                          RichText(
+                            textAlign: textAlign,
+                            text: WebVttInlineParser.parse(
+                              rawText: subtitleText,
+                              baseStyle: innerTextStyle,
+                            ),
                           ),
+                        ],
+                      )
+                    : RichText(
+                        textAlign: textAlign,
+                        text: WebVttInlineParser.parse(
+                          rawText: subtitleText,
+                          baseStyle: innerTextStyle,
                         ),
-                      ],
-                    )
-                  : RichText(
-                      textAlign: textAlign,
-                      text: WebVttInlineParser.parse(
-                        rawText: subtitleText,
-                        baseStyle: innerTextStyle,
                       ),
-                    ),
+              ),
             ),
           ),
         ),
