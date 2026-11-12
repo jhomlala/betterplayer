@@ -86,10 +86,12 @@ class PlayerDataSource {
     NotificationConfiguration? notificationConfiguration,
     Duration? overriddenDuration,
     Widget? placeholder,
+    String? videoExtension,
   }) {
     return PlayerDataSource(
       DataSourceType.file,
       url,
+      videoExtension: videoExtension,
       subtitles: subtitles,
       useAsmsSubtitles: useAsmsSubtitles,
       useAsmsTracks: useAsmsTracks,
