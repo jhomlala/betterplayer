@@ -202,9 +202,9 @@ import Cache
         self.completionHandlers.removeAll()
     }
 
-    // MARK: - Private Helper Methods
+    // MARK: - Helper Methods
 
-    private func getMimeType(url: URL, explicitVideoExtension: String?) -> (String, String) {
+    func getMimeType(url: URL, explicitVideoExtension: String?) -> (String, String) {
         var videoExtension = url.pathExtension
         if let explicit = explicitVideoExtension {
             videoExtension = explicit

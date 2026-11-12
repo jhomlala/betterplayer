@@ -107,6 +107,34 @@ void main() {
       ).called(1);
     });
 
+    test('setupDataSource with file source forwards videoExtension', () async {
+      final controller = BetterPlayerMockController(
+        const PlayerConfiguration(),
+      );
+
+      const filePath = '/path/to/video';
+      final dataSource = PlayerDataSource.file(
+        filePath,
+        videoExtension: 'mp4',
+      );
+
+      await controller.setupDataSource(dataSource);
+
+      verify(
+        () => mockPlatform.setDataSource(
+          any(),
+          any(
+            that: predicate<DataSource>(
+              (ds) =>
+                  ds.uri == 'file://$filePath' &&
+                  ds.sourceType == DataSourceType.file &&
+                  ds.videoExtension == 'mp4',
+            ),
+          ),
+        ),
+      ).called(1);
+    });
+
     test(
       'setupDataSource with memory source creates temp file and uses file:// URI',
       () async {

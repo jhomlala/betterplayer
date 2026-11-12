@@ -371,7 +371,16 @@ private var externalPlaybackActiveContext = 0
             let videoExtInternal = videoExtension
             item = cacheManager.getCachingPlayerItemForNormalPlayback(url, cacheKey: cacheKeyInternal, videoExtension: videoExtInternal, headers: headers as [NSObject: AnyObject]) ?? AVPlayerItem(url: url)
         } else {
-            let asset = AVURLAsset(url: url, options: ["AVURLAssetHTTPHeaderFieldsKey": headers])
+            var options: [String: Any] = ["AVURLAssetHTTPHeaderFieldsKey": headers]
+            // AVFoundation picks the container format from the URL's extension, so
+            // files without one need it provided. The public override key needs iOS 17+.
+            if #available(iOS 17.0, *), let videoExtension = videoExtension, !videoExtension.isEmpty {
+                let mimeType = cacheManager.getMimeType(url: url, explicitVideoExtension: videoExtension).1
+                if !mimeType.isEmpty {
+                    options[AVURLAssetOverrideMIMETypeKey] = mimeType
+                }
+            }
+            let asset = AVURLAsset(url: url, options: options)
             if let certificateUrl = certificateUrl, !certificateUrl.isEmpty {
                 let certURL = URL(string: certificateUrl)
                 let licURL = licenseUrl.flatMap { URL(string: $0) }
