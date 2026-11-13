@@ -859,6 +859,7 @@ class BetterPlayer(
     @Keep
     fun dispose() {
         BetterPlayerApi.log(1, "dispose()")
+        BetterPlayerApi.onPlayerDisposed(this)
         disposeMediaSession()
         disposeRemoteNotifications()
         

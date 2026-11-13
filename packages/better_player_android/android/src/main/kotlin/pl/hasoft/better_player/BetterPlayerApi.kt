@@ -59,10 +59,25 @@ class BetterPlayerApi {
             }
         }
 
+        private val players = mutableListOf<BetterPlayer>()
+
         @Keep
         fun createPlayer(context: Context, callback: BetterPlayerCallback): BetterPlayer? {
             val texture = textureRegistry?.createSurfaceTexture() ?: return null
-            return BetterPlayer(context, texture, callback)
+            val player = BetterPlayer(context, texture, callback)
+            synchronized(players) { players.add(player) }
+            return player
+        }
+
+        internal fun onPlayerDisposed(player: BetterPlayer) {
+            synchronized(players) { players.removeAll { it === player } }
+        }
+
+        // Dart can't dispose its players once the engine is gone, so a
+        // playing player would keep going after the app is closed.
+        internal fun disposeAllPlayers() {
+            val remaining = synchronized(players) { players.toList() }
+            remaining.forEach { it.dispose() }
         }
     }
 }

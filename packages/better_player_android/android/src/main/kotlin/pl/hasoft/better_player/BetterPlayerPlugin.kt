@@ -26,6 +26,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         BetterPlayerApi.textureRegistry = null
         channel?.setMethodCallHandler(null)
         channel = null
+        BetterPlayerApi.disposeAllPlayers()
         releaseCache()
     }
 
