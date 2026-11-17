@@ -1,5 +1,6 @@
 import 'package:better_player/src/engine/player_engine_controller.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
+import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
 class MockPlayerEngineController extends PlayerEngineController {
@@ -155,6 +156,9 @@ class MockPlayerEngineController extends PlayerEngineController {
     lastPipLeft = left;
     lastPipWidth = width;
     lastPipHeight = height;
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      value = value.copyWith(isPip: true);
+    }
   }
 
   String? lastTextTrackName;

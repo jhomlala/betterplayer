@@ -257,7 +257,6 @@ extension PlayerViewStateExtension on BetterPlayerController {
         width: 0,
         height: 0,
       );
-      _postEvent(PlayerEvent(PlayerEventType.pipStart));
       enterFullScreen();
       return;
     }
