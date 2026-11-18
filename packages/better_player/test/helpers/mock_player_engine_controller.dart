@@ -161,6 +161,13 @@ class MockPlayerEngineController extends PlayerEngineController {
     }
   }
 
+  @override
+  Future<void> disablePictureInPicture() async {
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      value = value.copyWith(isPip: false);
+    }
+  }
+
   String? lastTextTrackName;
   int? lastTextTrackIndex;
 
