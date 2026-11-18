@@ -682,8 +682,13 @@ private var externalPlaybackActiveContext = 0
         var height = size.height
 
         let asset = currentItem.asset
-        let videoTracks = asset.tracks(withMediaType: .video)
-        let onlyAudio = videoTracks.isEmpty
+        let videoTracks: [AVAssetTrack]
+        if asset.statusOfValue(forKey: "tracks", error: nil) == .loaded {
+            videoTracks = asset.tracks(withMediaType: .video)
+        } else {
+            videoTracks = currentItem.tracks.compactMap { $0.assetTrack }.filter { $0.mediaType == .video }
+        }
+        let onlyAudio = videoTracks.isEmpty && (asset.statusOfValue(forKey: "tracks", error: nil) == .loaded ? asset.tracks(withMediaType: .audio).count > 0 : false)
 
         if let track = currentItem.tracks.first(where: { $0.assetTrack?.mediaType == .video })?.assetTrack ?? videoTracks.first {
             let naturalSize = track.naturalSize
@@ -700,8 +705,13 @@ private var externalPlaybackActiveContext = 0
         // A stream is truly live only if both the item and the asset report indefinite duration.
         // For progressive downloads (like MP4), asset.duration is usually available even if currentItem.duration is not.
         let itemDuration = currentItem.duration
-        let assetDuration = asset.duration
-        let isLive = CMTIME_IS_INDEFINITE(itemDuration) && CMTIME_IS_INDEFINITE(assetDuration)
+        let assetDuration: CMTime
+        if asset.statusOfValue(forKey: "duration", error: nil) == .loaded {
+            assetDuration = asset.duration
+        } else {
+            assetDuration = .invalid
+        }
+        let isLive = CMTIME_IS_INDEFINITE(itemDuration) && (CMTIME_IS_INDEFINITE(assetDuration) || CMTIME_IS_INVALID(assetDuration))
 
         let dur = duration()
 
@@ -711,7 +721,7 @@ private var externalPlaybackActiveContext = 0
             return
         }
 
-        let durMs = BetterPlayerTimeUtils.cmTimeToMillis(assetDuration)
+        let durMs = CMTIME_IS_VALID(assetDuration) ? BetterPlayerTimeUtils.cmTimeToMillis(assetDuration) : dur
         if overriddenDuration > 0 && durMs > Int64(overriddenDuration) {
             currentItem.forwardPlaybackEndTime = CMTimeMake(
                 value: Int64(overriddenDuration / 1000),
