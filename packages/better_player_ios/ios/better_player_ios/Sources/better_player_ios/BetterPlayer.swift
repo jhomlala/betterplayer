@@ -778,12 +778,17 @@ private var externalPlaybackActiveContext = 0
             time = currentItem.duration
             // Fallback to asset duration if item duration is indefinite/invalid (common race condition on init)
             if CMTIME_IS_INDEFINITE(time) || CMTIME_IS_INVALID(time) || time.value == 0 {
-                time = currentItem.asset.duration
+                if currentItem.asset.statusOfValue(forKey: "duration", error: nil) == .loaded {
+                    time = currentItem.asset.duration
+                }
             }
         }
 
         if let endTime = player.currentItem?.forwardPlaybackEndTime, !CMTIME_IS_INVALID(endTime) {
             return BetterPlayerTimeUtils.cmTimeToMillis(endTime)
+        }
+        if CMTIME_IS_INDEFINITE(time) || CMTIME_IS_INVALID(time) {
+            return 0
         }
         return BetterPlayerTimeUtils.cmTimeToMillis(time)
     }
