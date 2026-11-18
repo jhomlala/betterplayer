@@ -857,7 +857,11 @@ class BetterPlayer(
     }
 
     @Keep
+    private var isDisposed = false
+
     fun dispose() {
+        if (isDisposed) return
+        isDisposed = true
         BetterPlayerApi.log(1, "dispose()")
         BetterPlayerApi.onPlayerDisposed(this)
         disposeMediaSession()

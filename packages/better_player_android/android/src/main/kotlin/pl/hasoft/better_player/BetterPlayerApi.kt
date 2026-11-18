@@ -59,25 +59,29 @@ class BetterPlayerApi {
             }
         }
 
-        private val players = mutableListOf<BetterPlayer>()
+        // Each player with the registry of the engine that created it.
+        private val players = mutableListOf<Pair<BetterPlayer, TextureRegistry>>()
 
         @Keep
         fun createPlayer(context: Context, callback: BetterPlayerCallback): BetterPlayer? {
-            val texture = textureRegistry?.createSurfaceTexture() ?: return null
-            val player = BetterPlayer(context, texture, callback)
-            synchronized(players) { players.add(player) }
+            val registry = textureRegistry ?: return null
+            val player = BetterPlayer(context, registry.createSurfaceTexture(), callback)
+            synchronized(players) { players.add(player to registry) }
             return player
         }
 
         internal fun onPlayerDisposed(player: BetterPlayer) {
-            synchronized(players) { players.removeAll { it === player } }
+            synchronized(players) { players.removeAll { it.first === player } }
         }
 
-        // Dart can't dispose its players once the engine is gone, so a
-        // playing player would keep going after the app is closed.
-        internal fun disposeAllPlayers() {
-            val remaining = synchronized(players) { players.toList() }
-            remaining.forEach { it.dispose() }
+        // Dart can't dispose its players once its engine is gone, so a
+        // playing player would keep going after the app is closed. Players
+        // from other engines, such as a background messaging engine, stay.
+        internal fun disposePlayers(registry: TextureRegistry) {
+            val enginePlayers = synchronized(players) {
+                players.filter { it.second === registry }.map { it.first }
+            }
+            enginePlayers.forEach { it.dispose() }
         }
     }
 }
