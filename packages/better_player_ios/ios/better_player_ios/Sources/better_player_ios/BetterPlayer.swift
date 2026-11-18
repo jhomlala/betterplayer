@@ -281,6 +281,9 @@ private var externalPlaybackActiveContext = 0
             }
         } else {
             isPlaying = false
+            if showNotification && BetterPlayerApi.activeNotificationPlayer === self {
+                updateNowPlayingInfo()
+            }
             if callback != nil {
                 callback?.onCompleted(key: key)
             }
@@ -1097,6 +1100,9 @@ private var externalPlaybackActiveContext = 0
         notificationImageUrl = imageUrl
         BetterPlayerApi.activeNotificationPlayer = self
 
+        if AVAudioSession.sharedInstance().category != .playback {
+            try? AVAudioSession.sharedInstance().setCategory(.playback)
+        }
         try? AVAudioSession.sharedInstance().setActive(true)
         UIApplication.shared.beginReceivingRemoteControlEvents()
 
