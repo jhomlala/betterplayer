@@ -42,7 +42,7 @@ class PlayerViewState {
 
   /// Flag indicating whether the current full screen was entered for Android
   /// Picture-in-Picture rather than by the user. Such a full screen makes no
-  /// orientation, system UI or wakelock changes.
+  /// orientation or system UI changes.
   final bool isFullScreenForPip;
 
   /// A specific aspect ratio that overrides the configuration's aspect ratio.

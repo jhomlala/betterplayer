@@ -32,7 +32,10 @@ void main() {
     VisibilityDetectorController.instance.updateInterval = Duration.zero;
   });
 
-  Future<void> pumpPlayer(WidgetTester tester) async {
+  Future<void> pumpPlayer(
+    WidgetTester tester, {
+    PlayerConfiguration configuration = const PlayerConfiguration(),
+  }) async {
     systemChromeCalls = [];
     wakelockCalls = 0;
     const codec = StandardMessageCodec();
@@ -69,7 +72,7 @@ void main() {
 
     engineController = MockPlayerEngineController()..isPipSupported = true;
     controller = BetterPlayerMockController(
-      const PlayerConfiguration(),
+      configuration,
       playerEngineController: engineController,
     );
     engineController.emitInitialized();
@@ -108,6 +111,32 @@ void main() {
         expect(controller.isFullScreenForPip, isFalse);
         expect(systemChromeCalls, isEmpty);
         expect(wakelockCalls, 0);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+    },
+  );
+
+  testWidgets(
+    'Android PiP full screen keeps the screen on when screen sleep is not '
+    'allowed',
+    (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      try {
+        await pumpPlayer(
+          tester,
+          configuration: const PlayerConfiguration(allowedScreenSleep: false),
+        );
+
+        await controller.enablePictureInPicture(GlobalKey());
+        await setPip(tester, isPip: true);
+
+        expect(wakelockCalls, 1);
+
+        await setPip(tester, isPip: false);
+
+        expect(wakelockCalls, 2);
+        expect(systemChromeCalls, isEmpty);
       } finally {
         debugDefaultTargetPlatformOverride = null;
       }
