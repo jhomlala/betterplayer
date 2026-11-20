@@ -216,11 +216,8 @@ class _BetterPlayerState extends State<BetterPlayer>
       },
     );
 
-    // A full screen entered for Android PiP only fills the PiP window. The
-    // activity is being pinned, and an orientation or system UI request
-    // landing inside that transition wedges the PiP window on Android 17, so
-    // push the route without them and restore neither. The wakelock is only a
-    // window flag, so it still keeps the screen on.
+    // An orientation or system UI request during the PiP enter transition
+    // wedges the PiP window on Android 17. The wakelock is safe.
     if (widget.controller.isFullScreenForPip) {
       final keepScreenOn = !_betterPlayerConfiguration.allowedScreenSleep;
       if (keepScreenOn) {

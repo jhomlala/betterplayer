@@ -249,11 +249,7 @@ extension PlayerViewStateExtension on BetterPlayerController {
     }
 
     if (defaultTargetPlatform == TargetPlatform.android) {
-      // The activity is pinned while the full screen below opens. An
-      // orientation request landing inside that transition wedges the PiP
-      // window on Android 17, so this full screen must not touch orientation
-      // (see BetterPlayer). Set it before pipStart goes out, so a listener
-      // that enters full screen gets the same treatment.
+      // Set before pipStart so listeners see it.
       _viewState = _viewState.copyWith(
         wasInFullScreenBeforePiP: _viewState.isFullScreen,
         wasControlsEnabledBeforePiP: _viewState.controlsEnabled,

@@ -41,8 +41,7 @@ class PlayerViewState {
   final bool wasControlsEnabledBeforePiP;
 
   /// Flag indicating whether the current full screen was entered for Android
-  /// Picture-in-Picture rather than by the user. Such a full screen makes no
-  /// orientation or system UI changes.
+  /// Picture-in-Picture rather than by the user.
   final bool isFullScreenForPip;
 
   /// A specific aspect ratio that overrides the configuration's aspect ratio.
