@@ -856,9 +856,9 @@ class BetterPlayer(
         setAudioAttributes(exoPlayer, mixWithOthers)
     }
 
-    @Keep
     private var isDisposed = false
 
+    @Keep
     fun dispose() {
         if (isDisposed) return
         isDisposed = true
