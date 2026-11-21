@@ -1,4 +1,4 @@
-## Unreleased
+## 1.13.2
 - Fixed: Disposed native player instances when the Flutter engine detaches to prevent background audio leaks (by @SuperWes).
 
 ## 1.13.1
