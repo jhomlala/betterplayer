@@ -108,15 +108,21 @@ class _BetterPlayerState extends State<BetterPlayer>
     ///full screen is on, then full screen route must be pop and return to normal
     ///state.
     if (_isFullScreen) {
-      unawaited(WakelockPlus.disable());
       _navigatorState.maybePop();
-      SystemChrome.setEnabledSystemUIMode(
-        SystemUiMode.manual,
-        overlays: _betterPlayerConfiguration.systemOverlaysAfterFullScreen,
-      );
-      SystemChrome.setPreferredOrientations(
-        _betterPlayerConfiguration.deviceOrientationsAfterFullScreen,
-      );
+      if (widget.controller.isFullScreenForPip) {
+        if (!_betterPlayerConfiguration.allowedScreenSleep) {
+          unawaited(WakelockPlus.disable());
+        }
+      } else {
+        unawaited(WakelockPlus.disable());
+        SystemChrome.setEnabledSystemUIMode(
+          SystemUiMode.manual,
+          overlays: _betterPlayerConfiguration.systemOverlaysAfterFullScreen,
+        );
+        SystemChrome.setPreferredOrientations(
+          _betterPlayerConfiguration.deviceOrientationsAfterFullScreen,
+        );
+      }
     }
 
     WidgetsBinding.instance.removeObserver(this);
@@ -209,6 +215,22 @@ class _BetterPlayerState extends State<BetterPlayer>
         );
       },
     );
+
+    // An orientation or system UI request during the PiP enter transition
+    // wedges the PiP window on Android 17. The wakelock is safe.
+    if (widget.controller.isFullScreenForPip) {
+      final keepScreenOn = !_betterPlayerConfiguration.allowedScreenSleep;
+      if (keepScreenOn) {
+        await WakelockPlus.enable();
+      }
+      await navigator.push(route);
+      _isFullScreen = false;
+      widget.controller.exitFullScreen();
+      if (keepScreenOn) {
+        await WakelockPlus.disable();
+      }
+      return;
+    }
 
     await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 

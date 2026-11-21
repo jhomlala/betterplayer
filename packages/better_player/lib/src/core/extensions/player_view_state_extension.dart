@@ -20,7 +20,10 @@ extension PlayerViewStateExtension on BetterPlayerController {
 
   ///Disables full screen mode in player. This will trigger route change.
   void exitFullScreen() {
-    _viewState = _viewState.copyWith(isFullScreen: false);
+    _viewState = _viewState.copyWith(
+      isFullScreen: false,
+      isFullScreenForPip: false,
+    );
     _postControllerEvent(PlayerControllerEvent.hideFullscreen);
     // Guard for direct callsites only (e.g. user exits fullscreen while PiP
     // is still active on Android). When this method is invoked from
@@ -246,9 +249,11 @@ extension PlayerViewStateExtension on BetterPlayerController {
     }
 
     if (defaultTargetPlatform == TargetPlatform.android) {
+      // Set before pipStart so listeners see it.
       _viewState = _viewState.copyWith(
         wasInFullScreenBeforePiP: _viewState.isFullScreen,
         wasControlsEnabledBeforePiP: _viewState.controlsEnabled,
+        isFullScreenForPip: !_viewState.isFullScreen,
       );
       setControlsEnabled(false);
       await _engine?.enablePictureInPicture(

@@ -11,6 +11,7 @@ class PlayerViewState {
     this.wasInPipMode = false,
     this.wasInFullScreenBeforePiP = false,
     this.wasControlsEnabledBeforePiP = false,
+    this.isFullScreenForPip = false,
     this.overriddenAspectRatio,
     this.overriddenFit,
     this.betterPlayerGlobalKey,
@@ -39,6 +40,10 @@ class PlayerViewState {
   /// Stores the controls enablement state prior to entering Picture-in-Picture mode.
   final bool wasControlsEnabledBeforePiP;
 
+  /// Flag indicating whether the current full screen was entered for Android
+  /// Picture-in-Picture rather than by the user.
+  final bool isFullScreenForPip;
+
   /// A specific aspect ratio that overrides the configuration's aspect ratio.
   final double? overriddenAspectRatio;
 
@@ -59,6 +64,7 @@ class PlayerViewState {
     bool? wasInPipMode,
     bool? wasInFullScreenBeforePiP,
     bool? wasControlsEnabledBeforePiP,
+    bool? isFullScreenForPip,
     double? overriddenAspectRatio,
     BoxFit? overriddenFit,
     GlobalKey? betterPlayerGlobalKey,
@@ -75,6 +81,7 @@ class PlayerViewState {
           wasInFullScreenBeforePiP ?? this.wasInFullScreenBeforePiP,
       wasControlsEnabledBeforePiP:
           wasControlsEnabledBeforePiP ?? this.wasControlsEnabledBeforePiP,
+      isFullScreenForPip: isFullScreenForPip ?? this.isFullScreenForPip,
       overriddenAspectRatio:
           overriddenAspectRatio ?? this.overriddenAspectRatio,
       overriddenFit: overriddenFit ?? this.overriddenFit,

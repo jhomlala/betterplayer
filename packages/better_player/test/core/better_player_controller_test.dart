@@ -1409,6 +1409,7 @@ void main() {
           await Future<void>.delayed(Duration.zero);
 
           expect(controller.isFullScreen, isTrue);
+          expect(controller.isFullScreenForPip, isFalse);
           expect(controller.controlsEnabled, isFalse);
           // No second openFullscreen event emitted
           expect(
@@ -1456,12 +1457,21 @@ void main() {
 
           expect(controller.isFullScreen, isFalse);
 
+          bool? isFullScreenForPipOnOpen;
+          final sub = controller.controllerEventStream.listen((event) {
+            if (event == PlayerControllerEvent.openFullscreen) {
+              isFullScreenForPipOnOpen = controller.isFullScreenForPip;
+            }
+          });
+
           await controller.enablePictureInPicture(GlobalKey());
           engineController.value = engineController.value.copyWith(isPip: true);
           engineController.notifyListeners();
           await Future<void>.delayed(Duration.zero);
 
           expect(controller.isFullScreen, isTrue);
+          expect(isFullScreenForPipOnOpen, isTrue);
+          expect(controller.isFullScreenForPip, isTrue);
           expect(controller.controlsEnabled, isFalse);
 
           // Exit PiP -> should exit fullscreen since wasInFullScreenBeforePiP was false
@@ -1472,7 +1482,10 @@ void main() {
           await Future<void>.delayed(Duration.zero);
 
           expect(controller.isFullScreen, isFalse);
+          expect(controller.isFullScreenForPip, isFalse);
           expect(controller.controlsEnabled, isTrue);
+
+          await sub.cancel();
         } finally {
           debugDefaultTargetPlatformOverride = null;
         }
