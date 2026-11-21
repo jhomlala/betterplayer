@@ -1,4 +1,4 @@
-## Unreleased
+## 1.15.0
 - Fixed: Restored iOS media playback notifications and Lock Screen and Control Center controls via `MPNowPlayingInfoCenter` and `MPRemoteCommandCenter` (#1660).
 - Fixed: Audio muted on iPhone when hardware Silent switch is active by configuring `AVAudioSession` category to `.playback` and activating the audio session on playback (#1663).
 - Fixed: Uncached sources now honor `videoExtension` through the public `AVURLAssetOverrideMIMETypeKey` on iOS 17+, so files without an extension can play. The MIME type comes from the existing `CacheManager` lookup (by @Henry-Hiles).
