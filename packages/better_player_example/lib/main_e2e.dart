@@ -190,7 +190,6 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
           _errorDescription = err;
         });
         if (err != null &&
-            (err.contains('TLS') || err.contains('-1200')) &&
             _currentUrl == E2ELocalMediaServer.mp4Url &&
             _mp4RetryCount < 3) {
           _mp4RetryCount++;

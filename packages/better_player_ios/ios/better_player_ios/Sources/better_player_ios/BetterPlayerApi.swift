@@ -1,5 +1,8 @@
 import Foundation
 import AVKit
+#if canImport(MediaPlayer)
+import MediaPlayer
+#endif
 
 @objc(BetterPlayerCallback) public protocol BetterPlayerCallback {
     @objc(onInitializedWithDurationMs:width:height:key:)
@@ -41,6 +44,7 @@ import AVKit
 @objc public class BetterPlayerApi: NSObject {
     @objc public static var players: [Int64: BetterPlayer] = [:]
     @objc public static var nextId: Int64 = 0
+    @objc public static weak var activeNotificationPlayer: BetterPlayer? = nil
 
     private static var _logCallback: BetterPlayerLogCallback? = nil
     private static var _preCacheCallback: BetterPlayerPreCacheCallback? = nil
@@ -125,6 +129,10 @@ import AVKit
     @objc public static func cleanUp() {
         _logCallback = nil
         _preCacheCallback = nil
+        activeNotificationPlayer = nil
+        #if canImport(MediaPlayer)
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
+        #endif
         let activePlayers = Array(players.values)
         players.removeAll()
         for player in activePlayers {

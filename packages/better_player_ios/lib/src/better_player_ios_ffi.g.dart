@@ -530,6 +530,12 @@ extension BetterPlayer$Methods on BetterPlayer {
     _objc_msgSend_1pl9qdv(_$$ref.pointer, _sel_dispose);
   }
 
+  /// disposeRemoteNotifications
+  void disposeRemoteNotifications() {
+    final _$$ref = object$.ref;
+    _objc_msgSend_1pl9qdv(_$$ref.pointer, _sel_disposeRemoteNotifications);
+  }
+
   /// Disposes the player without affecting the event channel.
   void disposeSansEventChannel() {
     final _$$ref = object$.ref;
@@ -891,6 +897,25 @@ extension BetterPlayer$Methods on BetterPlayer {
     _objc_msgSend_hwm8nu(_$$ref.pointer, _sel_setVolume_, volume);
   }
 
+  /// setupPlayerNotificationWithTitle:author:imageUrl:
+  void setupPlayerNotificationWithTitle(
+    objc.NSString title, {
+    objc.NSString? author,
+    objc.NSString? imageUrl,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = title.ref;
+    final _$$ref$2 = author?.ref;
+    final _$$ref$3 = imageUrl?.ref;
+    _objc_msgSend_r8gdi7(
+      _$$ref.pointer,
+      _sel_setupPlayerNotificationWithTitle_author_imageUrl_,
+      _$$ref$1.pointer,
+      _$$ref$2?.pointer ?? ffi.nullptr,
+      _$$ref$3?.pointer ?? ffi.nullptr,
+    );
+  }
+
   /// Returns the view to be displayed in Flutter.
   UIView view() {
     final _$$ref = object$.ref;
@@ -945,6 +970,17 @@ extension type BetterPlayerApi._(objc.ObjCObject object$)
       retain: true,
       release: true,
     );
+  }
+
+  /// activeNotificationPlayer
+  static BetterPlayer? getActiveNotificationPlayer() {
+    final $ret = _objc_msgSend_151sglz(
+      _class_BetterPlayerApi,
+      _sel_activeNotificationPlayer,
+    );
+    return $ret.address == 0
+        ? null
+        : BetterPlayer.fromPointer($ret, retain: true, release: true);
   }
 
   /// alloc
@@ -1047,6 +1083,16 @@ extension type BetterPlayerApi._(objc.ObjCObject object$)
       _$$ref$1?.pointer ?? ffi.nullptr,
       _$$ref$2?.pointer ?? ffi.nullptr,
       _$$ref$3?.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// setActiveNotificationPlayer:
+  static void setActiveNotificationPlayer(BetterPlayer? value) {
+    final _$$ref = value?.ref;
+    _objc_msgSend_xtuoz7(
+      _class_BetterPlayerApi,
+      _sel_setActiveNotificationPlayer_,
+      _$$ref?.pointer ?? ffi.nullptr,
     );
   }
 
@@ -6431,6 +6477,9 @@ late final _sel__dummyPreCacheCallback = objc.registerName(
   "_dummyPreCacheCallback",
 );
 late final _sel_absolutePosition = objc.registerName("absolutePosition");
+late final _sel_activeNotificationPlayer = objc.registerName(
+  "activeNotificationPlayer",
+);
 late final _sel_alloc = objc.registerName("alloc");
 late final _sel_allocWithZone_ = objc.registerName("allocWithZone:");
 late final _sel_arg0 = objc.registerName("arg0");
@@ -6452,6 +6501,9 @@ late final _sel_disablePictureInPicture = objc.registerName(
   "disablePictureInPicture",
 );
 late final _sel_dispose = objc.registerName("dispose");
+late final _sel_disposeRemoteNotifications = objc.registerName(
+  "disposeRemoteNotifications",
+);
 late final _sel_disposeSansEventChannel = objc.registerName(
   "disposeSansEventChannel",
 );
@@ -6518,6 +6570,9 @@ late final _sel_position = objc.registerName("position");
 late final _sel_preCacheWithUrl_cacheKey_videoExtension_headers_ = objc
     .registerName("preCacheWithUrl:cacheKey:videoExtension:headers:");
 late final _sel_seekTo_ = objc.registerName("seekTo:");
+late final _sel_setActiveNotificationPlayer_ = objc.registerName(
+  "setActiveNotificationPlayer:",
+);
 late final _sel_setAspectRatio_ = objc.registerName("setAspectRatio:");
 late final _sel_setAudioTrackWithName_index_ = objc.registerName(
   "setAudioTrackWithName:index:",
@@ -6556,13 +6611,15 @@ late final _sel_setTrackParametersWithWidth_height_bitrate_ = objc.registerName(
   "setTrackParametersWithWidth:height:bitrate:",
 );
 late final _sel_setVolume_ = objc.registerName("setVolume:");
+late final _sel_setupPlayerNotificationWithTitle_author_imageUrl_ = objc
+    .registerName("setupPlayerNotificationWithTitle:author:imageUrl:");
 late final _sel_stopPreCacheWithUrl_cacheKey_ = objc.registerName(
   "stopPreCacheWithUrl:cacheKey:",
 );
 late final _sel_view = objc.registerName("view");
 
-/// better_player_ios_Swift_470
-extension better_player_ios_Swift_470 on BetterPlayer {
+/// better_player_ios_Swift_472
+extension better_player_ios_Swift_472 on BetterPlayer {
   /// legibleOutput:didOutputAttributedStrings:nativeSampleBuffers:forItemTime:
   void legibleOutput(
     AVPlayerItemLegibleOutput output, {

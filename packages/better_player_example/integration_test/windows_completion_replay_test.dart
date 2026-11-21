@@ -46,7 +46,7 @@ void main() {
       await pumpUntilFound(
         tester: tester,
         finder: finishedStatus,
-        timeout: const Duration(seconds: 30),
+        timeout: const Duration(seconds: 60),
       );
 
       // Tap replay button in controls

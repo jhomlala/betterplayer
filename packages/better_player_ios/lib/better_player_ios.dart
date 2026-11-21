@@ -146,7 +146,9 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
   Future<void> dispose(int? textureId) async {
     if (textureId == null) return;
     _lastInitializedKeys.remove(textureId);
-    getPlayer(textureId)?.dispose();
+    final player = getPlayer(textureId);
+    player?.disposeRemoteNotifications();
+    player?.dispose();
     _callbacks.remove(textureId);
     unawaited(_eventControllers[textureId]?.close());
     _eventControllers.remove(textureId);
@@ -344,6 +346,17 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
         overriddenDuration: overriddenDuration,
         videoExtension: dataSource.videoExtension,
       );
+    }
+
+    final notificationConfig = dataSource.notificationConfiguration;
+    if (notificationConfig?.showNotification == true) {
+      player.setupPlayerNotification(
+        notificationConfig?.title ?? '',
+        author: notificationConfig?.author,
+        imageUrl: notificationConfig?.imageUrl,
+      );
+    } else {
+      player.disposeRemoteNotifications();
     }
   }
 
@@ -626,6 +639,12 @@ abstract class BetterPlayerWrapper {
   void setSpeed(double speed);
   void seekTo(int positionMs);
   int? position();
+  void setupPlayerNotification(
+    String title, {
+    String? author,
+    String? imageUrl,
+  });
+  void disposeRemoteNotifications();
 }
 
 class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
@@ -741,4 +760,20 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
 
   @override
   int? position() => _player.position();
+
+  @override
+  void setupPlayerNotification(
+    String title, {
+    String? author,
+    String? imageUrl,
+  }) {
+    _player.setupPlayerNotificationWithTitle(
+      title.toNSString(),
+      author: author?.toNSString(),
+      imageUrl: imageUrl?.toNSString(),
+    );
+  }
+
+  @override
+  void disposeRemoteNotifications() => _player.disposeRemoteNotifications();
 }

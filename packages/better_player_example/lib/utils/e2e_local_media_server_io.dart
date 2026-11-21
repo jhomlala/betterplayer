@@ -223,6 +223,14 @@ class E2ELocalMediaServer {
     if (parts.length != 2) {
       return null;
     }
+    if (parts[0].isEmpty) {
+      final suffix = int.tryParse(parts[1]);
+      if (suffix == null || suffix <= 0 || total <= 0) {
+        return null;
+      }
+      final start = (total - suffix).clamp(0, total - 1);
+      return (start: start, end: total - 1);
+    }
     final start = int.tryParse(parts[0]);
     if (start == null || start < 0 || start >= total) {
       return null;
