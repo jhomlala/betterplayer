@@ -2,6 +2,7 @@
 - Added: `PlayerSubtitlesConfiguration.textBackgroundHorizontalPadding` to configure horizontal padding inside subtitle background boxes (by @SuperWes).
 - Fixed: Prevented PiP window freezing on Android 15+ by bypassing orientation and system UI changes during PiP fullscreen (by @SuperWes).
 - Fixed: Dropped duplicate `pipStart` and `pipStop` events on Android (by @SuperWes).
+- Fixed: `PlayerDataSource.file` now accepts `videoExtension` and forwards it to the platform, so local files without an extension can play on iOS and macOS (by @Henry-Hiles).
 
 ## 1.37.0
 - Added: Swift Package Manager support for iOS and macOS via `FlutterFramework` dependency in `Package.swift` (by @hellohuanlin).

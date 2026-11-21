@@ -1,6 +1,7 @@
 ## Unreleased
 - Fixed: Restored iOS media playback notifications and Lock Screen and Control Center controls via `MPNowPlayingInfoCenter` and `MPRemoteCommandCenter` (#1660).
 - Fixed: Audio muted on iPhone when hardware Silent switch is active by configuring `AVAudioSession` category to `.playback` and activating the audio session on playback (#1663).
+- Fixed: Uncached sources now honor `videoExtension` through the public `AVURLAssetOverrideMIMETypeKey` on iOS 17+, so files without an extension can play. The MIME type comes from the existing `CacheManager` lookup (by @Henry-Hiles).
 
 ## 1.14.0
 - Fixed: Video stutters when it resumes from Picture in Picture, and a video paused from the PiP controls can resume on its own. The stall check and `updatePlayingState` no longer force `playImmediately(atRate:)` while AVKit plays or buffers in PiP, and `isPlaying` now follows the PiP play and pause controls (by @Marionetista).

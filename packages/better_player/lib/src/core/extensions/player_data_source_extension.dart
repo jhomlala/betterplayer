@@ -275,6 +275,7 @@ extension PlayerDataSourceExtension on BetterPlayerController {
 
         await _engine?.setFileDataSource(
           filePath,
+          videoExtension: _betterPlayerDataSource!.videoExtension,
           showNotification: _betterPlayerDataSource
               ?.notificationConfiguration
               ?.showNotification,

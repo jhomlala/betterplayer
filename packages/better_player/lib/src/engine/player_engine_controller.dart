@@ -239,6 +239,7 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
   /// `'file://$filePath'`.
   Future<void> setFileDataSource(
     String filePath, {
+    String? videoExtension,
     bool? showNotification,
     String? title,
     String? author,
@@ -252,6 +253,7 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
       DataSource(
         sourceType: DataSourceType.file,
         uri: 'file://$filePath',
+        videoExtension: videoExtension,
         notificationConfiguration: NotificationConfiguration(
           showNotification: showNotification,
           title: title,
