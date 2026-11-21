@@ -39,8 +39,11 @@ class PlayerSubtitlesDrawerItem extends StatelessWidget {
         Expanded(
           child: Align(
             alignment: effectiveAlignment,
-            child: ColoredBox(
+            child: Container(
               color: configuration.backgroundColor,
+              padding: EdgeInsets.symmetric(
+                horizontal: configuration.textBackgroundHorizontalPadding,
+              ),
               child: configuration.outlineEnabled
                   ? Stack(
                       children: [

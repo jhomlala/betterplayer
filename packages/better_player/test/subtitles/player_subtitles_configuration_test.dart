@@ -9,6 +9,7 @@ void main() {
     expect(config.fontColor, Colors.white);
     expect(config.outlineEnabled, true);
     expect(config.alignment, Alignment.center);
+    expect(config.textBackgroundHorizontalPadding, 0);
   });
 
   test('PlayerSubtitlesConfiguration custom values', () {
@@ -16,9 +17,11 @@ void main() {
       fontSize: 20,
       fontColor: Colors.red,
       alignment: Alignment.bottomLeft,
+      textBackgroundHorizontalPadding: 8,
     );
     expect(config.fontSize, 20);
     expect(config.fontColor, Colors.red);
     expect(config.alignment, Alignment.bottomLeft);
+    expect(config.textBackgroundHorizontalPadding, 8);
   });
 }
