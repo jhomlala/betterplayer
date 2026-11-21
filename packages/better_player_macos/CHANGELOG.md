@@ -1,4 +1,4 @@
-## Unreleased
+## 1.10.0
 - Fixed: Uncached sources now honor `videoExtension` through the public `AVURLAssetOverrideMIMETypeKey` on macOS 14+, so files without an extension can play. The MIME type comes from the existing `CacheManager` lookup (by @Henry-Hiles).
 
 ## 1.9.0
