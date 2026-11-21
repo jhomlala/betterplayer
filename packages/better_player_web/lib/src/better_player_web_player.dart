@@ -482,11 +482,13 @@ class BetterPlayerWebPlayer {
               'abr': {'enabled': true},
             }.jsify()!
             as JSObject;
-    _shakaPlayer?.configure(resetConfig);
-
-    final config = buildShakaConfig(dataSource);
-    if (config != null) {
-      _shakaPlayer!.configure(config);
+    final jsPlayer = _shakaPlayer != null ? _shakaPlayer! as JSObject : null;
+    if (jsPlayer != null && jsPlayer.has('configure')) {
+      _shakaPlayer!.configure(resetConfig);
+      final config = buildShakaConfig(dataSource);
+      if (config != null) {
+        _shakaPlayer!.configure(config);
+      }
     }
 
     _clearRequestFilter();
@@ -544,9 +546,11 @@ class BetterPlayerWebPlayer {
         if (drm.licenseUrl != null) {
           servers['com.widevine.alpha'] = drm.licenseUrl!;
         }
-        if (securityLevel != null) {
+        if ((drm.headers != null && drm.headers!.isNotEmpty) ||
+            securityLevel != null) {
           advanced['com.widevine.alpha'] = {
-            'videoRobustness': securityLevel,
+            if (drm.headers != null) 'licenseRequestHeaders': drm.headers!,
+            'videoRobustness': ?securityLevel,
           };
         }
       case DrmType.fairplay:
@@ -562,6 +566,9 @@ class BetterPlayerWebPlayer {
         if (drm.licenseUrl != null) {
           servers['org.w3.clearkey'] = drm.licenseUrl!;
         }
+        if (drm.headers != null && drm.headers!.isNotEmpty) {
+          advanced['org.w3.clearkey'] = {'licenseRequestHeaders': drm.headers!};
+        }
         if (drm.clearKey != null) {
           final parsed = _parseClearKeys(drm.clearKey!);
           clearKeys.addAll(parsed);
@@ -570,9 +577,11 @@ class BetterPlayerWebPlayer {
         if (drm.licenseUrl != null) {
           servers['com.widevine.alpha'] = drm.licenseUrl!;
         }
-        if (securityLevel != null) {
+        if (drm.token != null || securityLevel != null) {
           advanced['com.widevine.alpha'] = {
-            'videoRobustness': securityLevel,
+            if (drm.token != null)
+              'licenseRequestHeaders': {'Authorization': 'Bearer ${drm.token}'},
+            'videoRobustness': ?securityLevel,
           };
         }
       case null:
@@ -940,9 +949,16 @@ class BetterPlayerWebPlayer {
     }
     _disposed = true;
     _clearRequestFilter();
-    videoElement.pause();
-    videoElement.removeAttribute('src');
-    videoElement.load();
+    final jsVideo = videoElement as JSObject;
+    if (jsVideo.has('pause')) {
+      videoElement.pause();
+    }
+    if (jsVideo.has('removeAttribute')) {
+      videoElement.removeAttribute('src');
+    }
+    if (jsVideo.has('load')) {
+      videoElement.load();
+    }
     if (_shakaPlayer != null) {
       await _shakaPlayer!.destroy().toDart;
     }
