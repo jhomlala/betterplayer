@@ -1,3 +1,6 @@
+## Unreleased
+- Fixed: Disposed native player instances when the Flutter engine detaches to prevent background audio leaks (by @SuperWes).
+
 ## 1.13.1
 - Fixed: Resolved audio tracks JSON getter access in FFI wrapper.
 - Updated: Bumped `better_player_platform_interface` constraint to `^1.8.0` to resolve constructor compatibility during dependency lower-bound analysis.
