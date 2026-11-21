@@ -48,6 +48,18 @@ class TestBetterPlayerAndroid extends BetterPlayerAndroid {
     return (player as MockBetterPlayer).textureId;
   }
 
+  final List<
+    ({
+      String dataSource,
+      int preCacheSize,
+      int maxCacheSize,
+      int maxCacheFileSize,
+      Map<String, String?>? headers,
+      String? cacheKey,
+    })
+  >
+  preCacheCalls = [];
+
   @override
   void ensurePreCacheCallbackConfigured() {}
 
@@ -59,7 +71,16 @@ class TestBetterPlayerAndroid extends BetterPlayerAndroid {
     int maxCacheFileSize,
     Map<String, String?>? headers,
     String? cacheKey,
-  ) {}
+  ) {
+    preCacheCalls.add((
+      dataSource: dataSource,
+      preCacheSize: preCacheSize,
+      maxCacheSize: maxCacheSize,
+      maxCacheFileSize: maxCacheFileSize,
+      headers: headers,
+      cacheKey: cacheKey,
+    ));
+  }
 
   @override
   void jniStopPreCache(String url) {}
@@ -375,6 +396,85 @@ void main() {
       expect(events.first.captions, ['Caption 1', 'Caption 2']);
 
       await sub.cancel();
+    });
+
+    test(
+      'preCache applies safe defaults when cache sizes are omitted or <= 0',
+      () async {
+        final withoutCacheConfig = DataSource(
+          sourceType: DataSourceType.network,
+          uri: 'https://example.com/video1.mp4',
+        );
+        final withZeroSizes = DataSource(
+          sourceType: DataSourceType.network,
+          uri: 'https://example.com/video2.mp4',
+          cacheConfiguration: const CacheConfiguration(
+            useCache: true,
+            maxCacheSize: 0,
+            maxCacheFileSize: -1,
+          ),
+        );
+        final withPositiveSizes = DataSource(
+          sourceType: DataSourceType.network,
+          uri: 'https://example.com/video3.mp4',
+          cacheConfiguration: const CacheConfiguration(
+            useCache: true,
+            maxCacheSize: 50 * 1024 * 1024,
+            maxCacheFileSize: 5 * 1024 * 1024,
+          ),
+        );
+
+        await androidPlayer.preCache(withoutCacheConfig, 1024);
+        await androidPlayer.preCache(withZeroSizes, 2048);
+        await androidPlayer.preCache(withPositiveSizes, 4096);
+
+        expect(androidPlayer.preCacheCalls, hasLength(3));
+        expect(androidPlayer.preCacheCalls[0].maxCacheSize, 100 * 1024 * 1024);
+        expect(
+          androidPlayer.preCacheCalls[0].maxCacheFileSize,
+          10 * 1024 * 1024,
+        );
+        expect(androidPlayer.preCacheCalls[1].maxCacheSize, 100 * 1024 * 1024);
+        expect(
+          androidPlayer.preCacheCalls[1].maxCacheFileSize,
+          10 * 1024 * 1024,
+        );
+        expect(androidPlayer.preCacheCalls[2].maxCacheSize, 50 * 1024 * 1024);
+        expect(
+          androidPlayer.preCacheCalls[2].maxCacheFileSize,
+          5 * 1024 * 1024,
+        );
+      },
+    );
+
+    test('async JNI callbacks after dispose do not throw StateError', () async {
+      androidPlayer.jStringConverter = (str) => '["Caption 1"]';
+      final textureId = await androidPlayer.create();
+      final callback =
+          androidPlayer.capturedCallbacks.first as $BetterPlayerCallback;
+      final dummyJString = (MockJObject() as dynamic) as JString;
+
+      await androidPlayer.dispose(textureId);
+
+      expect(
+        () => callback.onInitialized(1000, 1920, 1080, null),
+        returnsNormally,
+      );
+      expect(() => callback.onCompleted(null), returnsNormally);
+      expect(callback.onPlay, returnsNormally);
+      expect(callback.onPause, returnsNormally);
+      expect(() => callback.onSeek(500), returnsNormally);
+      expect(callback.onBufferingStart, returnsNormally);
+      expect(callback.onBufferingEnd, returnsNormally);
+      expect(() => callback.onBufferingUpdate(2000), returnsNormally);
+      expect(callback.onPipStart, returnsNormally);
+      expect(callback.onPipStop, returnsNormally);
+      expect(() => callback.onChangedSize(1280, 720, null), returnsNormally);
+      expect(() => callback.onCuesJson(dummyJString), returnsNormally);
+      expect(
+        () => callback.onError(dummyJString, dummyJString, dummyJString),
+        returnsNormally,
+      );
     });
   });
 }

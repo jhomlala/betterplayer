@@ -6,10 +6,9 @@ import 'package:http/http.dart' as http;
 
 ///Base helper class for ASMS parsing.
 class PlayerAsmsUtils {
-  PlayerAsmsUtils({http.Client? httpClient})
-    : _httpClient = httpClient ?? http.Client();
+  PlayerAsmsUtils({http.Client? httpClient}) : _client = httpClient;
 
-  final http.Client _httpClient;
+  final http.Client? _client;
 
   static const String _hlsExtension = 'm3u8';
   static const String _dashExtension = 'mpd';
@@ -29,10 +28,14 @@ class PlayerAsmsUtils {
     String data,
     String masterPlaylistUrl, {
     Map<String, String?>? headers,
+    VideoFormat? videoFormat,
   }) async {
-    return isDataSourceDash(masterPlaylistUrl)
+    final isDash =
+        videoFormat == VideoFormat.dash ||
+        (videoFormat != VideoFormat.hls && isDataSourceDash(masterPlaylistUrl));
+    return isDash
         ? PlayerDashUtils.parse(data, masterPlaylistUrl)
-        : PlayerHlsUtils(httpClient: _httpClient).parse(
+        : PlayerHlsUtils(httpClient: _client).parse(
             data,
             masterPlaylistUrl,
             headers: headers,
@@ -64,37 +67,44 @@ class PlayerAsmsUtils {
       });
     }
 
-    const maxRetries = 3;
-    for (var attempt = 1; attempt <= maxRetries; attempt++) {
-      try {
-        final response = await _httpClient.get(
-          Uri.parse(url),
-          headers: nonNullHeaders.isEmpty ? null : nonNullHeaders,
-        );
+    final client = _client ?? http.Client();
+    try {
+      const maxRetries = 3;
+      for (var attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+          final response = await client.get(
+            Uri.parse(url),
+            headers: nonNullHeaders.isEmpty ? null : nonNullHeaders,
+          );
 
-        if (response.statusCode >= 200 && response.statusCode < 300) {
-          final effectiveUrl = response.request?.url.toString() ?? url;
-          return (data: response.body, effectiveUrl: effectiveUrl);
-        } else {
+          if (response.statusCode >= 200 && response.statusCode < 300) {
+            final effectiveUrl = response.request?.url.toString() ?? url;
+            return (data: response.body, effectiveUrl: effectiveUrl);
+          } else {
+            PlayerLogger.warning(
+              message:
+                  'GetDataFromUrl attempt $attempt failed: HTTP ${response.statusCode}',
+            );
+          }
+        } on Exception catch (exception) {
           PlayerLogger.warning(
             message:
-                'GetDataFromUrl attempt $attempt failed: HTTP ${response.statusCode}',
+                'GetDataFromUrl attempt $attempt failed with exception: $exception',
           );
         }
-      } on Exception catch (exception) {
-        PlayerLogger.warning(
-          message:
-              'GetDataFromUrl attempt $attempt failed with exception: $exception',
-        );
+        if (attempt < maxRetries) {
+          await Future<void>.delayed(Duration(milliseconds: 500 * attempt));
+        }
       }
-      if (attempt < maxRetries) {
-        await Future<void>.delayed(Duration(milliseconds: 500 * attempt));
+
+      PlayerLogger.error(
+        message: 'GetDataFromUrl failed after $maxRetries attempts for $url',
+      );
+      return (data: null, effectiveUrl: url);
+    } finally {
+      if (_client == null) {
+        client.close();
       }
     }
-
-    PlayerLogger.error(
-      message: 'GetDataFromUrl failed after $maxRetries attempts for $url',
-    );
-    return (data: null, effectiveUrl: url);
   }
 }

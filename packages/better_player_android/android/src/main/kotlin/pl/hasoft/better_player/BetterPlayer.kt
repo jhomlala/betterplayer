@@ -145,6 +145,7 @@ class BetterPlayer(
         drmSecurityLevel: String?
     ) {
         BetterPlayerApi.log(1, "setDataSource: $dataSource")
+        disposeRemoteNotifications()
         this.key = key
         isInitialized = false
         isInitializedSent = false
@@ -152,8 +153,15 @@ class BetterPlayer(
         var dataSourceFactory: DataSource.Factory?
         val userAgent = getUserAgent(headers)
         if (licenseUrl != null && licenseUrl.isNotEmpty()) {
+            val drmDataSourceFactory = DefaultHttpDataSource.Factory()
+                .setAllowCrossProtocolRedirects(true)
+                .apply {
+                    if (userAgent != null) {
+                        setUserAgent(userAgent)
+                    }
+                }
             val httpMediaDrmCallback =
-                HttpMediaDrmCallback(licenseUrl, DefaultHttpDataSource.Factory())
+                HttpMediaDrmCallback(licenseUrl, drmDataSourceFactory)
             if (drmHeaders != null) {
                 for ((drmKey, drmValue) in drmHeaders) {
                     httpMediaDrmCallback.setKeyRequestProperty(drmKey, drmValue)
@@ -186,7 +194,7 @@ class BetterPlayer(
                                 return@setUuidAndExoMediaDrmProvider DummyExoMediaDrm()
                             }
                         }
-                        .setMultiSession(false)
+                        .setMultiSession(true)
                         .build(httpMediaDrmCallback)
                 }
             }
@@ -322,26 +330,32 @@ class BetterPlayer(
                 return null
             }
         }
-        var playerNotificationChannelName = notificationChannelName
-        if (notificationChannelName == null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val importance = NotificationManager.IMPORTANCE_LOW
+        disposeRemoteNotifications()
+        val playerNotificationChannelName = if (notificationChannelName.isNullOrBlank()) {
+            DEFAULT_NOTIFICATION_CHANNEL
+        } else {
+            notificationChannelName
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationManager = context.getSystemService(
+                NotificationManager::class.java
+            )
+            if (notificationManager != null &&
+                notificationManager.getNotificationChannel(playerNotificationChannelName) == null
+            ) {
                 val channel = NotificationChannel(
-                    DEFAULT_NOTIFICATION_CHANNEL,
-                    DEFAULT_NOTIFICATION_CHANNEL, importance
+                    playerNotificationChannelName,
+                    playerNotificationChannelName,
+                    NotificationManager.IMPORTANCE_LOW
                 )
-                channel.description = DEFAULT_NOTIFICATION_CHANNEL
-                val notificationManager = context.getSystemService(
-                    NotificationManager::class.java
-                )
+                channel.description = playerNotificationChannelName
                 notificationManager.createNotificationChannel(channel)
-                playerNotificationChannelName = DEFAULT_NOTIFICATION_CHANNEL
             }
         }
 
         playerNotificationManager = PlayerNotificationManager.Builder(
             context, NOTIFICATION_ID,
-            playerNotificationChannelName!!
+            playerNotificationChannelName
         ).setMediaDescriptionAdapter(mediaDescriptionAdapter).build()
 
         playerNotificationManager?.apply {
@@ -361,9 +375,8 @@ class BetterPlayer(
     @Keep
     fun disposeRemoteNotifications() {
         BetterPlayerApi.log(1, "disposeRemoteNotifications()")
-        if (playerNotificationManager != null) {
-            playerNotificationManager?.setPlayer(null)
-        }
+        playerNotificationManager?.setPlayer(null)
+        playerNotificationManager = null
         bitmap = null
     }
 
@@ -434,7 +447,7 @@ class BetterPlayer(
     private fun setupVideoPlayer(textureEntry: SurfaceTextureEntry) {
         surface = Surface(textureEntry.surfaceTexture())
         exoPlayer?.setVideoSurface(surface)
-        setAudioAttributes(exoPlayer, true)
+        setAudioAttributes(exoPlayer, false)
         exoPlayer?.addListener(object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
                 when (playbackState) {
@@ -491,6 +504,26 @@ class BetterPlayer(
                 }
             }
 
+            override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
+                if (playWhenReady) {
+                    callback.onPlay()
+                } else {
+                    callback.onPause()
+                }
+            }
+
+            override fun onPositionDiscontinuity(
+                oldPosition: Player.PositionInfo,
+                newPosition: Player.PositionInfo,
+                reason: Int
+            ) {
+                if (reason == Player.DISCONTINUITY_REASON_SEEK ||
+                    reason == Player.DISCONTINUITY_REASON_SEEK_ADJUSTMENT
+                ) {
+                    callback.onSeek(newPosition.positionMs)
+                }
+            }
+
             override fun onCues(cueGroup: CueGroup) {
                 val cuesList = cueGroup.cues.mapNotNull { it.text?.toString() }
                 callback.onCues(cuesList)
@@ -504,6 +537,7 @@ class BetterPlayer(
         
     }
 
+    @Keep
     fun sendBufferingUpdate(isFromBufferingStart: Boolean) {
         val bufferedPosition = exoPlayer?.bufferedPosition ?: 0L
         if (isFromBufferingStart || bufferedPosition != lastSendBufferedPosition) {
@@ -577,12 +611,14 @@ class BetterPlayer(
         exoPlayer?.seekTo(location.toLong())
     }
 
+    @get:Keep
     val position: Long
         get() {
             sendBufferingUpdate(false)
             return exoPlayer?.currentPosition ?: 0L
         }
 
+    @get:Keep
     val absolutePosition: Long
         get() {
             val timeline = exoPlayer?.currentTimeline
@@ -628,12 +664,15 @@ class BetterPlayer(
         return if (duration == C.TIME_UNSET) 0L else duration
     }
 
+    @Keep
     @SuppressLint("InlinedApi")
     fun setupMediaSession(context: Context?): MediaSession? {
         mediaSession?.release()
+        mediaSession = null
         context?.let {
             val player = exoPlayer ?: return null
             val mediaSession = MediaSession.Builder(context, player)
+                .setId("better_player_${textureEntry.id()}")
                 .build()
             this.mediaSession = mediaSession
             return mediaSession
@@ -651,6 +690,7 @@ class BetterPlayer(
         }
     }
 
+    @Keep
     fun disposeMediaSession() {
         if (mediaSession != null) {
             mediaSession?.release()
@@ -877,10 +917,12 @@ class BetterPlayer(
         if (isInitialized) {
             exoPlayer?.stop()
         }
-        textureEntry.release()
-        
-        surface?.release()
+        exoPlayer?.clearVideoSurface()
         exoPlayer?.release()
+
+        surface?.release()
+        surface = null
+        textureEntry.release()
     }
 
     override fun equals(other: Any?): Boolean {
@@ -897,6 +939,7 @@ class BetterPlayer(
         return result
     }
 
+    @Keep
     companion object {
         
         private const val FORMAT_SS = "ss"
@@ -908,30 +951,8 @@ class BetterPlayer(
         private const val NOTIFICATION_ID = 20772077
 
         @Keep
-    fun clearCache(context: Context?) {
-            try {
-                BetterPlayerCache.clearCache()
-                context?.let { context ->
-                    val file = File(context.cacheDir, "betterPlayerCache")
-                    deleteDirectory(file)
-                }
-                
-            } catch (exception: Exception) {
-                Log.e("BetterPlayer", "Failed to clear cache", exception)
-            }
-        }
-
-        private fun deleteDirectory(file: File) {
-            if (file.isDirectory) {
-                val entries = file.listFiles()
-                if (entries != null) {
-                    for (entry in entries) {
-                        deleteDirectory(entry)
-                    }
-                }
-            }
-            if (!file.delete()) {
-            }
+        fun clearCache(context: Context?) {
+            BetterPlayerCache.clearCache(context)
         }
 
         @Keep

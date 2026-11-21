@@ -7,13 +7,12 @@ import 'package:better_player/src/utils/player_io_utils.dart';
 import 'package:http/http.dart' as http;
 
 class PlayerSubtitlesFactory {
-  PlayerSubtitlesFactory({http.Client? httpClient})
-    : _httpClient = httpClient ?? http.Client();
+  PlayerSubtitlesFactory({http.Client? httpClient}) : _client = httpClient;
 
   static const int _mpegTsRollover = 8589934592;
   static const int _mpegTsClockRate = 90000;
 
-  final http.Client _httpClient;
+  final http.Client? _client;
 
   Future<List<PlayerSubtitle>> parseSubtitles(
     PlayerSubtitlesSource source,
@@ -62,6 +61,7 @@ class PlayerSubtitlesFactory {
   Future<List<PlayerSubtitle>> _parseSubtitlesFromNetwork(
     PlayerSubtitlesSource source,
   ) async {
+    final client = _client ?? http.Client();
     try {
       final subtitles = <PlayerSubtitle>[];
       for (final url in source.urls!) {
@@ -71,7 +71,7 @@ class PlayerSubtitlesFactory {
             nonNullHeaders[key] = value;
           });
         }
-        final response = await _httpClient.get(
+        final response = await client.get(
           Uri.parse(url!),
           headers: nonNullHeaders.isEmpty ? null : nonNullHeaders,
         );
@@ -96,6 +96,10 @@ class PlayerSubtitlesFactory {
         message: 'Failed to read subtitles from network: $exception',
         error: exception,
       );
+    } finally {
+      if (_client == null) {
+        client.close();
+      }
     }
     return [];
   }
@@ -212,10 +216,6 @@ class PlayerSubtitlesFactory {
         localDuration = PlayerSubtitle.stringToDuration(localStr);
       }
 
-      if (localDuration == Duration.zero) {
-        return Duration.zero;
-      }
-
       if (mpegtsStr != null) {
         final mpegtsValue = int.tryParse(mpegtsStr) ?? 0;
         // MPEG-TS timestamps are 90kHz clock. Also account for 33-bit rollover (2^33 = 8589934592)
@@ -228,10 +228,10 @@ class PlayerSubtitlesFactory {
                   rolloverCount * _mpegTsRollover * 1000 ~/ _mpegTsClockRate,
             );
 
-        return localDuration - mpegtsDuration;
+        return mpegtsDuration - localDuration;
       }
 
-      return localDuration;
+      return Duration.zero;
     } on Object {
       PlayerLogger.error(message: 'Failed to parse X-TIMESTAMP-MAP: $line');
       return Duration.zero;

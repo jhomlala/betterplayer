@@ -41,6 +41,13 @@ public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFac
 
     private static var secureTextField: UITextField?
 
+    private static func secureContainerLayer(for field: UITextField) -> CALayer? {
+        if #available(iOS 17.0, *) {
+            return field.layer.sublayers?.last ?? field.layer.sublayers?.first
+        }
+        return field.layer.sublayers?.first
+    }
+
     public static func setScreenCaptureProtection(enabled: Bool) {
         DispatchQueue.main.async {
             guard let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) ?? UIApplication.shared.windows.first else {
@@ -49,13 +56,14 @@ public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFac
             if enabled {
                 guard secureTextField == nil else { return }
                 let field = UITextField()
+                field.translatesAutoresizingMaskIntoConstraints = false
                 field.isSecureTextEntry = true
                 field.isUserInteractionEnabled = false
                 window.addSubview(field)
                 field.centerYAnchor.constraint(equalTo: window.centerYAnchor).isActive = true
                 field.centerXAnchor.constraint(equalTo: window.centerXAnchor).isActive = true
                 window.layer.superlayer?.addSublayer(field.layer)
-                field.layer.sublayers?.first?.addSublayer(window.layer)
+                secureContainerLayer(for: field)?.addSublayer(window.layer)
                 secureTextField = field
             } else {
                 guard let field = secureTextField else { return }
@@ -63,7 +71,7 @@ public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFac
                 if let superlayer = field.layer.superlayer {
                     superlayer.addSublayer(window.layer)
                 }
-                field.layer.sublayers?.first?.sublayers?.removeAll(where: { $0 === window.layer })
+                secureContainerLayer(for: field)?.sublayers?.removeAll(where: { $0 === window.layer })
                 field.layer.removeFromSuperlayer()
                 field.removeFromSuperview()
                 secureTextField = nil

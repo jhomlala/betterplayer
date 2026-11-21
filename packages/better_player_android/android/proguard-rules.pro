@@ -1,0 +1,1 @@
+-keep class pl.hasoft.better_player.** { *; }

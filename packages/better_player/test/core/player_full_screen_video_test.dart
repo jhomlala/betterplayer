@@ -41,4 +41,33 @@ void main() {
       expect(annotatedRegion.value, SystemUiOverlayStyle.light);
     },
   );
+
+  testWidgets(
+    'PlayerFullScreenVideo renders inside WidgetsApp without MaterialLocalizations ancestor',
+    (tester) async {
+      final mockController = BetterPlayerMockController(
+        const PlayerConfiguration(),
+      );
+      final controllerProvider = BetterPlayerControllerProvider(
+        controller: mockController,
+        child: const SizedBox(),
+      );
+
+      await tester.pumpWidget(
+        WidgetsApp(
+          color: const Color(0xFF000000),
+          pageRouteBuilder: <T>(settings, builder) => PageRouteBuilder<T>(
+            settings: settings,
+            pageBuilder: (ctx, _, _) => builder(ctx),
+          ),
+          home: PlayerFullScreenVideo(
+            controllerProvider: controllerProvider,
+          ),
+        ),
+      );
+
+      expect(find.byType(Scaffold), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
 }

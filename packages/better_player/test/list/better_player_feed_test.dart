@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:better_player/better_player.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 import '../helpers/better_player_test_utils.dart';
 import '../helpers/mock_better_player_platform.dart';
@@ -806,5 +809,143 @@ void main() {
         feedController.dispose();
       },
     );
+
+    testWidgets(
+      'BetterPlayerFeed pauses pool on app background and restores on foreground',
+      (tester) async {
+        VisibilityDetectorController.instance.updateInterval = Duration.zero;
+        final feedController = BetterPlayerFeedController(
+          dataSources: [
+            PlayerDataSource.network('https://example.com/0.mp4'),
+            PlayerDataSource.network('https://example.com/1.mp4'),
+          ],
+          poolConfiguration: const PlayerPoolConfiguration(poolSize: 2),
+        );
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: BetterPlayerFeed(controller: feedController),
+            ),
+          ),
+        );
+        await tester.pump();
+        await tester.runAsync(() async {
+          await Future<void>.delayed(const Duration(milliseconds: 50));
+        });
+        await tester.pump();
+
+        expect(feedController.pool.isForeground, isTrue);
+        final lease0 = feedController.leaseNotifier(0).value;
+        expect(lease0, isNotNull);
+        expect(lease0!.controller.isPlaying(), isTrue);
+
+        tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+        await tester.pump();
+
+        expect(feedController.pool.isForeground, isFalse);
+        expect(lease0.controller.isPlaying(), isFalse);
+
+        tester.binding.handleAppLifecycleStateChanged(
+          AppLifecycleState.resumed,
+        );
+        await tester.pump();
+
+        expect(feedController.pool.isForeground, isTrue);
+
+        feedController.dispose();
+      },
+    );
+
+    test(
+      'stale onIndexChanged completion does not call updatePreloads after fast swipe',
+      () async {
+        final delayedAcquire0 = Completer<PlayerPoolLease>();
+        final spyPool = _SpyAcquirePool(
+          delayedAcquireIndex: 0,
+          delayedCompleter: delayedAcquire0,
+        );
+        final feedController = BetterPlayerFeedController(
+          dataSources: [
+            PlayerDataSource.network('https://example.com/0.mp4'),
+            PlayerDataSource.network('https://example.com/1.mp4'),
+            PlayerDataSource.network('https://example.com/2.mp4'),
+          ],
+          pool: spyPool,
+          autoPlay: false,
+        );
+
+        final future0 = feedController.onIndexChanged(0);
+        await feedController.onIndexChanged(1);
+
+        final lease0 = await spyPool.acquireDirect(
+          itemId: 'item_0',
+          index: 0,
+          dataSource: feedController.dataSources[0],
+        );
+        delayedAcquire0.complete(lease0);
+        await future0;
+
+        expect(spyPool.recordedPreloadIndices, [1]);
+
+        feedController.dispose();
+        spyPool.dispose();
+      },
+    );
   });
+}
+
+class _SpyAcquirePool extends BetterPlayerPool {
+  _SpyAcquirePool({
+    required this.delayedAcquireIndex,
+    required this.delayedCompleter,
+  });
+
+  final int delayedAcquireIndex;
+  final Completer<PlayerPoolLease> delayedCompleter;
+  final List<int> recordedPreloadIndices = [];
+  bool _delayUsed = false;
+
+  Future<PlayerPoolLease> acquireDirect({
+    required String itemId,
+    required int index,
+    required PlayerDataSource dataSource,
+  }) {
+    return super.acquire(
+      itemId: itemId,
+      index: index,
+      dataSource: dataSource,
+    );
+  }
+
+  @override
+  Future<PlayerPoolLease> acquire({
+    required String itemId,
+    required int index,
+    required PlayerDataSource dataSource,
+  }) {
+    if (index == delayedAcquireIndex && !_delayUsed) {
+      _delayUsed = true;
+      return delayedCompleter.future;
+    }
+    return super.acquire(
+      itemId: itemId,
+      index: index,
+      dataSource: dataSource,
+    );
+  }
+
+  @override
+  void updatePreloads({
+    required int currentIndex,
+    required List<PlayerDataSource> dataSources,
+    required String Function(int index) idGetter,
+  }) {
+    recordedPreloadIndices.add(currentIndex);
+    super.updatePreloads(
+      currentIndex: currentIndex,
+      dataSources: dataSources,
+      idGetter: idGetter,
+    );
+  }
 }

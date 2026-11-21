@@ -187,10 +187,12 @@ class BetterPlayerFeed extends StatefulWidget {
   State<BetterPlayerFeed> createState() => _BetterPlayerFeedState();
 }
 
-class _BetterPlayerFeedState extends State<BetterPlayerFeed> {
+class _BetterPlayerFeedState extends State<BetterPlayerFeed>
+    with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     if (!widget.configuration.autoPlay && widget.controller.autoPlay) {
       widget.controller.autoPlay = false;
     }
@@ -207,11 +209,30 @@ class _BetterPlayerFeedState extends State<BetterPlayerFeed> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.hidden ||
+        state == AppLifecycleState.detached) {
+      widget.controller.pool.onAppBackground();
+    } else if (state == AppLifecycleState.resumed) {
+      widget.controller.pool.onAppForeground();
+    }
+  }
+
+  @override
   void didUpdateWidget(BetterPlayerFeed oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.configuration.autoPlay != widget.configuration.autoPlay) {
       widget.controller.autoPlay = widget.configuration.autoPlay;
     }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override

@@ -25,6 +25,8 @@ class _DelayedMockPlayerEngineController extends MockPlayerEngineController {
     String? imageUrl,
     String? notificationChannelName,
     Duration? overriddenDuration,
+    DrmType? drmType,
+    String? token,
     String? licenseUrl,
     String? certificateUrl,
     Map<String, String>? drmHeaders,

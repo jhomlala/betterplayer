@@ -73,10 +73,17 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
   Future<int?> create({BufferingConfiguration? bufferingConfiguration}) async {
     final tempController = StreamController<VideoEvent>.broadcast();
 
+    void addEvent(VideoEvent event) {
+      if (!tempController.isClosed) {
+        tempController.add(event);
+      }
+    }
+
     final callback = buildCallback(
       $BetterPlayerCallback(
         onInitialized: (durationMs, width, height, key) {
-          tempController.add(
+          if (tempController.isClosed) return;
+          addEvent(
             VideoEvent(
               eventType: VideoEventType.initialized,
               key: key?.toDartString(),
@@ -87,7 +94,8 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
         },
         onInitialized$async: true,
         onCompleted: (key) {
-          tempController.add(
+          if (tempController.isClosed) return;
+          addEvent(
             VideoEvent(
               eventType: VideoEventType.completed,
               key: key?.toDartString(),
@@ -96,19 +104,17 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
         },
         onCompleted$async: true,
         onPlay: () {
-          tempController.add(
-            const VideoEvent(eventType: VideoEventType.play, key: null),
-          );
+          addEvent(const VideoEvent(eventType: VideoEventType.play, key: null));
         },
         onPlay$async: true,
         onPause: () {
-          tempController.add(
+          addEvent(
             const VideoEvent(eventType: VideoEventType.pause, key: null),
           );
         },
         onPause$async: true,
         onSeek: (positionMs) {
-          tempController.add(
+          addEvent(
             VideoEvent(
               eventType: VideoEventType.seek,
               key: null,
@@ -118,7 +124,7 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
         },
         onSeek$async: true,
         onBufferingStart: () {
-          tempController.add(
+          addEvent(
             const VideoEvent(
               eventType: VideoEventType.bufferingStart,
               key: null,
@@ -127,13 +133,13 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
         },
         onBufferingStart$async: true,
         onBufferingEnd: () {
-          tempController.add(
+          addEvent(
             const VideoEvent(eventType: VideoEventType.bufferingEnd, key: null),
           );
         },
         onBufferingEnd$async: true,
         onBufferingUpdate: (bufferedMs) {
-          tempController.add(
+          addEvent(
             VideoEvent(
               eventType: VideoEventType.bufferingUpdate,
               key: null,
@@ -148,19 +154,20 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
         },
         onBufferingUpdate$async: true,
         onPipStart: () {
-          tempController.add(
+          addEvent(
             const VideoEvent(eventType: VideoEventType.pipStart, key: null),
           );
         },
         onPipStart$async: true,
         onPipStop: () {
-          tempController.add(
+          addEvent(
             const VideoEvent(eventType: VideoEventType.pipStop, key: null),
           );
         },
         onPipStop$async: true,
         onChangedSize: (width, height, key) {
-          tempController.add(
+          if (tempController.isClosed) return;
+          addEvent(
             VideoEvent(
               eventType: VideoEventType.changedSize,
               key: key?.toDartString(),
@@ -170,6 +177,7 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
         },
         onChangedSize$async: true,
         onError: (errorCode, errorMessage, errorDetails) {
+          if (tempController.isClosed) return;
           tempController.addError(
             PlatformException(
               code: errorCode.toDartString(),
@@ -182,13 +190,14 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
         onCues: (list) {},
         onCues$async: true,
         onCuesJson: (cuesJson) {
+          if (tempController.isClosed) return;
           final jsonStr = jStringConverter(cuesJson);
           if (jsonStr == null) return;
           try {
             final dynamic decoded = jsonDecode(jsonStr);
             if (decoded is List) {
               final cues = decoded.map((e) => e.toString()).toList();
-              tempController.add(
+              addEvent(
                 VideoEvent(
                   eventType: VideoEventType.captionUpdate,
                   key: null,
@@ -343,6 +352,9 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
     BetterPlayerApi.Companion.preCacheCallback = _preCacheCallback;
   }
 
+  static const int _defaultMaxCacheSize = 100 * 1024 * 1024;
+  static const int _defaultMaxCacheFileSize = 10 * 1024 * 1024;
+
   @override
   Future<void> preCache(
     DataSource dataSource,
@@ -350,11 +362,20 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
     void Function(PreCacheProgress progress)? onProgress,
   }) async {
     ensurePreCacheCallbackConfigured();
+    final rawMaxCacheSize = dataSource.cacheConfiguration?.maxCacheSize ?? 0;
+    final rawMaxCacheFileSize =
+        dataSource.cacheConfiguration?.maxCacheFileSize ?? 0;
+    final maxCacheSize = rawMaxCacheSize > 0
+        ? rawMaxCacheSize
+        : _defaultMaxCacheSize;
+    final maxCacheFileSize = rawMaxCacheFileSize > 0
+        ? rawMaxCacheFileSize
+        : _defaultMaxCacheFileSize;
     jniPreCache(
       dataSource.uri ?? dataSource.asset ?? '',
       preCacheSize,
-      dataSource.cacheConfiguration?.maxCacheSize ?? 0,
-      dataSource.cacheConfiguration?.maxCacheFileSize ?? 0,
+      maxCacheSize,
+      maxCacheFileSize,
       dataSource.headers?.map((k, v) => MapEntry(k, v?.toString())),
       dataSource.cacheConfiguration?.key,
     );
@@ -694,6 +715,6 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
 
   @override
   void setMatchFrameRate(bool matchFrameRate) {
-    (_player as dynamic).setMatchFrameRate(matchFrameRate);
+    _player.matchFrameRate = matchFrameRate;
   }
 }

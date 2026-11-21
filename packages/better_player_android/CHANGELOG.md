@@ -1,3 +1,12 @@
+## Unreleased
+- Fixed: Added ProGuard/R8 consumer rules (`proguard-rules.pro`) and `@Keep` annotations on JNI-accessed `BetterPlayer` members so release builds do not strip JNI bindings.
+- Fixed: Synchronized `BetterPlayerCache` operations, stopped deleting the cache directory while `SimpleCache` is open, and guarded `preCache` against 0-byte `SimpleCache` initialization when cache sizes are omitted or non-positive.
+- Fixed: Prevented notification NPE on Android API 24-25, ensured custom notification channels are created on API 26+, added unique per-player `MediaSession` IDs, detached old `PlayerNotificationManager` instances before creating new ones, and fixed `ImageWorker` cache file path and stream closing.
+- Fixed: Corrected `setAndroidMatchFrameRate` to call the generated `matchFrameRate` JNI setter instead of a nonexistent dynamic method.
+- Fixed: Released `ExoPlayer` and cleared its video surface before releasing `Surface` and `SurfaceTextureEntry` in `dispose()`, and guarded async JNI event callbacks after stream closure.
+- Fixed: Enabled Widevine multi-session DRM and configured `HttpMediaDrmCallback` with cross-protocol redirects and the resolved `User-Agent`.
+- Fixed: Enabled audio focus handling by default and forwarded `onPlayWhenReadyChanged` and `onPositionDiscontinuity` seek events from `ExoPlayer` to Flutter.
+
 ## 1.13.2
 - Fixed: Disposed native player instances when the Flutter engine detaches to prevent background audio leaks (by @SuperWes).
 

@@ -17,6 +17,7 @@ let package = Package(
         .target(
             name: "better_player_ios",
             dependencies: [
+                "better_player_ios_objc",
                 .product(name: "Cache", package: "Cache"),
                 .product(name: "FlutterFramework", package: "FlutterFramework")
             ],
@@ -27,7 +28,7 @@ let package = Package(
         ),
         .target(
             name: "better_player_ios_objc",
-            dependencies: ["better_player_ios"],
+            dependencies: [],
             path: "Sources/better_player_ios_objc",
             publicHeadersPath: ""
         )

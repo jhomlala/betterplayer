@@ -21,7 +21,7 @@ public class FlutterError: NSObject {
 public typealias FlutterResult = (Any?) -> Void
 
 @objc public class BetterPlayerEzDrmAssetsLoaderDelegate: NSObject, AVAssetResourceLoaderDelegate {
-    public init(_ certificateURL: URL, withLicenseURL licenseURL: URL?) { super.init() }
+    public init(_ certificateURL: URL, withLicenseURL licenseURL: URL?, headers: [String: String] = [:]) { super.init() }
 }
 @objc public class CacheManager: NSObject {
     @objc public static let shared = CacheManager()
@@ -385,7 +385,9 @@ private var externalPlaybackActiveContext = 0
         self.overriddenDuration = 0
 
         let item: AVPlayerItem
-        if useCache {
+        let hasFairPlayDrm = !(certificateUrl?.isEmpty ?? true)
+        if useCache && !hasFairPlayDrm {
+            self.loaderDelegate = nil
             let cacheKeyInternal = cacheKey
             let videoExtInternal = videoExtension
             item = cacheManager.getCachingPlayerItemForNormalPlayback(url, cacheKey: cacheKeyInternal, videoExtension: videoExtInternal, headers: headers as [NSObject: AnyObject]) ?? AVPlayerItem(url: url)
@@ -404,7 +406,8 @@ private var externalPlaybackActiveContext = 0
                 let certURL = URL(string: certificateUrl)
                 let licURL = licenseUrl.flatMap { URL(string: $0) }
                 if let certURL = certURL {
-                    let delegate = BetterPlayerEzDrmAssetsLoaderDelegate(certURL, withLicenseURL: licURL)
+                    let stringHeaders = (headers as? [String: String]) ?? [:]
+                    let delegate = BetterPlayerEzDrmAssetsLoaderDelegate(certURL, withLicenseURL: licURL, headers: stringHeaders)
                     self.loaderDelegate = delegate
                     let qos = DispatchQoS.QoSClass.default
                     let streamQueue = DispatchQueue(label: "streamQueue", qos: DispatchQoS(qosClass: qos, relativePriority: -1), attributes: [])
@@ -484,7 +487,7 @@ private var externalPlaybackActiveContext = 0
     }
 
     private func startStalledCheck() {
-        guard !disposed else { return }
+        guard !disposed, isPlaying else { return }
         if let currentItem = player.currentItem {
             if currentItem.isPlaybackLikelyToKeepUp || (availableDuration() - CMTimeGetSeconds(currentItem.currentTime())) > 10.0 {
                 play()
@@ -497,7 +500,7 @@ private var externalPlaybackActiveContext = 0
                     return
                 }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-                    guard let self = self, !self.disposed else { return }
+                    guard let self = self, !self.disposed, self.isPlaying else { return }
                     self.startStalledCheck()
                 }
             }
@@ -836,13 +839,13 @@ private var externalPlaybackActiveContext = 0
             toleranceBefore: .positiveInfinity,
             toleranceAfter: .positiveInfinity
         ) { [weak self] finished in
-            guard let self = self else { return }
+            guard let self = self, !self.disposed else { return }
             self.isSeeking = false
             if self.showNotification && BetterPlayerApi.activeNotificationPlayer === self {
                 self.updateNowPlayingInfo()
             }
             // Only resume if this seek actually completed (not cancelled by a subsequent one)
-            if finished && wasPlaying { self.applyPlayerRate() }
+            if finished && wasPlaying && self.isPlaying { self.applyPlayerRate() }
         }
     }
 

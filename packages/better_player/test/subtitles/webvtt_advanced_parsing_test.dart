@@ -59,10 +59,10 @@ void main() {
         expect(
           subtitles[0].start,
           const Duration(
-            hours: -26,
-            minutes: -30,
-            seconds: -23,
-            milliseconds: -717,
+            hours: 26,
+            minutes: 30,
+            seconds: 43,
+            milliseconds: 717,
           ),
         );
       },
@@ -90,7 +90,7 @@ void main() {
     );
 
     test(
-      'Parse WebVTT with X-TIMESTAMP-MAP where LOCAL is 00:00:00.000 preserves zero-based cues',
+      'Parse WebVTT with X-TIMESTAMP-MAP where LOCAL is 00:00:00.000 offsets cues by MPEGTS duration',
       () async {
         final factory = PlayerSubtitlesFactory();
         const vttContent =
@@ -107,8 +107,38 @@ void main() {
 
         final subtitles = await factory.parseSubtitles(source);
         expect(subtitles.length, 1);
-        expect(subtitles[0].start, const Duration(milliseconds: 8));
-        expect(subtitles[0].end, const Duration(milliseconds: 992));
+        expect(
+          subtitles[0].start,
+          const Duration(seconds: 10, milliseconds: 8),
+        );
+        expect(
+          subtitles[0].end,
+          const Duration(seconds: 10, milliseconds: 992),
+        );
+      },
+    );
+
+    test(
+      'Parse WebVTT with X-TIMESTAMP-MAP computes mpegts minus local offset per RFC 8216',
+      () async {
+        final factory = PlayerSubtitlesFactory();
+        const vttContent =
+            'WEBVTT\n'
+            'X-TIMESTAMP-MAP=MPEGTS:900000,LOCAL:00:00:05.000\n\n'
+            '1\n'
+            '00:00:07.000 --> 00:00:09.000\n'
+            'Offset cue';
+
+        final source = PlayerSubtitlesSource(
+          type: PlayerSubtitlesSourceType.memory,
+          content: vttContent,
+        );
+
+        final subtitles = await factory.parseSubtitles(source);
+        expect(subtitles.length, 1);
+        // 10s (MPEGTS) - 5s (LOCAL) = +5s offset
+        expect(subtitles[0].start, const Duration(seconds: 12));
+        expect(subtitles[0].end, const Duration(seconds: 14));
       },
     );
 

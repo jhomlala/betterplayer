@@ -88,6 +88,8 @@ class MockPlayerEngineController extends PlayerEngineController {
     String? imageUrl,
     String? notificationChannelName,
     Duration? overriddenDuration,
+    DrmType? drmType,
+    String? token,
     String? licenseUrl,
     String? certificateUrl,
     Map<String, String>? drmHeaders,
@@ -97,6 +99,8 @@ class MockPlayerEngineController extends PlayerEngineController {
     String? videoExtension,
   }) async {
     this.headers = headers;
+    this.drmType = drmType;
+    this.token = token;
     this.drmSecurityLevel = drmSecurityLevel;
     value = value.copyWith(duration: const Duration(seconds: 1));
   }
@@ -112,8 +116,13 @@ class MockPlayerEngineController extends PlayerEngineController {
     String? notificationChannelName,
     Duration? overriddenDuration,
     String? activityName,
+    DrmType? drmType,
+    String? token,
     String? clearKey,
   }) async {
+    this.drmType = drmType;
+    this.token = token;
+    lastFilePath = filePath;
     value = value.copyWith(duration: const Duration(seconds: 1));
   }
 
@@ -133,6 +142,9 @@ class MockPlayerEngineController extends PlayerEngineController {
   }
 
   Map<String, String?>? headers;
+  DrmType? drmType;
+  String? token;
+  String? lastFilePath;
   DrmSecurityLevel? drmSecurityLevel;
   bool isPipSupported = false;
 

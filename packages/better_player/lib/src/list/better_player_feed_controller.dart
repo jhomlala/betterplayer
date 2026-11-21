@@ -260,6 +260,13 @@ class BetterPlayerFeedController extends ChangeNotifier {
             _startLeasePlayback(lease: lease, index: index);
           }
         }
+
+        // Update lookahead/lookbehind preloads
+        _pool.updatePreloads(
+          currentIndex: index,
+          dataSources: dataSources,
+          idGetter: (i) => _entries[i].id,
+        );
       }
     } on Object catch (error) {
       if (!_isDisposed) {
@@ -270,13 +277,6 @@ class BetterPlayerFeedController extends ChangeNotifier {
         );
       }
     }
-
-    // Update lookahead/lookbehind preloads
-    _pool.updatePreloads(
-      currentIndex: index,
-      dataSources: dataSources,
-      idGetter: (i) => _entries[i].id,
-    );
   }
 
   void _onPlayerMetricsEvent(PlayerEvent event) {

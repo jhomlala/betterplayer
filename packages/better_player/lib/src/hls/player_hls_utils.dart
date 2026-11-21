@@ -10,10 +10,9 @@ import 'package:http/http.dart' as http;
 
 ///HLS helper class
 class PlayerHlsUtils {
-  PlayerHlsUtils({http.Client? httpClient})
-    : _httpClient = httpClient ?? http.Client();
+  PlayerHlsUtils({http.Client? httpClient}) : _client = httpClient;
 
-  final http.Client _httpClient;
+  final http.Client? _client;
 
   Future<PlayerAsmsDataHolder> parse(
     String data,
@@ -104,13 +103,23 @@ class PlayerHlsUtils {
       );
 
       if (parsedPlaylist is HlsMasterPlaylist) {
-        for (final element in parsedPlaylist.subtitles) {
-          final hlsSubtitle = await _parseSubtitlesPlaylist(
-            element,
-            headers: headers,
-          );
-          if (hlsSubtitle != null) {
-            subtitles.add(hlsSubtitle);
+        if (parsedPlaylist.subtitles.isNotEmpty) {
+          final client = _client ?? http.Client();
+          try {
+            for (final element in parsedPlaylist.subtitles) {
+              final hlsSubtitle = await _parseSubtitlesPlaylist(
+                element,
+                headers: headers,
+                httpClient: client,
+              );
+              if (hlsSubtitle != null) {
+                subtitles.add(hlsSubtitle);
+              }
+            }
+          } finally {
+            if (_client == null) {
+              client.close();
+            }
           }
         }
 
@@ -162,12 +171,13 @@ class PlayerHlsUtils {
   ///on time in playlist.
   Future<PlayerAsmsSubtitle?> _parseSubtitlesPlaylist(
     Rendition rendition, {
+    required http.Client httpClient,
     Map<String, String?>? headers,
   }) async {
     try {
       final hlsPlaylistParser = HlsPlaylistParser.create();
       final subtitleData = await PlayerAsmsUtils(
-        httpClient: _httpClient,
+        httpClient: httpClient,
       ).getDataFromUrl(rendition.url.toString(), headers);
       if (subtitleData == null) {
         return null;
