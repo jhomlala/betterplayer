@@ -152,6 +152,9 @@ private var externalPlaybackActiveContext = 0
         self.isInitialized = false
         self.isPlaying = false
         self.disposed = false
+        if AVAudioSession.sharedInstance().category != .playback {
+            try? AVAudioSession.sharedInstance().setCategory(.playback)
+        }
     }
 
     public convenience init(frame: CGRect) {
@@ -755,6 +758,10 @@ private var externalPlaybackActiveContext = 0
         stalledCount = 0
         isStalledCheckStarted = false
         isPlaying = true
+        if AVAudioSession.sharedInstance().category != .playback {
+            try? AVAudioSession.sharedInstance().setCategory(.playback)
+        }
+        try? AVAudioSession.sharedInstance().setActive(true)
         if showNotification {
             BetterPlayerApi.activeNotificationPlayer = self
             setupNotificationTimeObserver()
@@ -1310,6 +1317,9 @@ private var externalPlaybackActiveContext = 0
         if let key = BetterPlayerApi.players.first(where: { $0.value === self })?.key {
             BetterPlayerApi.players.removeValue(forKey: key)
             BetterPlayerApi.notifyExternalPlaybackChanged()
+        }
+        if BetterPlayerApi.players.isEmpty {
+            try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
         }
     }
 
