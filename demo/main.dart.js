@@ -9592,24 +9592,19 @@ A.l1("File "+a3+" doesn't exists. This may be because you're acessing file from 
 q=a6.c
 if(q==null)q=null
 else{p=a6.f
-o=p==null
-if(o)n=null
-else n=p.as.a
-if(o)m=null
-else m=p.as.b
-if(o)l=null
-else l=p.as.c
-if(o)k=null
-else k=p.as.d
-if(o)j=null
-else j=p.as.e
-i=p.at
-if(o)h=null
-else h=p.as.f
-if(o)p=null
-else{p=p.ch
-p=p==null?null:p.e}i=q.oW(A.b5u(null,new A.yu(null,null,null,p,null,null),null,null,new A.zv(n,m,l,k,j,h),i,B.WQ,"file://"+a3,null))
-q=i}s=9
+o=p.ay
+n=p.as
+m=n.a
+l=n.b
+k=n.c
+j=n.d
+i=n.e
+h=p.at
+n=n.f
+p=p.ch
+p=p==null?null:p.e
+o=q.oW(A.b5u(null,new A.yu(null,null,null,p,null,null),null,null,new A.zv(m,l,k,j,i,n),h,B.WQ,"file://"+a3,o))
+q=o}s=9
 return A.w(t.J.b(q)?q:A.dU(q,t.H),$async$v7)
 case 9:s=3
 break
