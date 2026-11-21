@@ -27,6 +27,7 @@ public typealias FlutterResult = (Any?) -> Void
     @objc public func preCacheURL(_ url: URL, cacheKey: String?, videoExtension: String?, withHeaders headers: [NSObject: AnyObject], completionHandler: ((_ success: Bool) -> Void)?) {}
     @objc public func stopPreCache(_ url: URL, cacheKey: String?, completionHandler: ((_ success: Bool) -> Void)?) {}
     @objc public func clearCache() {}
+    func getMimeType(url: URL, explicitVideoExtension: String?) -> (String, String) { return ("", "") }
 }
 #endif
 import Foundation
