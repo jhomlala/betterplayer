@@ -72,6 +72,61 @@ void main() {
       expect(events, contains(PlayerEventType.pipStop));
     });
 
+    test('enablePictureInPicture on Android posts pipStart once', () async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      try {
+        final engineController = MockPlayerEngineController()
+          ..isPipSupported = true;
+        final controller = BetterPlayerMockController(
+          const PlayerConfiguration(),
+          playerEngineController: engineController,
+        );
+        engineController.emitInitialized();
+
+        final events = <PlayerEventType>[];
+        controller.addEventsListener((event) {
+          events.add(event.betterPlayerEventType);
+        });
+
+        await controller.enablePictureInPicture(GlobalKey());
+
+        expect(
+          events.where((e) => e == PlayerEventType.pipStart),
+          hasLength(1),
+        );
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+    });
+
+    test('disablePictureInPicture on Android posts pipStop once', () async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      try {
+        final engineController = MockPlayerEngineController()
+          ..isPipSupported = true;
+        final controller = BetterPlayerMockController(
+          const PlayerConfiguration(),
+          playerEngineController: engineController,
+        );
+        engineController.emitInitialized();
+        await controller.enablePictureInPicture(GlobalKey());
+
+        final events = <PlayerEventType>[];
+        controller.addEventsListener((event) {
+          events.add(event.betterPlayerEventType);
+        });
+
+        await controller.disablePictureInPicture();
+
+        expect(
+          events.where((e) => e == PlayerEventType.pipStop),
+          hasLength(1),
+        );
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+    });
+
     test('setSpeed changes speed', () async {
       final engineController = MockPlayerEngineController();
       final betterPlayerMockController = BetterPlayerMockController(
