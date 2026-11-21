@@ -54713,7 +54713,7 @@ if(n!=null)return new A.a_q(n,s,r,q,p,l)
 else return new A.a_u(s,m.e,r,q,p,l)}}
 A.a_3.prototype={
 A(a){var s=null,r=this.c,q=r.ok,p=this.d,o=t.p
-return A.av(s,s,A.aP(A.b([B.ahX,B.fe,B.aso,B.hq,A.aJ(r.k3+" 1.37.0",s,s,s,s,B.MP,s,s),B.fe,A.oM(B.rb,A.b([new A.v5("https://github.com/jhomlala/betterplayer",r.p1,"better_player_about_link_github",q,p,s),B.ask,new A.v5("https://hasoft.pl","Hasoft.pl","better_player_about_link_hasoft",q,p,s)],o),B.rc,0,8),new A.v5("https://github.com/jhomlala/betterplayer/issues",r.p3,"better_player_about_link_issues",q,p,s)],o),B.t,B.o,B.a1),!0,s,s,s,!1,s,!1,s,s,s,s,s,"better_player_about_dialog",s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s)}}
+return A.av(s,s,A.aP(A.b([B.ahX,B.fe,B.aso,B.hq,A.aJ(r.k3+" 1.38.0",s,s,s,s,B.MP,s,s),B.fe,A.oM(B.rb,A.b([new A.v5("https://github.com/jhomlala/betterplayer",r.p1,"better_player_about_link_github",q,p,s),B.ask,new A.v5("https://hasoft.pl","Hasoft.pl","better_player_about_link_hasoft",q,p,s)],o),B.rc,0,8),new A.v5("https://github.com/jhomlala/betterplayer/issues",r.p3,"better_player_about_link_issues",q,p,s)],o),B.t,B.o,B.a1),!0,s,s,s,!1,s,!1,s,s,s,s,s,"better_player_about_dialog",s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s)}}
 A.zM.prototype={
 A(a){var s,r=null,q="better_player_about_close",p=this.c,o=this.d,n=new A.a_3(p,o,r),m=A.aJ(p.k4,r,r,r,r,r,r,r)
 p=A.b([new A.qq(p),new A.qo(p)],t.a9)
@@ -56445,7 +56445,7 @@ s=s==null?p:s.a
 s=s==null?p:s.x
 if(s==null)s=1
 k.push(A.av(p,p,A.av(!0,p,A.eb(!1,p,!0,new A.ah(B.cf,new A.qs(h.x,A.i(s)+"x",B.a_q,i,!0,p),p),p,!0,p,p,p,p,p,p,p,p,new A.ayb(r),p,p,p,p,p,p,p),!0,p,p,p,!1,p,!1,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p),!0,p,p,p,!1,p,!1,p,p,p,p,p,m,p,p,p,p,m,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p))
-if(r.e)k.push(A.av(p,p,A.av(!0,p,A.eb(!1,p,!0,new A.ah(B.cf,new A.qs(j.r.k2,"1.37.0",B.c3,i,!0,p),p),p,!0,p,p,p,p,p,p,p,p,new A.ayc(r),p,p,p,p,p,p,p),!0,p,p,p,!1,p,!1,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p),!0,p,p,p,!1,p,!1,p,p,p,p,p,l,p,p,p,p,l,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p))
+if(r.e)k.push(A.av(p,p,A.av(!0,p,A.eb(!1,p,!0,new A.ah(B.cf,new A.qs(j.r.k2,"1.38.0",B.c3,i,!0,p),p),p,!0,p,p,p,p,p,p,p,p,new A.ayc(r),p,p,p,p,p,p,p),!0,p,p,p,!1,p,!1,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p),!0,p,p,p,!1,p,!1,p,p,p,p,p,l,p,p,p,p,l,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p))
 return A.ck(A.aP(k,B.ay,B.o,B.a1),p,p,p)},
 amR(){var s,r,q,p=this.c,o=p.dx.b
 if(o!=null){s=o.b
