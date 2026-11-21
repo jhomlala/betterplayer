@@ -856,9 +856,14 @@ class BetterPlayer(
         setAudioAttributes(exoPlayer, mixWithOthers)
     }
 
+    private var isDisposed = false
+
     @Keep
     fun dispose() {
+        if (isDisposed) return
+        isDisposed = true
         BetterPlayerApi.log(1, "dispose()")
+        BetterPlayerApi.onPlayerDisposed(this)
         disposeMediaSession()
         disposeRemoteNotifications()
         

@@ -23,9 +23,12 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     }
 
     override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
-        BetterPlayerApi.textureRegistry = null
+        if (BetterPlayerApi.textureRegistry === binding.textureRegistry) {
+            BetterPlayerApi.textureRegistry = null
+        }
         channel?.setMethodCallHandler(null)
         channel = null
+        BetterPlayerApi.disposePlayers(binding.textureRegistry)
         releaseCache()
     }
 
