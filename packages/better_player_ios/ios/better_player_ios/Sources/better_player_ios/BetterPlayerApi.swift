@@ -139,6 +139,7 @@ import MediaPlayer
             player.dispose()
         }
         notifyExternalPlaybackChanged()
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
 
     // Reference the dummy classes to prevent the linker from stripping them out
