@@ -241,6 +241,8 @@ private var externalPlaybackActiveContext = 0
         item.addObserver(self, forKeyPath: "playbackBufferEmpty", options: [], context: &playbackBufferEmptyContext)
         item.addObserver(self, forKeyPath: "playbackBufferFull", options: [], context: &playbackBufferFullContext)
         NotificationCenter.default.addObserver(self, selector: #selector(itemDidPlayToEndTime(_:)), name: .AVPlayerItemDidPlayToEndTime, object: item)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleAudioSessionInterruption(_:)), name: AVAudioSession.interruptionNotification, object: AVAudioSession.sharedInstance())
+        NotificationCenter.default.addObserver(self, selector: #selector(handleAudioSessionRouteChange(_:)), name: AVAudioSession.routeChangeNotification, object: AVAudioSession.sharedInstance())
 
         let output = AVPlayerItemLegibleOutput()
         output.suppressesPlayerRendering = true
@@ -290,6 +292,44 @@ private var externalPlaybackActiveContext = 0
             }
             if callback != nil {
                 callback?.onCompleted(key: key)
+            }
+        }
+    }
+
+    @objc private func handleAudioSessionInterruption(_ notification: Notification) {
+        guard !disposed,
+              let userInfo = notification.userInfo,
+              let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
+              let type = AVAudioSession.InterruptionType(rawValue: typeValue) else {
+            return
+        }
+        switch type {
+        case .began:
+            if isPlaying {
+                pause()
+            }
+        case .ended:
+            if let optionsValue = userInfo[AVAudioSessionInterruptionOptionKey] as? UInt {
+                let options = AVAudioSession.InterruptionOptions(rawValue: optionsValue)
+                if options.contains(.shouldResume) && !isPlaying {
+                    play()
+                }
+            }
+        @unknown default:
+            break
+        }
+    }
+
+    @objc private func handleAudioSessionRouteChange(_ notification: Notification) {
+        guard !disposed,
+              let userInfo = notification.userInfo,
+              let reasonValue = userInfo[AVAudioSessionRouteChangeReasonKey] as? UInt,
+              let reason = AVAudioSession.RouteChangeReason(rawValue: reasonValue) else {
+            return
+        }
+        if reason == .oldDeviceUnavailable {
+            if isPlaying {
+                pause()
             }
         }
     }
@@ -972,6 +1012,11 @@ private var externalPlaybackActiveContext = 0
     /// Disables Picture-in-Picture.
     @objc public func disablePictureInPicture() {
         BetterPlayerApi.log(1, "disablePictureInPicture()")
+        if #available(iOS 9.0, *) {
+            if let pip = pipController, pip.isPictureInPictureActive {
+                pip.stopPictureInPicture()
+            }
+        }
         setPictureInPicture(false)
         if let layer = playerLayerRef {
             layer.removeFromSuperlayer()
@@ -990,6 +1035,11 @@ private var externalPlaybackActiveContext = 0
     public func pictureInPictureControllerDidStartPictureInPicture(_ pictureInPictureController: AVPictureInPictureController) {
         BetterPlayerApi.log(1, "pictureInPictureControllerDidStartPictureInPicture")
         callback?.onPipStart()
+    }
+
+    public func pictureInPictureController(_ pictureInPictureController: AVPictureInPictureController, failedToStartPictureInPictureWithError error: Error) {
+        BetterPlayerApi.log(3, "failedToStartPictureInPictureWithError: \(error.localizedDescription)")
+        disablePictureInPicture()
     }
 
     public func pictureInPictureController(_ pictureInPictureController: AVPictureInPictureController, restoreUserInterfaceForPictureInPictureStopWithCompletionHandler completionHandler: @escaping (Bool) -> Void) {

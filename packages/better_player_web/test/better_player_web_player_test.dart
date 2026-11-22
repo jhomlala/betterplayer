@@ -1365,6 +1365,99 @@ void main() {
           expect(webkitPickerCalled, isTrue);
         },
       );
+
+      test(
+        'attachToContainer and onViewDisposed restore video element to previous container',
+        () {
+          final testPlayer = BetterPlayerWebPlayer(
+            viewId: 'test_container_view',
+            onLog: ({required message, levelIndex = 0}) {},
+          );
+          final realVideo =
+              web.document.createElement('video') as web.HTMLVideoElement;
+          testPlayer.videoElement = realVideo;
+
+          final div1 = web.document.createElement('div') as web.HTMLDivElement;
+          final div2 = web.document.createElement('div') as web.HTMLDivElement;
+          web.document.body?.appendChild(div1);
+          web.document.body?.appendChild(div2);
+
+          testPlayer.attachToContainer(div1);
+          expect(div1.contains(realVideo), isTrue);
+
+          testPlayer.attachToContainer(div2);
+          expect(div2.contains(realVideo), isTrue);
+
+          testPlayer.onViewDisposed();
+          expect(div1.contains(realVideo), isTrue);
+
+          div1.remove();
+          div2.remove();
+        },
+      );
+
+      test(
+        'setDataSource falls back to native videoElement when Shaka is null',
+        () async {
+          final savedShaka = globalContext['shaka'];
+          globalContext.delete('shaka'.toJS);
+          try {
+            final nativePlayer = BetterPlayerWebPlayer(
+              viewId: 'test_native_view',
+              onLog: ({required message, levelIndex = 0}) {},
+            );
+            await nativePlayer.initialize();
+
+            await nativePlayer.setDataSource(
+              DataSource(
+                sourceType: DataSourceType.network,
+                uri: 'https://example.com/video.mp4',
+              ),
+            );
+            expect(
+              nativePlayer.videoElement.src,
+              'https://example.com/video.mp4',
+            );
+          } finally {
+            if (savedShaka != null) {
+              globalContext.setProperty('shaka'.toJS, savedShaka);
+            }
+          }
+        },
+      );
+
+      test(
+        'setDataSource throws StateError when DRM is used without Shaka',
+        () async {
+          final savedShaka = globalContext['shaka'];
+          globalContext.delete('shaka'.toJS);
+          try {
+            final nativePlayer = BetterPlayerWebPlayer(
+              viewId: 'test_native_view_drm',
+              onLog: ({required message, levelIndex = 0}) {},
+            );
+            await nativePlayer.initialize();
+
+            expect(
+              () => nativePlayer.setDataSource(
+                DataSource(
+                  sourceType: DataSourceType.network,
+                  uri: 'https://example.com/video.mpd',
+                  drmConfiguration: const DrmConfiguration(
+                    drmType: DrmType.widevine,
+                    licenseUrl: 'https://example.com/license',
+                  ),
+                ),
+              ),
+              throwsA(isA<StateError>()),
+            );
+          } finally {
+            if (savedShaka != null) {
+              globalContext.setProperty('shaka'.toJS, savedShaka);
+            }
+          }
+        },
+      );
     });
   });
 }

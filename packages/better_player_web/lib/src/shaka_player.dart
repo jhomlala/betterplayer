@@ -4,7 +4,13 @@ import 'package:web/web.dart' as web;
 
 /// Shaka namespace
 
-ShakaNamespace get shaka => globalContext['shaka']! as ShakaNamespace;
+/// Checks whether Shaka Player is loaded in the DOM.
+bool get isShakaAvailable =>
+    globalContext.has('shaka') && globalContext['shaka'] != null;
+
+/// Shaka namespace, or null if not loaded.
+ShakaNamespace? get shaka =>
+    isShakaAvailable ? (globalContext['shaka']! as ShakaNamespace) : null;
 
 @JS()
 @staticInterop

@@ -610,8 +610,24 @@ extension BetterPlayer$Methods on BetterPlayer {
     _objc_msgSend_1pl9qdv(_$$ref.pointer, _sel_pause);
   }
 
-  /// pictureInPictureController:restoreUserInterfaceForPictureInPictureStopWithCompletionHandler:
+  /// pictureInPictureController:failedToStartPictureInPictureWithError:
   void pictureInPictureController(
+    AVPictureInPictureController pictureInPictureController, {
+    required objc.NSError failedToStartPictureInPictureWithError,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = pictureInPictureController.ref;
+    final _$$ref$2 = failedToStartPictureInPictureWithError.ref;
+    _objc_msgSend_pfv6jd(
+      _$$ref.pointer,
+      _sel_pictureInPictureController_failedToStartPictureInPictureWithError_,
+      _$$ref$1.pointer,
+      _$$ref$2.pointer,
+    );
+  }
+
+  /// pictureInPictureController:restoreUserInterfaceForPictureInPictureStopWithCompletionHandler:
+  void pictureInPictureController$1(
     AVPictureInPictureController pictureInPictureController, {
     required objc.ObjCBlock<ffi.Void Function(ffi.Bool)>
     restoreUserInterfaceForPictureInPictureStopWithCompletionHandler,
@@ -6560,6 +6576,10 @@ late final _sel_pictureInPictureControllerDidStartPictureInPicture_ = objc
     .registerName("pictureInPictureControllerDidStartPictureInPicture:");
 late final _sel_pictureInPictureControllerDidStopPictureInPicture_ = objc
     .registerName("pictureInPictureControllerDidStopPictureInPicture:");
+late final _sel_pictureInPictureController_failedToStartPictureInPictureWithError_ =
+    objc.registerName(
+      "pictureInPictureController:failedToStartPictureInPictureWithError:",
+    );
 late final _sel_pictureInPictureController_restoreUserInterfaceForPictureInPictureStopWithCompletionHandler_ =
     objc.registerName(
       "pictureInPictureController:restoreUserInterfaceForPictureInPictureStopWithCompletionHandler:",
@@ -6618,8 +6638,8 @@ late final _sel_stopPreCacheWithUrl_cacheKey_ = objc.registerName(
 );
 late final _sel_view = objc.registerName("view");
 
-/// better_player_ios_Swift_472
-extension better_player_ios_Swift_472 on BetterPlayer {
+/// better_player_ios_Swift_473
+extension better_player_ios_Swift_473 on BetterPlayer {
   /// legibleOutput:didOutputAttributedStrings:nativeSampleBuffers:forItemTime:
   void legibleOutput(
     AVPlayerItemLegibleOutput output, {

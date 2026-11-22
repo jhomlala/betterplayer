@@ -5,6 +5,7 @@ import 'package:better_player_platform_interface/better_player_platform_interfac
 import 'package:better_player_web/src/better_player_web_player.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+import 'package:web/web.dart' as web;
 
 typedef WebPlayerFactory =
     BetterPlayerWebPlayer Function({
@@ -68,9 +69,13 @@ class BetterPlayerWeb extends BetterPlayerPlatform {
     final player = _playerFactory(viewId: viewId, onLog: _log);
     await player.initialize();
 
-    // Register the video element as a Flutter platform view
+    // Register the video element container as a Flutter platform view
     ui_web.platformViewRegistry.registerViewFactory(viewId, (int _) {
-      return player.videoElement;
+      final container = web.HTMLDivElement()
+        ..style.width = '100%'
+        ..style.height = '100%';
+      player.attachToContainer(container);
+      return container;
     });
 
     _players[id] = player;
@@ -187,8 +192,8 @@ class BetterPlayerWeb extends BetterPlayerPlatform {
 
   @override
   Widget buildView(int? textureId) {
-    final viewId = _getPlayer(textureId).viewId;
-    return HtmlElementView(viewType: viewId);
+    final player = _getPlayer(textureId);
+    return _BetterPlayerWebView(player: player);
   }
 
   // ── No-ops / Unsupported on web ──────────────────────────────────────────
@@ -223,5 +228,27 @@ class BetterPlayerWeb extends BetterPlayerPlatform {
   ) async {
     _logCallback = callback;
     _log(message: 'Log callback wired up for web', levelIndex: 1);
+  }
+}
+
+class _BetterPlayerWebView extends StatefulWidget {
+  const _BetterPlayerWebView({required this.player});
+
+  final BetterPlayerWebPlayer player;
+
+  @override
+  State<_BetterPlayerWebView> createState() => _BetterPlayerWebViewState();
+}
+
+class _BetterPlayerWebViewState extends State<_BetterPlayerWebView> {
+  @override
+  void dispose() {
+    widget.player.onViewDisposed();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return HtmlElementView(viewType: widget.player.viewId);
   }
 }
