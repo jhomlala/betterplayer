@@ -1,4 +1,4 @@
-## Unreleased
+## 1.7.0
 - Fixed: Wrapped video element in a persistent container so exiting fullscreen restores the element without leaving a black screen.
 - Fixed: Added native `<video>` fallback when Shaka Player is not loaded in DOM, and throw an explicit StateError if DRM playback is requested without Shaka.
 - Fixed: Attached DRM license headers via Shaka `NetworkingEngine` request filter for Widevine, ClearKey, and Token DRM, and reset DRM configuration between data sources.

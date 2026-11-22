@@ -1,4 +1,4 @@
-## Unreleased
+## 1.14.0
 - Fixed: Added ProGuard/R8 consumer rules (`proguard-rules.pro`) and `@Keep` annotations on JNI-accessed `BetterPlayer` members so release builds do not strip JNI bindings.
 - Fixed: Synchronized `BetterPlayerCache` operations, stopped deleting the cache directory while `SimpleCache` is open, and guarded `preCache` against 0-byte `SimpleCache` initialization when cache sizes are omitted or non-positive.
 - Fixed: Prevented notification NPE on Android API 24-25, ensured custom notification channels are created on API 26+, added unique per-player `MediaSession` IDs, detached old `PlayerNotificationManager` instances before creating new ones, and fixed `ImageWorker` cache file path and stream closing.

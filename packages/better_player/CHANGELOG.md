@@ -1,4 +1,4 @@
-## Unreleased
+## 1.39.0
 - Fixed: Forwarded `drmType` and `token` to platform DRM configuration for Web and Token DRM compatibility, and copied headers to prevent `UnsupportedError` on unmodifiable header maps.
 - Fixed: Wrapped fullscreen route, overflow bottom sheets, and about dialog in `Localizations.override` for `MaterialLocalizations` and `CupertinoLocalizations` to prevent crashes in apps using `package:flutter/material.dart`.
 - Fixed: Corrected HLS WebVTT `X-TIMESTAMP-MAP` offset computation (`mpegtsDuration - localDuration` per RFC 8216) and supported `LOCAL:00:00:00.000` headers.
@@ -6,6 +6,7 @@
 - Fixed: Added app lifecycle observer to `BetterPlayerFeed` to pause background playback, and guarded fast swipe index updates in `BetterPlayerFeedController`.
 - Fixed: Prevented `.null` temporary file generation for memory data sources, closed `http.Client` instances in ASMS and subtitle parsers, and preserved `VideoFormat.dash` without `.mpd` in manifest URLs.
 - Updated: Relaxed `meta` dependency constraint to `^1.18.0` for Flutter SDK compatibility.
+- Updated: Bumped federated sub-packages: `better_player_android` to `^1.14.0`, `better_player_ios` to `^1.16.0`, `better_player_platform_interface` to `^1.8.1`, and `better_player_web` to `^1.7.0`.
 
 ## 1.38.0
 - Added: `PlayerSubtitlesConfiguration.textBackgroundHorizontalPadding` to configure horizontal padding inside subtitle background boxes (by @SuperWes).
