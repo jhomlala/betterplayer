@@ -1,0 +1,94 @@
+appId: pl.hasoft.example
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible:
+      id: "better_player_e2e_app_bar_title"
+    timeout: 60000
+- assertVisible:
+    id: "better_player_e2e_app_bar_title"
+
+# Navigate to Cast E2E page
+- scrollUntilVisible:
+    element:
+      id: "better_player_e2e_navigate_cast"
+    direction: DOWN
+- tapOn:
+    id: "better_player_e2e_navigate_cast"
+
+# Wait for Cast player controls to render and assert initial disconnected state
+- extendedWaitUntil:
+    visible:
+      id: "better_player_material_controls_airplay_button"
+    timeout: 30000
+- assertVisible:
+    id: "better_player_material_controls_airplay_button"
+- assertVisible:
+    id: "e2e_cast_state_disconnected"
+
+# Open Cast picker
+- tapOn:
+    id: "better_player_material_controls_airplay_button"
+
+# Wait for discovered E2E target TV in the picker sheet
+- extendedWaitUntil:
+    visible:
+      id: "better_player_cast_device_item_e2e-tv"
+    timeout: 20000
+- assertVisible:
+    id: "better_player_cast_device_item_e2e-tv"
+
+# Connect to target device
+- tapOn:
+    id: "better_player_cast_device_item_e2e-tv"
+
+# Verify connection and media LOAD command arrived at loopback Cast mock
+- extendedWaitUntil:
+    visible:
+      id: "e2e_cast_state_connected"
+    timeout: 20000
+- assertVisible:
+    id: "e2e_cast_state_connected"
+- extendedWaitUntil:
+    visible:
+      id: "e2e_cast_cmd_load_verified"
+    timeout: 20000
+- assertVisible:
+    id: "e2e_cast_cmd_load_verified"
+
+# Pause playback through player controls and verify command forwarded
+- tapOn:
+    id: "better_player_material_controls_play_pause_button"
+- extendedWaitUntil:
+    visible:
+      id: "e2e_cast_cmd_pause_verified"
+    timeout: 20000
+- assertVisible:
+    id: "e2e_cast_cmd_pause_verified"
+
+# Open Cast picker again and disconnect
+- tapOn:
+    id: "better_player_material_controls_airplay_button"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_cast_disconnect_button"
+    timeout: 20000
+- assertVisible:
+    id: "better_player_cast_disconnect_button"
+- tapOn:
+    id: "better_player_cast_disconnect_button"
+
+# Verify STOP command sent and returned to disconnected state
+- extendedWaitUntil:
+    visible:
+      id: "e2e_cast_cmd_stop_verified"
+    timeout: 20000
+- assertVisible:
+    id: "e2e_cast_cmd_stop_verified"
+- extendedWaitUntil:
+    visible:
+      id: "e2e_cast_state_disconnected"
+    timeout: 20000
+- assertVisible:
+    id: "e2e_cast_state_disconnected"

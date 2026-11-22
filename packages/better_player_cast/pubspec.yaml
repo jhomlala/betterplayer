@@ -1,0 +1,32 @@
+name: better_player_cast
+resolution: workspace
+description: Chromecast extension for Better Player using CastV2 protocol and native mDNS discovery.
+version: 0.1.0
+homepage: https://github.com/jhomlala/betterplayer/tree/master/packages/better_player_cast
+documentation: https://jhomlala.github.io/betterplayer/
+
+topics:
+  - video
+  - video-player
+  - chromecast
+  - cast
+  - streaming
+
+environment:
+  sdk: "^3.13.0"
+  flutter: ">=3.47.0"
+
+dependencies:
+  better_player: ^1.38.0
+  bonsoir: ^7.1.6
+  flutter:
+    sdk: flutter
+  material_ui: ^1.1.0
+  meta: ^1.18.0
+
+dev_dependencies:
+  better_player_platform_interface: ^1.8.0
+  flutter_test:
+    sdk: flutter
+  mocktail: ^1.0.4
+  very_good_analysis: ^10.3.0

@@ -16,6 +16,22 @@ extension PlayerPlaybackExtension on BetterPlayerController {
       return;
     }
 
+    final castExtension = getExtension<PlayerCastExtension>();
+    if (castExtension != null && castExtension.isCasting) {
+      if (await castExtension.play()) {
+        _playbackState = _playbackState.copyWith(
+          hasCurrentDataSourceStarted: true,
+          wasPlayingBeforePause: false,
+        );
+        _postEvent(PlayerEvent(PlayerEventType.play));
+        _postControllerEvent(PlayerControllerEvent.play);
+        for (final listener in List<VoidCallback>.from(_videoListeners)) {
+          listener();
+        }
+        return;
+      }
+    }
+
     if (_playbackState.appLifecycleState == AppLifecycleState.resumed) {
       await _engine!.play();
       _playbackState = _playbackState.copyWith(
@@ -42,6 +58,18 @@ extension PlayerPlaybackExtension on BetterPlayerController {
       throw StateError('The data source has not been initialized');
     }
 
+    final castExtension = getExtension<PlayerCastExtension>();
+    if (castExtension != null && castExtension.isCasting) {
+      await _engine!.pause();
+      if (await castExtension.pause()) {
+        _postEvent(PlayerEvent(PlayerEventType.pause));
+        for (final listener in List<VoidCallback>.from(_videoListeners)) {
+          listener();
+        }
+        return;
+      }
+    }
+
     await _engine!.pause();
     _postEvent(PlayerEvent(PlayerEventType.pause));
   }
@@ -53,6 +81,24 @@ extension PlayerPlaybackExtension on BetterPlayerController {
     }
     if (!(_engine?.value.initialized ?? false)) {
       throw StateError('The video has not been initialized yet.');
+    }
+
+    final castExtension = getExtension<PlayerCastExtension>();
+    if (castExtension != null && castExtension.isCasting) {
+      if (await castExtension.seekTo(moment)) {
+        _postEvent(
+          PlayerEvent(
+            PlayerEventType.seekTo,
+            parameters: <String, dynamic>{
+              PlayerEventConstants.durationParameter: moment,
+            },
+          ),
+        );
+        for (final listener in List<VoidCallback>.from(_videoListeners)) {
+          listener();
+        }
+        return;
+      }
     }
 
     await _engine!.seekTo(moment);
@@ -85,6 +131,25 @@ extension PlayerPlaybackExtension on BetterPlayerController {
     if (_engine == null) {
       throw StateError('The data source has not been initialized');
     }
+
+    final castExtension = getExtension<PlayerCastExtension>();
+    if (castExtension != null && castExtension.isCasting) {
+      if (await castExtension.setVolume(volume)) {
+        _postEvent(
+          PlayerEvent(
+            PlayerEventType.setVolume,
+            parameters: <String, dynamic>{
+              PlayerEventConstants.volumeParameter: volume,
+            },
+          ),
+        );
+        for (final listener in List<VoidCallback>.from(_videoListeners)) {
+          listener();
+        }
+        return;
+      }
+    }
+
     await _engine!.setVolume(volume);
     _postEvent(
       PlayerEvent(
@@ -120,7 +185,7 @@ extension PlayerPlaybackExtension on BetterPlayerController {
     if (_engine == null) {
       throw StateError('The data source has not been initialized');
     }
-    return _engine!.value.isPlaying;
+    return playerValue!.isPlaying;
   }
 
   ///Flag which determines whenever player is loading video data or not.
@@ -128,6 +193,6 @@ extension PlayerPlaybackExtension on BetterPlayerController {
     if (_engine == null) {
       throw StateError('The data source has not been initialized');
     }
-    return _engine!.value.isBuffering;
+    return playerValue!.isBuffering;
   }
 }

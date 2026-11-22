@@ -6,7 +6,6 @@ import 'package:better_player/src/configuration/player_controller_event.dart';
 import 'package:better_player/src/core/state/player_playback_state.dart';
 import 'package:better_player/src/core/state/player_track_state.dart';
 import 'package:better_player/src/core/state/player_view_state.dart';
-import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player/src/subtitles/player_subtitle.dart';
 import 'package:better_player/src/subtitles/player_subtitles_factory.dart';
 import 'package:better_player/src/utils/player_io_utils.dart';
@@ -470,17 +469,39 @@ class BetterPlayerController {
 
   /// Returns the total duration of the currently loaded media.
   /// Returns null if the video has not yet been initialized or if it's a live stream of unknown length.
-  Duration? get duration => _engine?.value.duration;
+  Duration? get duration => playerValue?.duration;
 
   /// Retrieves a complete snapshot of the underlying video engine's state (playing, buffering, volume, duration).
   /// For isolated state checks, prefer using the dedicated granular getters like [isInitialized] or [duration].
-  VideoPlayerValue? get playerValue => _engine?.value;
+  VideoPlayerValue? get playerValue {
+    final baseValue = _engine?.value;
+    if (baseValue == null) return null;
+    final castExtension = getExtension<PlayerCastExtension>();
+    if (castExtension == null || !castExtension.isCasting) {
+      return baseValue;
+    }
+    return baseValue.copyWith(
+      isPlaying: castExtension.isRemotePlaying ?? baseValue.isPlaying,
+      isBuffering: castExtension.isRemoteBuffering ?? baseValue.isBuffering,
+      position: castExtension.remotePosition ?? baseValue.position,
+      duration: castExtension.remoteDuration ?? baseValue.duration,
+      volume: castExtension.remoteVolume ?? baseValue.volume,
+    );
+  }
 
   /// An alias for [playerValue] providing a complete snapshot of the underlying video engine's state.
-  VideoPlayerValue? get videoPlayerValue => _engine?.value;
+  VideoPlayerValue? get videoPlayerValue => playerValue;
 
   /// Asynchronously retrieves the exact current playback position from the internal engine.
-  Future<Duration?> get position async => _engine?.position;
+  Future<Duration?> get position async {
+    final castExtension = getExtension<PlayerCastExtension>();
+    if (castExtension != null &&
+        castExtension.isCasting &&
+        castExtension.remotePosition != null) {
+      return castExtension.remotePosition;
+    }
+    return _engine?.position;
+  }
 
   /// Asynchronously retrieves the absolute physical time corresponding to the current playback position.
   /// Only applicable to live streams that embed EXT-X-PROGRAM-DATE-TIME tags.

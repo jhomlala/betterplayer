@@ -5,6 +5,7 @@ on:
     branches: [ master ]
     paths:
       - 'packages/better_player/**'
+      - 'packages/better_player_cast/**'
       - 'packages/better_player_ios/**'
       - 'packages/better_player_platform_interface/**'
       - 'packages/better_player_example/**'
@@ -14,6 +15,7 @@ on:
     branches: [ master ]
     paths:
       - 'packages/better_player/**'
+      - 'packages/better_player_cast/**'
       - 'packages/better_player_ios/**'
       - 'packages/better_player_platform_interface/**'
       - 'packages/better_player_example/**'

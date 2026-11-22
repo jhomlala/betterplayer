@@ -1,3 +1,8 @@
+## Unreleased
+
+- Added: Remote playback delegation hooks (`play`, `pause`, `seekTo`, `setVolume`, and remote state getters) on `PlayerCastExtension` and `BetterPlayerController`.
+- Updated: Exported `PlayerLogger` to enable custom extensions and companion packages to integrate with Better Player logging.
+
 ## 1.39.0
 - Fixed: Forwarded `drmType` and `token` to platform DRM configuration for Web and Token DRM compatibility, and copied headers to prevent `UnsupportedError` on unmodifiable header maps.
 - Fixed: Wrapped fullscreen route, overflow bottom sheets, and about dialog in `Localizations.override` for `MaterialLocalizations` and `CupertinoLocalizations` to prevent crashes in apps using `package:flutter/material.dart`.

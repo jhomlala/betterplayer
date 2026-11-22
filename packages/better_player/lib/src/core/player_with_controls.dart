@@ -8,7 +8,6 @@ import 'package:better_player/src/controls/player_cupertino_localizations_delega
 import 'package:better_player/src/controls/player_material_controls.dart';
 import 'package:better_player/src/controls/player_material_localizations_delegate.dart';
 import 'package:better_player/src/controls/player_web_controls.dart';
-import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player/src/subtitles/player_subtitles_drawer.dart';
 
 import 'package:flutter/foundation.dart';

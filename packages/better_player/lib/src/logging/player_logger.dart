@@ -5,7 +5,6 @@ import 'package:better_player_platform_interface/better_player_platform_interfac
 import 'package:flutter/foundation.dart';
 
 /// Logger for Better Player.
-@internal
 class PlayerLogger {
   PlayerLogger._();
 

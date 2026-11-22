@@ -1,7 +1,6 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/dash/player_dash_utils.dart';
 import 'package:better_player/src/hls/player_hls_utils.dart';
-import 'package:better_player/src/logging/player_logger.dart';
 import 'package:http/http.dart' as http;
 
 ///Base helper class for ASMS parsing.

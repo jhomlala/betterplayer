@@ -10,6 +10,8 @@ environment:
 dependencies:
   better_player:
     path: ../better_player
+  better_player_cast:
+    path: ../better_player_cast
   collection: ^1.19.1
   cupertino_ui: ^1.0.1
   flutter:
