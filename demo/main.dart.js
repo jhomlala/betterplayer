@@ -54811,7 +54811,7 @@ $1(a){return this.a.ada(a,this.b,this.c)},
 $S:21}
 A.a_5.prototype={
 A(a){var s=null,r=this.c,q=r.ok,p=this.d,o=t.p
-return A.av(s,s,A.aP(A.b([B.ai_,B.fe,B.asr,B.hq,A.aJ(r.k3+" 1.38.0",s,s,s,s,B.MS,s,s),B.fe,A.oP(B.re,A.b([new A.v8("https://github.com/jhomlala/betterplayer",r.p1,"better_player_about_link_github",q,p,s),B.asn,new A.v8("https://hasoft.pl","Hasoft.pl","better_player_about_link_hasoft",q,p,s)],o),B.rf,0,8),new A.v8("https://github.com/jhomlala/betterplayer/issues",r.p3,"better_player_about_link_issues",q,p,s)],o),B.t,B.o,B.a1),!0,s,s,s,!1,s,!1,s,s,s,s,s,"better_player_about_dialog",s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s)}}
+return A.av(s,s,A.aP(A.b([B.ai_,B.fe,B.asr,B.hq,A.aJ(r.k3+" 1.39.0",s,s,s,s,B.MS,s,s),B.fe,A.oP(B.re,A.b([new A.v8("https://github.com/jhomlala/betterplayer",r.p1,"better_player_about_link_github",q,p,s),B.asn,new A.v8("https://hasoft.pl","Hasoft.pl","better_player_about_link_hasoft",q,p,s)],o),B.rf,0,8),new A.v8("https://github.com/jhomlala/betterplayer/issues",r.p3,"better_player_about_link_issues",q,p,s)],o),B.t,B.o,B.a1),!0,s,s,s,!1,s,!1,s,s,s,s,s,"better_player_about_dialog",s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s)}}
 A.a_6.prototype={
 A(a){var s,r=null,q="better_player_about_close",p=this.c,o=this.d,n=new A.a_5(p,o,r),m=A.aJ(p.k4,r,r,r,r,r,r,r)
 p=A.b([new A.iC(p),new A.iB(p)],t.a9)
@@ -56546,7 +56546,7 @@ s=s==null?p:s.a
 s=s==null?p:s.x
 if(s==null)s=1
 k.push(A.av(p,p,A.av(!0,p,A.ec(!1,p,!0,new A.ai(B.cg,new A.qv(h.x,A.i(s)+"x",B.a_r,i,!0,p),p),p,!0,p,p,p,p,p,p,p,p,new A.ayh(r),p,p,p,p,p,p,p),!0,p,p,p,!1,p,!1,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p),!0,p,p,p,!1,p,!1,p,p,p,p,p,m,p,p,p,p,m,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p))
-if(r.e)k.push(A.av(p,p,A.av(!0,p,A.ec(!1,p,!0,new A.ai(B.cg,new A.qv(j.r.k2,"1.38.0",B.c3,i,!0,p),p),p,!0,p,p,p,p,p,p,p,p,new A.ayi(r),p,p,p,p,p,p,p),!0,p,p,p,!1,p,!1,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p),!0,p,p,p,!1,p,!1,p,p,p,p,p,l,p,p,p,p,l,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p))
+if(r.e)k.push(A.av(p,p,A.av(!0,p,A.ec(!1,p,!0,new A.ai(B.cg,new A.qv(j.r.k2,"1.39.0",B.c3,i,!0,p),p),p,!0,p,p,p,p,p,p,p,p,new A.ayi(r),p,p,p,p,p,p,p),!0,p,p,p,!1,p,!1,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p),!0,p,p,p,!1,p,!1,p,p,p,p,p,l,p,p,p,p,l,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p))
 return A.ck(A.aP(k,B.ay,B.o,B.a1),p,p,p)},
 amV(){var s,r,q,p=this.c,o=p.dx.b
 if(o!=null){s=o.b
