@@ -39,7 +39,14 @@ class PlayerAboutDialog extends StatelessWidget {
           context: context,
           useRootNavigator: useRootNavigator,
           barrierDismissible: true,
-          builder: (_) => dialog,
+          builder: (routeContext) => Localizations.override(
+            context: routeContext,
+            delegates: [
+              PlayerMaterialLocalizationsDelegate(translations),
+              PlayerCupertinoLocalizationsDelegate(translations),
+            ],
+            child: dialog,
+          ),
         );
       }
     } else {
@@ -53,7 +60,14 @@ class PlayerAboutDialog extends StatelessWidget {
         return showDialog<void>(
           context: context,
           useRootNavigator: useRootNavigator,
-          builder: (_) => dialog,
+          builder: (routeContext) => Localizations.override(
+            context: routeContext,
+            delegates: [
+              PlayerMaterialLocalizationsDelegate(translations),
+              PlayerCupertinoLocalizationsDelegate(translations),
+            ],
+            child: dialog,
+          ),
         );
       }
     }
@@ -68,7 +82,14 @@ class PlayerAboutDialog extends StatelessWidget {
       barrierDismissible: true,
       barrierLabel: translations.aboutClose,
       barrierColor: Colors.black54,
-      pageBuilder: (_, _, _) => themes.wrap(dialog),
+      pageBuilder: (routeContext, _, _) => Localizations.override(
+        context: routeContext,
+        delegates: [
+          PlayerMaterialLocalizationsDelegate(translations),
+          PlayerCupertinoLocalizationsDelegate(translations),
+        ],
+        child: themes.wrap(dialog),
+      ),
       transitionDuration: const Duration(milliseconds: 150),
       transitionBuilder: (_, animation, _, child) => FadeTransition(
         opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),

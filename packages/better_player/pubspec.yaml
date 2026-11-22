@@ -46,7 +46,7 @@ dependencies:
     sdk: flutter
   http: ^1.2.0
   material_ui: ^1.1.0
-  meta: ^1.19.0
+  meta: ^1.18.0
   path_provider: ^2.1.6
   visibility_detector: ^0.4.0+2
   wakelock_plus: ^1.7.0

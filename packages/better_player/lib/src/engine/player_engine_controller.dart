@@ -41,6 +41,7 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
 
   Timer? _timer;
   bool _isDisposed = false;
+  bool _createStarted = false;
   StreamSubscription<dynamic>? _eventSubscription;
 
   bool get _created => _creatingCompleter.isCompleted;
@@ -51,10 +52,21 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
 
   /// Attempts to initialize the platform player and create the texture and load metadata about the video.
   Future<void> _create() async {
-    _textureId = await _betterPlayerPlatform.create(
-      bufferingConfiguration: bufferingConfiguration,
-    );
-    _creatingCompleter.complete();
+    _createStarted = true;
+    try {
+      _textureId = await _betterPlayerPlatform.create(
+        bufferingConfiguration: bufferingConfiguration,
+      );
+      if (!_creatingCompleter.isCompleted) {
+        _creatingCompleter.complete();
+      }
+    } on Object catch (error, stackTrace) {
+      if (!_creatingCompleter.isCompleted) {
+        _creatingCompleter.completeError(error, stackTrace);
+      }
+      _creatingCompleter.future.ignore();
+      return;
+    }
     if (_isDisposed) {
       return;
     }
@@ -192,6 +204,8 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
     String? imageUrl,
     String? notificationChannelName,
     Duration? overriddenDuration,
+    DrmType? drmType,
+    String? token,
     String? licenseUrl,
     String? certificateUrl,
     Map<String, String>? drmHeaders,
@@ -222,6 +236,8 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
         ),
         overriddenDuration: overriddenDuration,
         drmConfiguration: DrmConfiguration(
+          drmType: drmType,
+          token: token,
           licenseUrl: licenseUrl,
           certificateUrl: certificateUrl,
           headers: drmHeaders,
@@ -247,6 +263,8 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
     String? notificationChannelName,
     Duration? overriddenDuration,
     String? activityName,
+    DrmType? drmType,
+    String? token,
     String? clearKey,
   }) {
     return _setDataSource(
@@ -263,7 +281,11 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
           activityName: activityName,
         ),
         overriddenDuration: overriddenDuration,
-        drmConfiguration: DrmConfiguration(clearKey: clearKey),
+        drmConfiguration: DrmConfiguration(
+          drmType: drmType,
+          token: token,
+          clearKey: clearKey,
+        ),
       ),
     );
   }
@@ -279,7 +301,9 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
       volume: value.volume,
     );
 
-    if (!_creatingCompleter.isCompleted) await _creatingCompleter.future;
+    if (_createStarted && !_creatingCompleter.isCompleted) {
+      await _creatingCompleter.future;
+    }
     if (_isDisposed) {
       return;
     }
@@ -287,11 +311,16 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
     final completer = Completer<void>();
     final subscription = videoEventStreamController.stream.listen(
       (event) {
-        if (event.eventType == VideoEventType.initialized) {
+        if (event.eventType == VideoEventType.initialized &&
+            !completer.isCompleted) {
           completer.complete();
         }
       },
-      onError: completer.completeError,
+      onError: (Object error, StackTrace stackTrace) {
+        if (!completer.isCompleted) {
+          completer.completeError(error, stackTrace);
+        }
+      },
       onDone: () {
         if (!completer.isCompleted) {
           completer.completeError(StateError('Stream closed'));
@@ -328,10 +357,18 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
     }
     _isDisposed = true;
     _timer?.cancel();
-    await _creatingCompleter.future;
+    if (_createStarted) {
+      try {
+        await _creatingCompleter.future;
+      } on Object catch (_) {
+        // Platform create failed; proceed with cleanup.
+      }
+    }
     value = VideoPlayerValue.uninitialized();
     await _eventSubscription?.cancel();
-    await _betterPlayerPlatform.dispose(_textureId);
+    if (_textureId != null) {
+      await _betterPlayerPlatform.dispose(_textureId);
+    }
     await videoEventStreamController.close();
     super.dispose();
   }
@@ -426,7 +463,7 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
 
   /// The position in the current video.
   Future<Duration?> get position async {
-    if (!value.initialized && _isDisposed) {
+    if (!value.initialized || _isDisposed) {
       return null;
     }
     return _betterPlayerPlatform.getPosition(_textureId);
@@ -435,7 +472,7 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
   /// The absolute position in the current video stream
   /// (i.e. EXT-X-PROGRAM-DATE-TIME in HLS).
   Future<DateTime?> get absolutePosition async {
-    if (!value.initialized && _isDisposed) {
+    if (!value.initialized || _isDisposed) {
       return null;
     }
     return _betterPlayerPlatform.getAbsolutePosition(_textureId);

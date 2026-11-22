@@ -1,3 +1,6 @@
+## Unreleased
+- Updated: Relaxed `meta` dependency constraint to `^1.18.0` for Flutter SDK compatibility.
+
 ## 1.8.0
 - Added: `getAudioTracks` method to `BetterPlayerPlatform` to retrieve audio tracks from the native player.
 - Updated: Updated doc comment for `setSpeed` to reflect the new 10.0 limit.

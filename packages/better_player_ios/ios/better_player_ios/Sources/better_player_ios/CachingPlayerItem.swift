@@ -97,6 +97,18 @@ open class CachingPlayerItem: AVPlayerItem {
         }
 
         func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
+            if let httpResponse = response as? HTTPURLResponse, !(200...299).contains(httpResponse.statusCode) {
+                completionHandler(.cancel)
+                let error = NSError(domain: "CachingPlayerItem", code: httpResponse.statusCode, userInfo: nil)
+                for request in pendingRequests {
+                    request.finishLoading(with: error)
+                }
+                pendingRequests.removeAll()
+                if let owner = owner {
+                    owner.delegate?.playerItem?(owner, downloadingFailedWith: error)
+                }
+                return
+            }
             completionHandler(.allow)
             mediaData = Data()
             self.response = response
@@ -105,6 +117,10 @@ open class CachingPlayerItem: AVPlayerItem {
 
         func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
             if let errorUnwrapped = error {
+                for request in pendingRequests {
+                    request.finishLoading(with: errorUnwrapped)
+                }
+                pendingRequests.removeAll()
                 if let owner = owner {
                     owner.delegate?.playerItem?(owner, downloadingFailedWith: errorUnwrapped)
                 }
@@ -122,7 +138,12 @@ open class CachingPlayerItem: AVPlayerItem {
             // get all fulfilled requests
             let requestsFulfilled = Set<AVAssetResourceLoadingRequest>(pendingRequests.compactMap {
                 self.fillInContentInformationRequest($0.contentInformationRequest)
-                if self.haveEnoughDataToFulfillRequest($0.dataRequest!) {
+                if let dataRequest = $0.dataRequest {
+                    if self.haveEnoughDataToFulfillRequest(dataRequest) {
+                        $0.finishLoading()
+                        return $0
+                    }
+                } else if self.response != nil || self.playingFromData {
                     $0.finishLoading()
                     return $0
                 }

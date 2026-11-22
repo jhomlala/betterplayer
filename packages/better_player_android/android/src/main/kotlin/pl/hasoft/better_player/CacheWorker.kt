@@ -32,8 +32,18 @@ class CacheWorker(
         val url = data.getString(BetterPlayerPlugin.URL_PARAMETER)
         val cacheKey = data.getString(BetterPlayerPlugin.CACHE_KEY_PARAMETER)
         val preCacheSize = data.getLong(BetterPlayerPlugin.PRE_CACHE_SIZE_PARAMETER, 0)
-        val maxCacheSize = data.getLong(BetterPlayerPlugin.MAX_CACHE_SIZE_PARAMETER, 0)
-        val maxCacheFileSize = data.getLong(BetterPlayerPlugin.MAX_CACHE_FILE_SIZE_PARAMETER, 0)
+        val rawMaxCacheSize = data.getLong(BetterPlayerPlugin.MAX_CACHE_SIZE_PARAMETER, 0)
+        val rawMaxCacheFileSize = data.getLong(BetterPlayerPlugin.MAX_CACHE_FILE_SIZE_PARAMETER, 0)
+        val maxCacheSize = if (rawMaxCacheSize > 0) {
+            rawMaxCacheSize
+        } else {
+            BetterPlayerCache.DEFAULT_MAX_CACHE_SIZE
+        }
+        val maxCacheFileSize = if (rawMaxCacheFileSize > 0) {
+            rawMaxCacheFileSize
+        } else {
+            BetterPlayerCache.DEFAULT_MAX_CACHE_FILE_SIZE
+        }
         var lastReportedBytes = 0L
 
         try {

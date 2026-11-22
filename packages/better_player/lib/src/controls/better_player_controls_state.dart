@@ -2,6 +2,9 @@ import 'dart:math';
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/controls/player_about_dialog.dart';
+import 'package:better_player/src/controls/player_cupertino_localizations_delegate.dart';
+import 'package:better_player/src/controls/player_material_localizations.dart';
+import 'package:better_player/src/controls/player_material_localizations_delegate.dart';
 import 'package:better_player/src/controls/player_overflow_menu.dart';
 import 'package:better_player/src/controls/player_selection_list_item_widget.dart';
 import 'package:better_player/src/logging/player_logger.dart';
@@ -485,23 +488,29 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void _showCupertinoModalBottomSheet(List<Widget> children) {
+    final controller = betterPlayerController;
+    final translations = controller?.translations ?? PlayerTranslations();
     showCupertinoModalPopup<void>(
       barrierColor: Colors.transparent,
       context: context,
       useRootNavigator:
-          betterPlayerController?.betterPlayerConfiguration.useRootNavigator ??
-          false,
-      builder: (context) {
-        return CupertinoTheme(
-          data: const CupertinoThemeData(
-            brightness: Brightness.dark,
-          ),
-          child: CupertinoActionSheet(
-            actions: children,
-            cancelButton: CupertinoActionSheetAction(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(
-                betterPlayerController!.translations.overflowMenuCancelLabel,
+          controller?.betterPlayerConfiguration.useRootNavigator ?? false,
+      builder: (modalContext) {
+        return Localizations.override(
+          context: modalContext,
+          delegates: [
+            PlayerMaterialLocalizationsDelegate(translations),
+            PlayerCupertinoLocalizationsDelegate(translations),
+          ],
+          child: CupertinoTheme(
+            data: const CupertinoThemeData(
+              brightness: Brightness.dark,
+            ),
+            child: CupertinoActionSheet(
+              actions: children,
+              cancelButton: CupertinoActionSheetAction(
+                onPressed: () => Navigator.of(modalContext).pop(),
+                child: Text(translations.overflowMenuCancelLabel),
               ),
             ),
           ),
@@ -511,46 +520,68 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void _showMaterialBottomSheet(List<Widget> children) {
-    showModalBottomSheet<void>(
-      backgroundColor: Colors.transparent,
-      context: context,
-      useRootNavigator:
-          betterPlayerController?.betterPlayerConfiguration.useRootNavigator ??
-          false,
-      builder: (context) {
-        return SafeArea(
-          top: false,
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-              decoration: BoxDecoration(
-                color: betterPlayerControlsConfiguration.overflowModalColor,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(24),
-                  topRight: Radius.circular(24),
+    final controller = betterPlayerController;
+    final translations = controller?.translations ?? PlayerTranslations();
+    final useRootNavigator =
+        controller?.betterPlayerConfiguration.useRootNavigator ?? false;
+    final navigator = Navigator.of(
+      context,
+      rootNavigator: useRootNavigator,
+    );
+    final localizations =
+        Localizations.of<MaterialLocalizations>(
+          context,
+          MaterialLocalizations,
+        ) ??
+        PlayerMaterialLocalizations(translations);
+    navigator.push(
+      _LocalizedModalBottomSheetRoute<void>(
+        translations: translations,
+        capturedThemes: InheritedTheme.capture(
+          from: context,
+          to: navigator.context,
+        ),
+        barrierLabel: localizations.scrimLabel,
+        barrierOnTapHint: localizations.scrimOnTapHint(
+          localizations.bottomSheetLabel,
+        ),
+        backgroundColor: Colors.transparent,
+        isScrollControlled: false,
+        builder: (modalContext) {
+          return SafeArea(
+            top: false,
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                decoration: BoxDecoration(
+                  color: betterPlayerControlsConfiguration.overflowModalColor,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(24),
+                    topRight: Radius.circular(24),
+                  ),
                 ),
-              ),
-              child: Column(
-                children: [
-                  Center(
-                    child: Container(
-                      width: 32,
-                      height: 4,
-                      margin: const EdgeInsets.only(bottom: 12, top: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade400,
-                        borderRadius: BorderRadius.circular(2),
+                child: Column(
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 32,
+                        height: 4,
+                        margin: const EdgeInsets.only(bottom: 12, top: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade400,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
                       ),
                     ),
-                  ),
-                  ...children,
-                ],
+                    ...children,
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
@@ -635,5 +666,41 @@ class _PlayerBottomSheetMenuItem extends StatelessWidget {
         semanticsIdentifier: semanticsIdentifier,
       );
     }
+  }
+}
+
+class _LocalizedModalBottomSheetRoute<T> extends ModalBottomSheetRoute<T> {
+  _LocalizedModalBottomSheetRoute({
+    required super.builder,
+    required this.translations,
+    required super.isScrollControlled,
+    super.capturedThemes,
+    super.barrierLabel,
+    super.barrierOnTapHint,
+    super.backgroundColor,
+  });
+
+  final PlayerTranslations translations;
+
+  @override
+  Widget buildPage(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+  ) {
+    return Localizations.override(
+      context: context,
+      delegates: [
+        PlayerMaterialLocalizationsDelegate(translations),
+        PlayerCupertinoLocalizationsDelegate(translations),
+      ],
+      child: Builder(
+        builder: (localizedContext) => super.buildPage(
+          localizedContext,
+          animation,
+          secondaryAnimation,
+        ),
+      ),
+    );
   }
 }

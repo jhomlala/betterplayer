@@ -429,20 +429,39 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
     BetterPlayerApi.setPreCacheCallback(_preCacheCallback);
   }
 
+  @visibleForTesting
+  void preCacheNative({
+    required String url,
+    required String? cacheKey,
+    required String? videoExtension,
+    required Map<String, String> headers,
+  }) {
+    _ensurePreCacheCallbackConfigured();
+    BetterPlayerApi.preCacheWithUrl(
+      url.toNSString(),
+      cacheKey: cacheKey?.toNSString(),
+      videoExtension: videoExtension?.toNSString(),
+      headers: headers.isEmpty ? null : headers.toNSDictionary(),
+    );
+  }
+
   @override
   Future<void> preCache(
     DataSource dataSource,
     int preCacheSize, {
     void Function(PreCacheProgress progress)? onProgress,
   }) async {
-    _ensurePreCacheCallbackConfigured();
     final url = dataSource.uri ?? dataSource.asset ?? '';
     final cacheKey = dataSource.cacheConfiguration?.key;
+    final headers =
+        dataSource.headers?.map((key, value) => MapEntry(key, value ?? '')) ??
+        const <String, String>{};
 
-    BetterPlayerApi.preCacheWithUrl(
-      url.toNSString(),
-      cacheKey: cacheKey?.toNSString(),
-      videoExtension: dataSource.videoExtension?.toNSString(),
+    preCacheNative(
+      url: url,
+      cacheKey: cacheKey,
+      videoExtension: dataSource.videoExtension,
+      headers: headers,
     );
   }
 

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:better_player/better_player.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -151,5 +153,132 @@ void main() {
         controller.dispose();
       },
     );
+
+    test(
+      'setupDataSource with const headers and token DRM does not throw UnsupportedError',
+      () async {
+        final mockEngine = MockPlayerEngineController();
+        final controller =
+            BetterPlayerTestUtils.setupBetterPlayerMockController(
+              controller: mockEngine,
+            );
+
+        final dataSource = PlayerDataSource(
+          DataSourceType.network,
+          'https://example.com/video.mp4',
+          headers: const {'X-Custom': 'abc'},
+          drmConfiguration: const DrmConfiguration(
+            drmType: DrmType.token,
+            token: 'Bearer const-token',
+          ),
+        );
+
+        await controller.setupDataSource(dataSource);
+
+        expect(mockEngine.headers?['X-Custom'], 'abc');
+        expect(
+          mockEngine.headers?[PlayerEventConstants.authorizationHeader],
+          'Bearer const-token',
+        );
+        expect(mockEngine.drmType, DrmType.token);
+        expect(mockEngine.token, 'Bearer const-token');
+
+        controller.dispose();
+      },
+    );
+
+    test(
+      'setupDataSource forwards drmType and token for file data source',
+      () async {
+        final mockEngine = MockPlayerEngineController();
+        final controller =
+            BetterPlayerTestUtils.setupBetterPlayerMockController(
+              controller: mockEngine,
+            );
+
+        final dataSource = PlayerDataSource(
+          DataSourceType.file,
+          '/path/to/video.mp4',
+          drmConfiguration: const DrmConfiguration(
+            drmType: DrmType.token,
+            token: 'Bearer file-token',
+          ),
+        );
+
+        await controller.setupDataSource(dataSource);
+
+        expect(mockEngine.drmType, DrmType.token);
+        expect(mockEngine.token, 'Bearer file-token');
+
+        controller.dispose();
+      },
+    );
+
+    test(
+      'setupDataSource skips _initializeVideo when controller is disposed mid-setup',
+      () async {
+        final setupCompleter = Completer<void>();
+        final mockEngine = _PendingSetDataSourceEngineController(
+          setupCompleter,
+        );
+        final controller =
+            BetterPlayerTestUtils.setupBetterPlayerMockController(
+              controller: mockEngine,
+              configuration: const PlayerConfiguration(autoPlay: true),
+            );
+
+        final dataSource = PlayerDataSource.network(
+          'https://example.com/video.mp4',
+        );
+
+        final setupFuture = controller.setupDataSource(dataSource);
+        controller.dispose(forceDispose: true);
+        setupCompleter.complete();
+        await setupFuture;
+
+        expect(mockEngine.playCalled, isFalse);
+      },
+    );
   });
+}
+
+class _PendingSetDataSourceEngineController extends MockPlayerEngineController {
+  _PendingSetDataSourceEngineController(this._completer);
+
+  final Completer<void> _completer;
+  bool playCalled = false;
+
+  @override
+  Future<void> setNetworkDataSource(
+    String dataSource, {
+    VideoFormat? formatHint,
+    Map<String, String?>? headers,
+    bool useCache = false,
+    int? maxCacheSize,
+    int? maxCacheFileSize,
+    String? cacheKey,
+    bool? showNotification,
+    String? title,
+    String? author,
+    String? imageUrl,
+    String? notificationChannelName,
+    Duration? overriddenDuration,
+    DrmType? drmType,
+    String? token,
+    String? licenseUrl,
+    String? certificateUrl,
+    Map<String, String>? drmHeaders,
+    String? activityName,
+    String? clearKey,
+    DrmSecurityLevel? drmSecurityLevel,
+    String? videoExtension,
+  }) {
+    return _completer.future;
+  }
+
+  @override
+  Future<void> play() async {
+    playCalled = true;
+    await super.play();
+  }
 }

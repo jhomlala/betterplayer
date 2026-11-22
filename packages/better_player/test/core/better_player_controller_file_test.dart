@@ -156,6 +156,8 @@ void main() {
                 (ds) =>
                     ds.uri!.startsWith('file://') &&
                     ds.uri!.contains('better_player_') &&
+                    ds.uri!.endsWith('.temp') &&
+                    !ds.uri!.endsWith('.null') &&
                     ds.sourceType == DataSourceType.file,
               ),
             ),

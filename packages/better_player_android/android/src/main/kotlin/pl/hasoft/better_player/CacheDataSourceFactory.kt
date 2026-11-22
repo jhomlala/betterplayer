@@ -19,14 +19,24 @@ internal class CacheDataSourceFactory(
 ) : DataSource.Factory {
     private var defaultDatasourceFactory: DefaultDataSource.Factory? = null
     override fun createDataSource(): CacheDataSource {
-        val betterPlayerCache = BetterPlayerCache.createCache(context, maxCacheSize)
+        val effectiveMaxCacheSize = if (maxCacheSize > 0) {
+            maxCacheSize
+        } else {
+            BetterPlayerCache.DEFAULT_MAX_CACHE_SIZE
+        }
+        val effectiveMaxFileSize = if (maxFileSize > 0) {
+            maxFileSize
+        } else {
+            BetterPlayerCache.DEFAULT_MAX_CACHE_FILE_SIZE
+        }
+        val betterPlayerCache = BetterPlayerCache.createCache(context, effectiveMaxCacheSize)
             ?: throw IllegalStateException("Cache can't be null.")
 
         return CacheDataSource(
             betterPlayerCache,
             defaultDatasourceFactory?.createDataSource(),
             FileDataSource(),
-            CacheDataSink(betterPlayerCache, maxFileSize),
+            CacheDataSink(betterPlayerCache, effectiveMaxFileSize),
             CacheDataSource.FLAG_BLOCK_ON_CACHE or CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR,
             null
         )

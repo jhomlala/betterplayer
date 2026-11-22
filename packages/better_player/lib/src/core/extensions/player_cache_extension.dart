@@ -48,10 +48,13 @@ extension PlayerCacheExtension on BetterPlayerController {
         betterPlayerDataSource.cacheConfiguration ??
         const CacheConfiguration(useCache: true);
 
+    final headers = _getHeaders(betterPlayerDataSource);
     final dataSource = DataSource(
       sourceType: DataSourceType.network,
       uri: betterPlayerDataSource.url,
-      headers: betterPlayerDataSource.headers,
+      headers: headers.isEmpty && betterPlayerDataSource.headers == null
+          ? null
+          : headers,
       cacheConfiguration: CacheConfiguration(
         useCache: true,
         maxCacheSize: cacheConfig.maxCacheSize,

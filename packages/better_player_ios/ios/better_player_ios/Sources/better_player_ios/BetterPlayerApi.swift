@@ -64,6 +64,7 @@ import MediaPlayer
     }
 
     @objc public static func setLogCallback(_ callback: BetterPlayerLogCallback?) {
+        _ = _dummyLogCallback as BetterPlayerLogCallback
         _logCallback = callback
     }
 
@@ -127,6 +128,9 @@ import MediaPlayer
     }
 
     @objc public static func cleanUp() {
+        _ = _dummyCallback
+        _ = _dummyPreCacheCallback
+        _ = _dummyLogCallback
         _logCallback = nil
         _preCacheCallback = nil
         activeNotificationPlayer = nil
@@ -145,6 +149,7 @@ import MediaPlayer
     // Reference the dummy classes to prevent the linker from stripping them out
     @objc public static let _dummyCallback: BetterPlayerCallback = _DummyBetterPlayerCallbackImpl()
     @objc public static let _dummyPreCacheCallback: BetterPlayerPreCacheCallback = _DummyPreCacheCallbackImpl()
+    private static let _dummyLogCallback: BetterPlayerLogCallback = _DummyLogCallbackImpl()
 }
 
 // Dummy class to force the Swift compiler to emit the full Objective-C protocol metadata

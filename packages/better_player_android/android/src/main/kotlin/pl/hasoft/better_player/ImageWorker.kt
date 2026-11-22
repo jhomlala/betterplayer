@@ -8,6 +8,7 @@ import android.util.Log
 import androidx.work.Data
 import androidx.work.WorkerParameters
 import androidx.work.Worker
+import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.lang.Exception
@@ -27,15 +28,17 @@ class ImageWorker(
             } else {
                 getBitmapFromInternalURL(imageUrl)
             }
-            val fileName = imageUrl.hashCode().toString() + IMAGE_EXTENSION
-            val filePath = applicationContext.cacheDir.absolutePath + fileName
             if (bitmap == null) {
                 return Result.failure()
             }
-            val out = FileOutputStream(filePath)
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+            val fileName = imageUrl.hashCode().toString() + IMAGE_EXTENSION
+            val file = File(applicationContext.cacheDir, fileName)
+            FileOutputStream(file).use { out ->
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+                out.flush()
+            }
             val data =
-                Data.Builder().putString(BetterPlayerPlugin.FILE_PATH_PARAMETER, filePath).build()
+                Data.Builder().putString(BetterPlayerPlugin.FILE_PATH_PARAMETER, file.absolutePath).build()
             Result.success(data)
         } catch (e: Exception) {
             e.printStackTrace()

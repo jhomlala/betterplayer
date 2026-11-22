@@ -171,6 +171,7 @@ extension PlayerDataSourceExtension on BetterPlayerController {
         data,
         result.effectiveUrl,
         headers: headers,
+        videoFormat: source.videoFormat,
       );
 
       /// Load tracks
@@ -249,6 +250,8 @@ extension PlayerDataSourceExtension on BetterPlayerController {
               ?.notificationChannelName,
           overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
           formatHint: _betterPlayerDataSource!.videoFormat,
+          drmType: _betterPlayerDataSource?.drmConfiguration?.drmType,
+          token: _betterPlayerDataSource?.drmConfiguration?.token,
           licenseUrl: _betterPlayerDataSource?.drmConfiguration?.licenseUrl,
           certificateUrl:
               _betterPlayerDataSource?.drmConfiguration?.certificateUrl,
@@ -289,6 +292,8 @@ extension PlayerDataSourceExtension on BetterPlayerController {
           overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
           activityName:
               _betterPlayerDataSource?.notificationConfiguration?.activityName,
+          drmType: _betterPlayerDataSource?.drmConfiguration?.drmType,
+          token: _betterPlayerDataSource?.drmConfiguration?.token,
           clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey,
         );
       case DataSourceType.memory:
@@ -313,14 +318,19 @@ extension PlayerDataSourceExtension on BetterPlayerController {
             activityName: _betterPlayerDataSource
                 ?.notificationConfiguration
                 ?.activityName,
+            drmType: _betterPlayerDataSource?.drmConfiguration?.drmType,
+            token: _betterPlayerDataSource?.drmConfiguration?.token,
             clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey,
             drmSecurityLevel:
                 _betterPlayerDataSource?.drmConfiguration?.drmSecurityLevel,
           );
         } else {
+          final videoExtension = _betterPlayerDataSource!.videoExtension;
           final filePath = await _createFile(
             _betterPlayerDataSource!.bytes!,
-            extension: _betterPlayerDataSource!.videoExtension,
+            extension: (videoExtension != null && videoExtension.isNotEmpty)
+                ? videoExtension
+                : 'temp',
           );
 
           if (PlayerIoUtils.fileExists(filePath)) {
@@ -341,6 +351,8 @@ extension PlayerDataSourceExtension on BetterPlayerController {
               activityName: _betterPlayerDataSource
                   ?.notificationConfiguration
                   ?.activityName,
+              drmType: _betterPlayerDataSource?.drmConfiguration?.drmType,
+              token: _betterPlayerDataSource?.drmConfiguration?.token,
               clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey,
             );
             _tempFiles.add(filePath);
@@ -352,6 +364,9 @@ extension PlayerDataSourceExtension on BetterPlayerController {
       case DataSourceType.asset:
         throw UnimplementedError('DataSourceType.asset is not implemented');
     }
+    if (_disposed) {
+      return;
+    }
     await _initializeVideo();
   }
 
@@ -361,8 +376,11 @@ extension PlayerDataSourceExtension on BetterPlayerController {
     List<int> bytes, {
     String? extension = 'temp',
   }) async {
+    final resolvedExtension = (extension != null && extension.isNotEmpty)
+        ? extension
+        : 'temp';
     final fileName =
-        'better_player_${DateTime.now().millisecondsSinceEpoch}.$extension';
+        'better_player_${DateTime.now().millisecondsSinceEpoch}.$resolvedExtension';
     final filePath = await PlayerIoUtils.getTempPath(fileName);
     await PlayerIoUtils.writeBytes(filePath, bytes);
     return filePath;
@@ -447,12 +465,15 @@ extension PlayerDataSourceExtension on BetterPlayerController {
 
   ///Build headers map that will be used to setup video player controller. Apply
   ///DRM headers if available.
-  Map<String, String?> _getHeaders() {
-    final headers = betterPlayerDataSource!.headers ?? {};
-    if (betterPlayerDataSource?.drmConfiguration?.drmType == DrmType.token &&
-        betterPlayerDataSource?.drmConfiguration?.token != null) {
-      headers[PlayerEventConstants.authorizationHeader] =
-          betterPlayerDataSource!.drmConfiguration!.token!;
+  Map<String, String?> _getHeaders([PlayerDataSource? source]) {
+    final targetSource = source ?? betterPlayerDataSource;
+    final headers = Map<String, String?>.from(
+      targetSource?.headers ?? const <String, String?>{},
+    );
+    final drm = targetSource?.drmConfiguration;
+    final token = drm?.token;
+    if (drm?.drmType == DrmType.token && token != null) {
+      headers[PlayerEventConstants.authorizationHeader] = token;
     }
     return headers;
   }

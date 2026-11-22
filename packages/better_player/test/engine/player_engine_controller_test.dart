@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:better_player/src/engine/player_engine_controller.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -254,5 +256,142 @@ void main() {
         await controller.dispose();
       },
     );
+
+    test(
+      'setNetworkDataSource and setFileDataSource forward drmType and token',
+      () async {
+        final recordingPlatform = _RecordingMockPlatform();
+        BetterPlayerPlatform.instance = recordingPlatform;
+
+        final controller = PlayerEngineController();
+
+        await controller.setNetworkDataSource(
+          'https://example.com/video.mp4',
+          drmType: DrmType.token,
+          token: 'Bearer net-token',
+        );
+        expect(
+          recordingPlatform.lastDataSource?.drmConfiguration?.drmType,
+          DrmType.token,
+        );
+        expect(
+          recordingPlatform.lastDataSource?.drmConfiguration?.token,
+          'Bearer net-token',
+        );
+
+        await controller.setFileDataSource(
+          '/tmp/video.mp4',
+          drmType: DrmType.token,
+          token: 'Bearer file-token',
+        );
+        expect(
+          recordingPlatform.lastDataSource?.drmConfiguration?.drmType,
+          DrmType.token,
+        );
+        expect(
+          recordingPlatform.lastDataSource?.drmConfiguration?.token,
+          'Bearer file-token',
+        );
+
+        await controller.dispose();
+      },
+    );
+
+    test(
+      'position and absolutePosition return null when uninitialized or disposed',
+      () async {
+        final controller = PlayerEngineController();
+        expect(await controller.position, isNull);
+        expect(await controller.absolutePosition, isNull);
+
+        await controller.setNetworkDataSource('https://example.com/video.mp4');
+        mockPlatform.currentPosition = const Duration(seconds: 3);
+        expect(await controller.position, const Duration(seconds: 3));
+
+        await controller.dispose();
+        expect(await controller.position, isNull);
+        expect(await controller.absolutePosition, isNull);
+      },
+    );
+
+    test(
+      'dispose completes without deadlock when autoCreate is false',
+      () async {
+        final controller = PlayerEngineController(autoCreate: false);
+        await expectLater(controller.dispose(), completes);
+      },
+    );
+
+    test(
+      'dispose completes without deadlock when platform create throws',
+      () async {
+        BetterPlayerPlatform.instance = _FailingCreateMockPlatform();
+        final controller = PlayerEngineController();
+        await expectLater(controller.dispose(), completes);
+      },
+    );
+
+    test(
+      'setNetworkDataSource ignores duplicate initialized events without throwing',
+      () async {
+        final dupPlatform = _DuplicateInitMockPlatform();
+        BetterPlayerPlatform.instance = dupPlatform;
+        final controller = PlayerEngineController();
+
+        await expectLater(
+          controller.setNetworkDataSource('https://example.com/video.mp4'),
+          completes,
+        );
+
+        await controller.dispose();
+      },
+    );
   });
+}
+
+class _RecordingMockPlatform extends MockBetterPlayerPlatform {
+  DataSource? lastDataSource;
+
+  @override
+  Future<void> setDataSource(int? textureId, DataSource dataSource) {
+    lastDataSource = dataSource;
+    return super.setDataSource(textureId, dataSource);
+  }
+}
+
+class _FailingCreateMockPlatform extends MockBetterPlayerPlatform {
+  @override
+  Future<int?> create({BufferingConfiguration? bufferingConfiguration}) async {
+    throw StateError('Simulated create failure');
+  }
+}
+
+class _DuplicateInitMockPlatform extends MockBetterPlayerPlatform {
+  @override
+  Future<void> setDataSource(int? textureId, DataSource dataSource) async {
+    if (textureId != null) {
+      unawaited(
+        Future.microtask(() {
+          sendEvent(
+            textureId,
+            VideoEvent(
+              eventType: VideoEventType.initialized,
+              duration: const Duration(seconds: 10),
+              size: initialVideoSize,
+              key: dataSource.key,
+            ),
+          );
+          sendEvent(
+            textureId,
+            VideoEvent(
+              eventType: VideoEventType.initialized,
+              duration: const Duration(seconds: 10),
+              size: initialVideoSize,
+              key: dataSource.key,
+            ),
+          );
+        }),
+      );
+    }
+  }
 }

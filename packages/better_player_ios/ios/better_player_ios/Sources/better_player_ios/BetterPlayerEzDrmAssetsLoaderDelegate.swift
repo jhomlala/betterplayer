@@ -12,6 +12,9 @@ public class BetterPlayerEzDrmAssetsLoaderDelegate: NSObject, AVAssetResourceLoa
     /// The optional URL for the DRM license server.
     public let licenseURL: URL?
 
+    /// Custom HTTP headers to include in certificate and license requests.
+    public let headers: [String: String]
+
     private let defaultLicenseServerURL = URL(string: "https://fps.ezdrm.com/api/licenses/")!
     private let certificateLock = NSLock()
     private var cachedCertificate: Data?
@@ -22,9 +25,11 @@ public class BetterPlayerEzDrmAssetsLoaderDelegate: NSObject, AVAssetResourceLoa
     /// - Parameters:
     ///   - certificateURL: The URL for the DRM certificate.
     ///   - licenseURL: The optional URL for the license server.
-    public init(_ certificateURL: URL, withLicenseURL licenseURL: URL?) {
+    ///   - headers: Custom HTTP headers to attach to DRM requests.
+    public init(_ certificateURL: URL, withLicenseURL licenseURL: URL?, headers: [String: String] = [:]) {
         self.certificateURL = certificateURL
         self.licenseURL = licenseURL
+        self.headers = headers
         super.init()
     }
 
@@ -114,7 +119,11 @@ public class BetterPlayerEzDrmAssetsLoaderDelegate: NSObject, AVAssetResourceLoa
             return
         }
 
-        let task = URLSession.shared.dataTask(with: certificateURL) { data, response, error in
+        var certRequest = URLRequest(url: certificateURL)
+        for (key, value) in headers {
+            certRequest.setValue(value, forHTTPHeaderField: key)
+        }
+        let task = URLSession.shared.dataTask(with: certRequest) { data, response, error in
             if let error = error {
                 completeAll(.failure(error))
                 return
@@ -151,6 +160,9 @@ public class BetterPlayerEzDrmAssetsLoaderDelegate: NSObject, AVAssetResourceLoa
     ) {
         var request = URLRequest(url: ksmURL)
         request.httpMethod = "POST"
+        for (key, value) in headers {
+            request.setValue(value, forHTTPHeaderField: key)
+        }
         request.setValue("application/octet-stream", forHTTPHeaderField: "Content-Type")
         request.httpBody = spc
         request.timeoutInterval = 30.0

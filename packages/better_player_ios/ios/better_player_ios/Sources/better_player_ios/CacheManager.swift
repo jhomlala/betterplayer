@@ -23,9 +23,9 @@ import Cache
 
     /// Configuration for memory cache.
     private let memoryConfig = MemoryConfig(
-        expiry: .never,
-        countLimit: 0,
-        totalCostLimit: 0
+        expiry: .seconds(600),
+        countLimit: 10,
+        totalCostLimit: 50 * 1024 * 1024
     )
 
     /// The underlying storage for the cache.

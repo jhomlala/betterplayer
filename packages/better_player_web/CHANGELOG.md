@@ -1,3 +1,10 @@
+## Unreleased
+- Fixed: Attached DRM license headers via Shaka `NetworkingEngine` request filter for Widevine, ClearKey, and Token DRM, and reset DRM configuration between data sources.
+- Fixed: Replaced dynamic track property access with Dart JS interop in `addtrack` listener for Dart2Wasm compatibility.
+- Fixed: Guarded Picture-in-Picture checks against undefined `document.pictureInPictureEnabled` on Firefox Wasm.
+- Fixed: Synchronized `videoElement.muted` when setting volume to 0 for muted autoplay compatibility.
+- Fixed: Guarded stream event emissions against disposal and closed stream controllers.
+
 ## 1.6.1
 - Updated: Bumped `better_player_platform_interface` constraint to `^1.8.0` for consistency across platform packages.
 

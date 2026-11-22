@@ -1,4 +1,5 @@
 import 'package:better_player/better_player.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -210,6 +211,81 @@ void main() {
           find.byType(MockControlsWidget),
         );
         expect(state.skipForward, returnsNormally);
+      },
+    );
+
+    testWidgets(
+      'Material overflow bottom sheet opens without MaterialLocalizations ancestor',
+      (tester) async {
+        final materialController = BetterPlayerMockController(
+          const PlayerConfiguration(
+            controlsConfiguration: PlayerControlsConfiguration(
+              playerTheme: PlayerTheme.material,
+            ),
+          ),
+        );
+
+        await tester.pumpWidget(
+          WidgetsApp(
+            color: const Color(0xFF000000),
+            pageRouteBuilder: <T>(settings, builder) => PageRouteBuilder<T>(
+              settings: settings,
+              pageBuilder: (ctx, _, _) => builder(ctx),
+            ),
+            home: MockControlsWidget(controller: materialController),
+          ),
+        );
+
+        final state = tester.state<MockControlsState>(
+          find.byType(MockControlsWidget),
+        );
+        state.onShowMoreClicked();
+        await tester.pumpAndSettle();
+
+        expect(
+          find.text(materialController.translations.overflowMenuPlaybackSpeed),
+          findsOneWidget,
+        );
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets(
+      'Cupertino overflow action sheet opens without CupertinoLocalizations ancestor',
+      (tester) async {
+        final cupertinoController = BetterPlayerMockController(
+          const PlayerConfiguration(
+            controlsConfiguration: PlayerControlsConfiguration(
+              playerTheme: PlayerTheme.cupertino,
+            ),
+          ),
+        );
+
+        await tester.pumpWidget(
+          WidgetsApp(
+            color: const Color(0xFF000000),
+            pageRouteBuilder: <T>(settings, builder) => PageRouteBuilder<T>(
+              settings: settings,
+              pageBuilder: (ctx, _, _) => builder(ctx),
+            ),
+            home: MockControlsWidget(controller: cupertinoController),
+          ),
+        );
+
+        final state = tester.state<MockControlsState>(
+          find.byType(MockControlsWidget),
+        );
+        state.onShowMoreClicked();
+        await tester.pumpAndSettle();
+
+        expect(find.byType(CupertinoActionSheet), findsOneWidget);
+        expect(
+          find.text(
+            cupertinoController.translations.overflowMenuPlaybackSpeed,
+          ),
+          findsOneWidget,
+        );
+        expect(tester.takeException(), isNull);
       },
     );
   });

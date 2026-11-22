@@ -21,6 +21,15 @@ class TestBetterPlayerIOS extends BetterPlayerIOS {
   final MockBetterPlayer mockPlayer;
   final MockCacheManager mockCacheManager;
   dynamic capturedCallback;
+  final List<
+    ({
+      String url,
+      String? cacheKey,
+      String? videoExtension,
+      Map<String, String> headers,
+    })
+  >
+  preCacheCalls = [];
 
   @override
   Future<int?> create({BufferingConfiguration? bufferingConfiguration}) async {
@@ -41,6 +50,21 @@ class TestBetterPlayerIOS extends BetterPlayerIOS {
   @override
   Object createCacheManager() {
     return mockCacheManager;
+  }
+
+  @override
+  void preCacheNative({
+    required String url,
+    required String? cacheKey,
+    required String? videoExtension,
+    required Map<String, String> headers,
+  }) {
+    preCacheCalls.add((
+      url: url,
+      cacheKey: cacheKey,
+      videoExtension: videoExtension,
+      headers: headers,
+    ));
   }
 }
 
@@ -739,5 +763,89 @@ void main() {
       verify(() => mockPlayer.disposeRemoteNotifications()).called(1);
       verify(() => mockPlayer.dispose()).called(1);
     });
+
+    test(
+      'preCache forwards headers, cacheKey, and videoExtension and normalizes null header values',
+      () async {
+        await iosPlayer.preCache(
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'https://example.com/video.mp4',
+            videoExtension: 'mp4',
+            headers: {
+              'Authorization': 'Bearer token-123',
+              'X-Nullable': null,
+            },
+            cacheConfiguration: const CacheConfiguration(
+              useCache: true,
+              key: 'custom-cache-key',
+            ),
+          ),
+          1024 * 1024,
+        );
+
+        expect(iosPlayer.preCacheCalls, hasLength(1));
+        final call = iosPlayer.preCacheCalls.single;
+        expect(call.url, 'https://example.com/video.mp4');
+        expect(call.cacheKey, 'custom-cache-key');
+        expect(call.videoExtension, 'mp4');
+        expect(call.headers, {
+          'Authorization': 'Bearer token-123',
+          'X-Nullable': '',
+        });
+      },
+    );
+
+    test('preCache forwards empty headers when headers are omitted', () async {
+      await iosPlayer.preCache(
+        DataSource(
+          sourceType: DataSourceType.network,
+          uri: 'https://example.com/video.mp4',
+        ),
+        1024 * 1024,
+      );
+
+      expect(iosPlayer.preCacheCalls, hasLength(1));
+      expect(iosPlayer.preCacheCalls.single.headers, isEmpty);
+    });
+
+    test(
+      'setDataSource with FairPlay DRM, custom headers, and useCache: true forwards all parameters',
+      () async {
+        await iosPlayer.create();
+        const certUrl = 'https://license.example.com/cert.der';
+        const licUrl = 'https://license.example.com/license';
+        const headers = {'Authorization': 'Bearer drm-token'};
+        await iosPlayer.setDataSource(
+          1,
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'https://example.com/protected.m3u8',
+            headers: headers,
+            cacheConfiguration: const CacheConfiguration(useCache: true),
+            drmConfiguration: const DrmConfiguration(
+              drmType: DrmType.fairplay,
+              certificateUrl: certUrl,
+              licenseUrl: licUrl,
+            ),
+          ),
+        );
+
+        verify(
+          () => mockPlayer.setDataSourceURLString(
+            'https://example.com/protected.m3u8',
+            key: any(named: 'key'),
+            certificateUrl: certUrl,
+            licenseUrl: licUrl,
+            headers: headers,
+            useCache: true,
+            cacheKey: any(named: 'cacheKey'),
+            cacheManager: any(named: 'cacheManager'),
+            overriddenDuration: any(named: 'overriddenDuration'),
+            videoExtension: any(named: 'videoExtension'),
+          ),
+        ).called(1);
+      },
+    );
   });
 }

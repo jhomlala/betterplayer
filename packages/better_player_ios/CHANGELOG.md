@@ -1,3 +1,10 @@
+## Unreleased
+- Fixed: Safely handled content-info-only probe requests in `CachingPlayerItem` to prevent nil force-unwrap crashes, rejected non-2xx HTTP responses from disk cache, bounded `CacheManager` memory cache, and forwarded HTTP headers in `preCache`.
+- Fixed: Prevented stall recovery and `seekTo` completion from resuming paused or disposed players.
+- Fixed: Bypassed `CacheManager` for FairPlay DRM streams when `useCache` is enabled and forwarded custom HTTP headers to FairPlay certificate and license requests.
+- Fixed: Prevented Release dead-code stripping of `BetterPlayerLogCallback`, corrected Swift Package Manager target dependency direction between `better_player_ios` and `better_player_ios_objc`, and declared `hyperoslo/Cache` required-reason APIs in `PrivacyInfo.xcprivacy`.
+- Fixed: Added `translatesAutoresizingMaskIntoConstraints = false` and iOS 17+ sublayer lookup for screen capture protection.
+
 ## 1.15.0
 - Fixed: Restored iOS media playback notifications and Lock Screen and Control Center controls via `MPNowPlayingInfoCenter` and `MPRemoteCommandCenter` (#1660).
 - Fixed: Audio muted on iPhone when hardware Silent switch is active by configuring `AVAudioSession` category to `.playback` and activating the audio session on playback (#1663).

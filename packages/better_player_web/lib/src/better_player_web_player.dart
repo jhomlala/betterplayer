@@ -42,6 +42,11 @@ class BetterPlayerWebPlayer {
 
   Stream<VideoEvent> get events => _eventController.stream;
 
+  void _safeEmitEvent(VideoEvent event) {
+    if (_disposed || _eventController.isClosed) return;
+    _eventController.add(event);
+  }
+
   Future<void> initialize({web.HTMLVideoElement? videoElement}) async {
     _eventController = StreamController<VideoEvent>.broadcast();
 
@@ -178,7 +183,7 @@ class BetterPlayerWebPlayer {
                 ? Duration.zero
                 : Duration(milliseconds: (raw * 1000).toInt()));
 
-        _eventController.add(
+        _safeEmitEvent(
           VideoEvent(
             eventType: VideoEventType.initialized,
             key: _currentKey,
@@ -195,7 +200,7 @@ class BetterPlayerWebPlayer {
     videoElement.addEventListener(
       'ended',
       ((web.Event _) {
-        _eventController.add(
+        _safeEmitEvent(
           VideoEvent(eventType: VideoEventType.completed, key: _currentKey),
         );
       }).toJS,
@@ -209,9 +214,9 @@ class BetterPlayerWebPlayer {
       ((web.Event _) {
         bufferingTimer?.cancel();
         bufferingTimer = Timer(const Duration(milliseconds: 200), () {
-          if (_disposed) return;
+          if (_disposed || _eventController.isClosed) return;
           isBuffering = true;
-          _eventController.add(
+          _safeEmitEvent(
             VideoEvent(
               eventType: VideoEventType.bufferingStart,
               key: _currentKey,
@@ -227,7 +232,7 @@ class BetterPlayerWebPlayer {
         bufferingTimer?.cancel();
         if (isBuffering) {
           isBuffering = false;
-          _eventController.add(
+          _safeEmitEvent(
             VideoEvent(
               eventType: VideoEventType.bufferingEnd,
               key: _currentKey,
@@ -293,7 +298,7 @@ class BetterPlayerWebPlayer {
     videoElement.addEventListener(
       'play',
       ((web.Event _) {
-        _eventController.add(
+        _safeEmitEvent(
           VideoEvent(eventType: VideoEventType.play, key: _currentKey),
         );
       }).toJS,
@@ -302,7 +307,7 @@ class BetterPlayerWebPlayer {
     videoElement.addEventListener(
       'pause',
       ((web.Event _) {
-        _eventController.add(
+        _safeEmitEvent(
           VideoEvent(eventType: VideoEventType.pause, key: _currentKey),
         );
       }).toJS,
@@ -314,7 +319,7 @@ class BetterPlayerWebPlayer {
         final now = DateTime.now();
         if (now.difference(_lastSeekUpdate).inMilliseconds > 200) {
           _lastSeekUpdate = now;
-          _eventController.add(
+          _safeEmitEvent(
             VideoEvent(
               eventType: VideoEventType.seek,
               key: _currentKey,
@@ -330,7 +335,7 @@ class BetterPlayerWebPlayer {
     videoElement.addEventListener(
       'resize',
       ((web.Event _) {
-        _eventController.add(
+        _safeEmitEvent(
           VideoEvent(
             eventType: VideoEventType.changedSize,
             key: _currentKey,
@@ -346,7 +351,7 @@ class BetterPlayerWebPlayer {
     videoElement.addEventListener(
       'enterpictureinpicture',
       ((web.Event _) {
-        _eventController.add(
+        _safeEmitEvent(
           VideoEvent(eventType: VideoEventType.pipStart, key: _currentKey),
         );
       }).toJS,
@@ -355,7 +360,7 @@ class BetterPlayerWebPlayer {
     videoElement.addEventListener(
       'leavepictureinpicture',
       ((web.Event _) {
-        _eventController.add(
+        _safeEmitEvent(
           VideoEvent(eventType: VideoEventType.pipStop, key: _currentKey),
         );
       }).toJS,
@@ -382,7 +387,10 @@ class BetterPlayerWebPlayer {
       tracks.addEventListener(
         'addtrack',
         ((web.Event event) {
-          final track = (event as dynamic).track as web.TextTrack?;
+          final eventObj = event as JSObject;
+          final track = eventObj.has('track')
+              ? eventObj.getProperty<web.TextTrack?>('track'.toJS)
+              : null;
           if (track != null) {
             attachCueListener(track);
           }
@@ -424,7 +432,7 @@ class BetterPlayerWebPlayer {
         }
       }
     }
-    _eventController.add(
+    _safeEmitEvent(
       VideoEvent(
         eventType: VideoEventType.captionUpdate,
         captions: captions,
@@ -451,7 +459,7 @@ class BetterPlayerWebPlayer {
         ),
       );
     }
-    _eventController.add(
+    _safeEmitEvent(
       VideoEvent(
         eventType: VideoEventType.bufferingUpdate,
         key: _currentKey,
@@ -464,14 +472,37 @@ class BetterPlayerWebPlayer {
     _currentKey = dataSource.key;
     overriddenDuration = dataSource.overriddenDuration;
 
-    final config = buildShakaConfig(dataSource);
-    if (config != null) {
-      _shakaPlayer!.configure(config);
+    final resetConfig =
+        {
+              'drm': {
+                'servers': <String, dynamic>{},
+                'advanced': <String, dynamic>{},
+                'clearKeys': <String, dynamic>{},
+              },
+              'abr': {'enabled': true},
+            }.jsify()!
+            as JSObject;
+    final jsPlayer = _shakaPlayer != null ? _shakaPlayer! as JSObject : null;
+    if (jsPlayer != null && jsPlayer.has('configure')) {
+      _shakaPlayer!.configure(resetConfig);
+      final config = buildShakaConfig(dataSource);
+      if (config != null) {
+        _shakaPlayer!.configure(config);
+      }
     }
 
     _clearRequestFilter();
-    if (dataSource.headers != null && dataSource.headers!.isNotEmpty) {
-      _attachRequestFilter(dataSource.headers!);
+    final drm = dataSource.drmConfiguration;
+    final licenseHeaders = <String, String>{
+      if (drm?.headers != null) ...drm!.headers!,
+      if (drm?.token != null) 'Authorization': 'Bearer ${drm!.token}',
+    };
+    final allHeaders = dataSource.headers ?? const <String, String>{};
+    if (allHeaders.isNotEmpty || licenseHeaders.isNotEmpty) {
+      _attachRequestFilter(
+        allHeaders,
+        licenseHeaders.isEmpty ? null : licenseHeaders,
+      );
     }
 
     final uri =
@@ -554,6 +585,19 @@ class BetterPlayerWebPlayer {
           };
         }
       case null:
+        if (drm.licenseUrl != null) {
+          servers['com.widevine.alpha'] = drm.licenseUrl!;
+        }
+        if (drm.certificateUrl != null) {
+          servers['com.apple.fps'] = drm.licenseUrl ?? '';
+          advanced['com.apple.fps'] = {
+            'serverCertificateUri': drm.certificateUrl!,
+          };
+        }
+        if (drm.clearKey != null) {
+          final parsed = _parseClearKeys(drm.clearKey!);
+          clearKeys.addAll(parsed);
+        }
     }
 
     return {
@@ -618,12 +662,21 @@ class BetterPlayerWebPlayer {
     }
   }
 
-  void _attachRequestFilter(Map<String, String?> headers) {
+  void _attachRequestFilter(
+    Map<String, String?> headers, [
+    Map<String, String>? licenseHeaders,
+  ]) {
     final filter = ((JSNumber type, JSObject request) {
+      if (!request.has('headers')) return;
       final requestHeaders = request['headers']! as JSObject;
       for (final entry in headers.entries) {
         if (entry.value != null) {
           requestHeaders[entry.key] = entry.value!.toJS;
+        }
+      }
+      if (licenseHeaders != null && type.toDartInt == 2) {
+        for (final entry in licenseHeaders.entries) {
+          requestHeaders[entry.key] = entry.value.toJS;
         }
       }
     }).toJS;
@@ -656,6 +709,9 @@ class BetterPlayerWebPlayer {
               'BetterPlayerWebPlayer: videoElement.play() promise rejected: $err',
           levelIndex: 3,
         );
+        _safeEmitEvent(
+          VideoEvent(eventType: VideoEventType.pause, key: _currentKey),
+        );
         return null;
       });
     } on Object catch (e) {
@@ -663,6 +719,9 @@ class BetterPlayerWebPlayer {
         message:
             'BetterPlayerWebPlayer: videoElement.play() threw exception: $e',
         levelIndex: 3,
+      );
+      _safeEmitEvent(
+        VideoEvent(eventType: VideoEventType.pause, key: _currentKey),
       );
     }
   }
@@ -672,9 +731,10 @@ class BetterPlayerWebPlayer {
     videoElement.pause();
   }
 
-  // Setter syntax is avoided to allow mocking in Mocktail unit tests.
-  // ignore: use_setters_to_change_properties
-  void setVolume(double volume) => videoElement.volume = volume;
+  void setVolume(double volume) {
+    videoElement.volume = volume;
+    videoElement.muted = volume == 0;
+  }
 
   // Setter syntax is avoided to allow mocking in Mocktail unit tests.
   // ignore: use_setters_to_change_properties
@@ -865,7 +925,7 @@ class BetterPlayerWebPlayer {
   void selectTextTrack(JSObject track) => _shakaPlayer!.selectTextTrack(track);
 
   Future<void> enablePictureInPicture() async {
-    if (!web.document.pictureInPictureEnabled) return;
+    if (!isPictureInPictureSupported()) return;
     await videoElement.requestPictureInPicture().toDart;
   }
 
@@ -875,7 +935,12 @@ class BetterPlayerWebPlayer {
   }
 
   bool isPictureInPictureSupported() {
-    return web.document.pictureInPictureEnabled;
+    final docJs = web.document as JSObject;
+    if (!docJs.has('pictureInPictureEnabled')) return false;
+    final enabled = docJs.getProperty<JSAny?>('pictureInPictureEnabled'.toJS);
+    return enabled != null &&
+        enabled.isA<JSBoolean>() &&
+        (enabled as JSBoolean).toDart;
   }
 
   Future<void> dispose() async {
@@ -884,6 +949,16 @@ class BetterPlayerWebPlayer {
     }
     _disposed = true;
     _clearRequestFilter();
+    final jsVideo = videoElement as JSObject;
+    if (jsVideo.has('pause')) {
+      videoElement.pause();
+    }
+    if (jsVideo.has('removeAttribute')) {
+      videoElement.removeAttribute('src');
+    }
+    if (jsVideo.has('load')) {
+      videoElement.load();
+    }
     if (_shakaPlayer != null) {
       await _shakaPlayer!.destroy().toDart;
     }

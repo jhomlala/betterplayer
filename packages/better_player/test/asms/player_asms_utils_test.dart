@@ -1,4 +1,4 @@
-import 'package:better_player/src/asms/player_asms_utils.dart';
+import 'package:better_player/better_player.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -92,6 +92,54 @@ void main() {
         expect(
           result.effectiveUrl,
           'https://cdn.example.com/hls/stream/master.m3u8',
+        );
+      },
+    );
+
+    test(
+      'parse uses DASH parser when videoFormat is dash even without .mpd in URL',
+      () async {
+        final utils = PlayerAsmsUtils();
+        const dashXml = '''
+<MPD xmlns="urn:mpeg:dash:schema:mpd:2011" profiles="urn:mpeg:dash:profile:isoff-on-demand:2011" type="static">
+  <Period>
+    <AdaptationSet mimeType="video/mp4">
+      <Representation id="1" width="1280" height="720" bandwidth="1500000"/>
+    </AdaptationSet>
+  </Period>
+</MPD>''';
+
+        final holder = await utils.parse(
+          dashXml,
+          'https://example.com/manifest?id=123',
+          videoFormat: VideoFormat.dash,
+        );
+
+        expect(holder.tracks, isNotNull);
+        expect(
+          holder.tracks!.any((t) => t.width == 1280 && t.height == 720),
+          isTrue,
+        );
+      },
+    );
+
+    test(
+      'parse uses HLS parser when videoFormat is hls even if URL contains mpd',
+      () async {
+        final utils = PlayerAsmsUtils();
+        const hlsPlaylist =
+            '#EXTM3U\n#EXT-X-STREAM-INF:BANDWIDTH=1280000,RESOLUTION=1280x720\nvideo.m3u8';
+
+        final holder = await utils.parse(
+          hlsPlaylist,
+          'https://example.com/stream?format=mpd',
+          videoFormat: VideoFormat.hls,
+        );
+
+        expect(holder.tracks, isNotNull);
+        expect(
+          holder.tracks!.any((t) => t.width == 1280 && t.height == 720),
+          isTrue,
         );
       },
     );

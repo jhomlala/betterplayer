@@ -446,5 +446,31 @@ void main() {
         expect(receivedProgress.first.cacheKey, customKey);
       },
     );
+
+    test(
+      'preCache includes token DRM authorization header and handles const headers',
+      () async {
+        const videoUrl = 'https://example.com/protected.mp4';
+        final dataSource = PlayerDataSource(
+          DataSourceType.network,
+          videoUrl,
+          headers: const {'X-Client': 'mobile'},
+          drmConfiguration: const DrmConfiguration(
+            drmType: DrmType.token,
+            token: 'Bearer precache-token',
+          ),
+        );
+
+        await controller.preCache(dataSource);
+
+        expect(mockPlatform.preCacheCalls, hasLength(1));
+        final passedHeaders = mockPlatform.preCacheCalls.first.headers;
+        expect(passedHeaders?['X-Client'], 'mobile');
+        expect(
+          passedHeaders?[PlayerEventConstants.authorizationHeader],
+          'Bearer precache-token',
+        );
+      },
+    );
   });
 }
