@@ -37,7 +37,10 @@ class BonsoirCastDiscovery implements CastDiscovery {
       await discovery.initialize();
 
       _subscription = discovery.eventStream?.listen(
-        (event) => _handleDiscoveryEvent(event, discovery),
+        (event) => _handleDiscoveryEvent(
+          event: event,
+          discovery: discovery,
+        ),
         onError: (Object error) {
           PlayerLogger.error(message: 'Cast mDNS discovery error: $error');
         },
@@ -72,16 +75,20 @@ class BonsoirCastDiscovery implements CastDiscovery {
   @override
   Future<void> dispose() async {
     await stop();
-    await _devicesController.close();
+    if (!_devicesController.isClosed) {
+      await _devicesController.close();
+    }
   }
 
-  void _handleDiscoveryEvent(
-    BonsoirDiscoveryEvent event,
-    BonsoirDiscovery discovery,
-  ) {
+  void _handleDiscoveryEvent({
+    required BonsoirDiscoveryEvent event,
+    required BonsoirDiscovery discovery,
+  }) {
     if (event is BonsoirDiscoveryServiceFoundEvent) {
       event.service.resolve(discovery.serviceResolver);
     } else if (event is BonsoirDiscoveryServiceResolvedEvent) {
+      _onServiceResolved(event.service);
+    } else if (event is BonsoirDiscoveryServiceUpdatedEvent) {
       _onServiceResolved(event.service);
     } else if (event is BonsoirDiscoveryServiceLostEvent) {
       _onServiceLost(event.service);
@@ -90,11 +97,16 @@ class BonsoirCastDiscovery implements CastDiscovery {
 
   void _onServiceResolved(BonsoirService service) {
     final host = _extractHost(service);
-    if (host == null) return;
+    if (host == null || host.isEmpty) return;
 
-    final name = service.attributes['fn'] ?? service.name;
-    final model = service.attributes['md'];
-    final id = service.attributes['id'] ?? '${host}_${service.port}';
+    final fn = service.attributes['fn']?.trim();
+    final name = (fn != null && fn.isNotEmpty) ? fn : service.name;
+    final md = service.attributes['md']?.trim();
+    final model = (md != null && md.isNotEmpty) ? md : null;
+    final rawId = service.attributes['id']?.trim();
+    final id = (rawId != null && rawId.isNotEmpty)
+        ? rawId
+        : '${host}_${service.port}';
 
     final device = CastDevice(
       id: id,
@@ -105,20 +117,32 @@ class BonsoirCastDiscovery implements CastDiscovery {
     );
 
     _deviceMap[device.id] = device;
-    _devicesController.add(_deviceMap.values.toList());
+    if (!_devicesController.isClosed) {
+      _devicesController.add(_deviceMap.values.toList());
+    }
   }
 
   void _onServiceLost(BonsoirService service) {
     final id = service.attributes['id'] ?? service.name;
-    _deviceMap.remove(id);
-    _deviceMap.removeWhere((_, d) => d.name == service.name);
-    _devicesController.add(_deviceMap.values.toList());
+    _deviceMap
+      ..remove(id)
+      ..removeWhere((_, d) => d.name == service.name);
+    if (!_devicesController.isClosed) {
+      _devicesController.add(_deviceMap.values.toList());
+    }
   }
 
   String? _extractHost(BonsoirService service) {
     if (service.hostAddresses.isNotEmpty) {
-      return service.hostAddresses.first;
+      final ipv4 = service.hostAddresses
+          .where((address) => !address.contains(':'))
+          .firstOrNull;
+      return ipv4 ?? service.hostAddresses.first;
     }
-    return service.hostname;
+    final hostname = service.hostname;
+    if (hostname == null || hostname.isEmpty) return null;
+    return hostname.endsWith('.')
+        ? hostname.substring(0, hostname.length - 1)
+        : hostname;
   }
 }

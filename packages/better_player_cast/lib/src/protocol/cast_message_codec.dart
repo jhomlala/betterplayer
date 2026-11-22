@@ -3,12 +3,6 @@ import 'dart:typed_data';
 
 import 'package:better_player_cast/src/protocol/cast_message.dart';
 
-/// Internal reference to track read position in byte buffers.
-class _OffsetRef {
-  _OffsetRef(this.offset);
-  int offset;
-}
-
 /// Binary encoder and decoder for CastV2 wire frames.
 class CastMessageCodec {
   /// Maximum permitted payload frame size (1 MB guard).
@@ -19,30 +13,42 @@ class CastMessageCodec {
     final payloadBytes = <int>[];
 
     // Field 1: protocolVersion (varint, tag 8)
-    _writeVarint(payloadBytes, (1 << 3) | 0);
-    _writeVarint(payloadBytes, message.protocolVersion);
+    _writeVarint(out: payloadBytes, value: (1 << 3) | 0);
+    _writeVarint(out: payloadBytes, value: message.protocolVersion);
 
     // Field 2: sourceId (length-delimited, tag 18)
-    _writeString(payloadBytes, fieldNumber: 2, value: message.sourceId);
+    _writeString(out: payloadBytes, fieldNumber: 2, value: message.sourceId);
 
     // Field 3: destinationId (length-delimited, tag 26)
-    _writeString(payloadBytes, fieldNumber: 3, value: message.destinationId);
+    _writeString(
+      out: payloadBytes,
+      fieldNumber: 3,
+      value: message.destinationId,
+    );
 
     // Field 4: namespace (length-delimited, tag 34)
-    _writeString(payloadBytes, fieldNumber: 4, value: message.namespace);
+    _writeString(out: payloadBytes, fieldNumber: 4, value: message.namespace);
 
     // Field 5: payloadType (varint, tag 40)
-    _writeVarint(payloadBytes, (5 << 3) | 0);
-    _writeVarint(payloadBytes, message.payloadType);
+    _writeVarint(out: payloadBytes, value: (5 << 3) | 0);
+    _writeVarint(out: payloadBytes, value: message.payloadType);
 
     // Field 6: payloadUtf8 (length-delimited, tag 50)
     if (message.payloadUtf8 != null) {
-      _writeString(payloadBytes, fieldNumber: 6, value: message.payloadUtf8!);
+      _writeString(
+        out: payloadBytes,
+        fieldNumber: 6,
+        value: message.payloadUtf8!,
+      );
     }
 
     // Field 7: payloadBinary (length-delimited, tag 58)
     if (message.payloadBinary != null) {
-      _writeBytes(payloadBytes, fieldNumber: 7, bytes: message.payloadBinary!);
+      _writeBytes(
+        out: payloadBytes,
+        fieldNumber: 7,
+        bytes: message.payloadBinary!,
+      );
     }
 
     final frameLen = payloadBytes.length;
@@ -89,7 +95,7 @@ class CastMessageCodec {
 
   /// Decodes raw protobuf payload bytes into a [CastMessage].
   CastMessage decodeSinglePayload(Uint8List data) {
-    final ref = _OffsetRef(0);
+    var offset = 0;
     var protocolVersion = 0;
     var sourceId = '';
     var destinationId = '';
@@ -98,23 +104,30 @@ class CastMessageCodec {
     String? payloadUtf8;
     Uint8List? payloadBinary;
 
-    while (ref.offset < data.length) {
-      final key = _readVarint(data, ref);
+    while (offset < data.length) {
+      final keyRes = _readVarint(data: data, offset: offset);
+      final key = keyRes.value;
+      offset = keyRes.offset;
+
       final fieldNumber = key >> 3;
       final wireType = key & 0x07;
 
       switch (wireType) {
         case 0: // Varint
-          final value = _readVarint(data, ref);
+          final valRes = _readVarint(data: data, offset: offset);
+          final value = valRes.value;
+          offset = valRes.offset;
           if (fieldNumber == 1) protocolVersion = value;
           if (fieldNumber == 5) payloadType = value;
         case 2: // Length-delimited
-          final len = _readVarint(data, ref);
-          if (ref.offset + len > data.length) {
+          final lenRes = _readVarint(data: data, offset: offset);
+          final len = lenRes.value;
+          offset = lenRes.offset;
+          if (offset + len > data.length) {
             throw const FormatException('Protobuf field length exceeds buffer');
           }
-          final fieldBytes = data.sublist(ref.offset, ref.offset + len);
-          ref.offset += len;
+          final fieldBytes = data.sublist(offset, offset + len);
+          offset += len;
 
           if (fieldNumber == 2) sourceId = utf8.decode(fieldBytes);
           if (fieldNumber == 3) destinationId = utf8.decode(fieldBytes);
@@ -122,7 +135,7 @@ class CastMessageCodec {
           if (fieldNumber == 6) payloadUtf8 = utf8.decode(fieldBytes);
           if (fieldNumber == 7) payloadBinary = fieldBytes;
         default:
-          _skipField(data, ref, wireType);
+          offset = _skipField(data: data, offset: offset, wireType: wireType);
       }
     }
 
@@ -137,7 +150,10 @@ class CastMessageCodec {
     );
   }
 
-  static void _writeVarint(List<int> out, int value) {
+  static void _writeVarint({
+    required List<int> out,
+    required int value,
+  }) {
     var v = value;
     while (v >= 0x80) {
       out.add((v & 0x7F) | 0x80);
@@ -146,44 +162,60 @@ class CastMessageCodec {
     out.add(v & 0x7F);
   }
 
-  static void _writeString(
-    List<int> out, {
+  static void _writeString({
+    required List<int> out,
     required int fieldNumber,
     required String value,
   }) {
     final bytes = utf8.encode(value);
-    _writeBytes(out, fieldNumber: fieldNumber, bytes: bytes);
+    _writeBytes(out: out, fieldNumber: fieldNumber, bytes: bytes);
   }
 
-  static void _writeBytes(
-    List<int> out, {
+  static void _writeBytes({
+    required List<int> out,
     required int fieldNumber,
     required List<int> bytes,
   }) {
-    _writeVarint(out, (fieldNumber << 3) | 2);
-    _writeVarint(out, bytes.length);
+    _writeVarint(out: out, value: (fieldNumber << 3) | 2);
+    _writeVarint(out: out, value: bytes.length);
     out.addAll(bytes);
   }
 
-  static int _readVarint(Uint8List data, _OffsetRef ref) {
+  static ({int value, int offset}) _readVarint({
+    required Uint8List data,
+    required int offset,
+  }) {
+    var currentOffset = offset;
     var result = 0;
     var shift = 0;
-    while (ref.offset < data.length) {
-      final byte = data[ref.offset++];
+    while (currentOffset < data.length) {
+      final byte = data[currentOffset++];
       result |= (byte & 0x7F) << shift;
-      if ((byte & 0x80) == 0) return result;
+      if ((byte & 0x80) == 0) {
+        return (value: result, offset: currentOffset);
+      }
       shift += 7;
       if (shift >= 64) throw const FormatException('Varint overflow');
     }
     throw const FormatException('Unexpected end of varint stream');
   }
 
-  static void _skipField(Uint8List data, _OffsetRef ref, int wireType) {
+  static int _skipField({
+    required Uint8List data,
+    required int offset,
+    required int wireType,
+  }) {
     switch (wireType) {
       case 1: // 64-bit
-        ref.offset += 8;
+        if (offset + 8 > data.length) {
+          throw const FormatException('64-bit field exceeds buffer');
+        }
+        return offset + 8;
       case 5: // 32-bit
-        ref.offset += 4;
+        if (offset + 4 > data.length) {
+          throw const FormatException('32-bit field exceeds buffer');
+        }
+        return offset + 4;
       default:
         throw FormatException('Unsupported wire type: $wireType');
     }

@@ -6,6 +6,7 @@ import 'package:better_player_cast/src/config/cast_configuration.dart';
 import 'package:better_player_cast/src/models/cast_device.dart';
 import 'package:better_player_cast/src/models/cast_media_info.dart';
 import 'package:better_player_cast/src/models/cast_media_status.dart';
+import 'package:better_player_cast/src/models/cast_player_state.dart';
 import 'package:better_player_cast/src/models/cast_session_state.dart';
 import 'package:better_player_cast/src/protocol/cast_message.dart';
 import 'package:better_player_cast/src/protocol/cast_namespaces.dart';
@@ -20,6 +21,7 @@ class CastSession {
     CastSocketFactory? socketFactory,
   }) : _socketFactory = socketFactory ?? CastTlsSocket.connect;
 
+  /// Cast session configuration.
   final CastConfiguration configuration;
   final CastSocketFactory _socketFactory;
 
@@ -36,6 +38,7 @@ class CastSession {
   String? _transportId;
   int? _mediaSessionId;
   CastMediaStatus? _lastMediaStatus;
+  DateTime _lastMediaStatusTime = DateTime.now();
 
   final StreamController<CastSessionState> _stateController =
       StreamController<CastSessionState>.broadcast();
@@ -55,6 +58,24 @@ class CastSession {
 
   /// Latest media status reported by the receiver.
   CastMediaStatus? get mediaStatus => _lastMediaStatus;
+
+  /// Estimated playback position on the receiver using wall-clock interpolation while playing.
+  Duration? get estimatedPosition {
+    final status = _lastMediaStatus;
+    if (status == null) return null;
+    if (status.playerState != CastPlayerState.playing) {
+      return status.currentTime;
+    }
+    final elapsed = DateTime.now().difference(_lastMediaStatusTime);
+    final interpolated = status.currentTime + elapsed;
+    final totalDuration = status.duration;
+    if (totalDuration != null &&
+        totalDuration > Duration.zero &&
+        interpolated > totalDuration) {
+      return totalDuration;
+    }
+    return interpolated;
+  }
 
   /// Stream of media status updates from the receiver.
   Stream<CastMediaStatus> get mediaStatusStream =>
@@ -85,6 +106,11 @@ class CastSession {
       _startHeartbeat();
 
       await _launchOrJoinApp();
+      if (_transportId == null) {
+        throw SocketException(
+          'Failed to launch or join receiver application ${configuration.receiverAppId}',
+        );
+      }
       _setState(CastSessionState.connected);
     } on Object catch (_) {
       await disconnect();
@@ -130,8 +156,7 @@ class CastSession {
     if (statuses != null && statuses.isNotEmpty) {
       final statusMap = statuses.first as Map<String, dynamic>;
       final status = CastMediaStatus.fromJson(statusMap);
-      _mediaSessionId = status.mediaSessionId;
-      _lastMediaStatus = status;
+      _updateMediaStatus(status);
       return status;
     }
     return _lastMediaStatus;
@@ -140,11 +165,29 @@ class CastSession {
   /// Sends a PLAY command to the receiver.
   Future<void> play() async {
     await _sendMediaCommand(type: 'PLAY');
+    final current = _lastMediaStatus;
+    if (current != null) {
+      _updateMediaStatus(
+        current.copyWith(
+          playerState: CastPlayerState.playing,
+          currentTime: estimatedPosition ?? current.currentTime,
+        ),
+      );
+    }
   }
 
   /// Sends a PAUSE command to the receiver.
   Future<void> pause() async {
     await _sendMediaCommand(type: 'PAUSE');
+    final current = _lastMediaStatus;
+    if (current != null) {
+      _updateMediaStatus(
+        current.copyWith(
+          playerState: CastPlayerState.paused,
+          currentTime: estimatedPosition ?? current.currentTime,
+        ),
+      );
+    }
   }
 
   /// Sends a SEEK command to the receiver.
@@ -153,12 +196,17 @@ class CastSession {
       type: 'SEEK',
       extra: {'currentTime': position.inMilliseconds / 1000.0},
     );
+    final current = _lastMediaStatus;
+    if (current != null) {
+      _updateMediaStatus(current.copyWith(currentTime: position));
+    }
   }
 
   /// Sets the receiver volume level (0.0 to 1.0).
   Future<void> setVolume(double level, {bool? muted}) async {
     final reqId = _nextRequestId();
-    final volume = <String, dynamic>{'level': level.clamp(0.0, 1.0)};
+    final clampedLevel = level.clamp(0.0, 1.0);
+    final volume = <String, dynamic>{'level': clampedLevel};
     if (muted != null) volume['muted'] = muted;
 
     _sendJson(
@@ -170,6 +218,16 @@ class CastSession {
         'volume': volume,
       },
     );
+
+    final current = _lastMediaStatus;
+    if (current != null) {
+      _updateMediaStatus(
+        current.copyWith(
+          volume: clampedLevel,
+          muted: muted ?? (clampedLevel == 0.0),
+        ),
+      );
+    }
   }
 
   /// Stops playback and closes the receiver application.
@@ -225,6 +283,17 @@ class CastSession {
     _setState(CastSessionState.disconnected);
   }
 
+  /// Disposes this session and closes internal stream controllers.
+  Future<void> dispose() async {
+    await disconnect();
+    if (!_stateController.isClosed) {
+      await _stateController.close();
+    }
+    if (!_mediaStatusController.isClosed) {
+      await _mediaStatusController.close();
+    }
+  }
+
   Future<void> _launchOrJoinApp() async {
     final status = await _getReceiverStatus();
     final apps = status['applications'] as List<dynamic>?;
@@ -245,9 +314,15 @@ class CastSession {
     final launchRes = await _launchApp(configuration.receiverAppId);
     final launchedApps = launchRes['applications'] as List<dynamic>?;
     if (launchedApps != null && launchedApps.isNotEmpty) {
-      final app = launchedApps.first as Map<String, dynamic>;
-      _sessionId = app['sessionId'] as String?;
-      _transportId = app['transportId'] as String?;
+      for (final app in launchedApps) {
+        if (app is Map<String, dynamic> &&
+            (app['appId'] == configuration.receiverAppId ||
+                launchedApps.length == 1)) {
+          _sessionId = app['sessionId'] as String?;
+          _transportId = app['transportId'] as String?;
+          break;
+        }
+      }
     }
     if (_transportId != null) {
       _connectTransport(_transportId!);
@@ -339,6 +414,7 @@ class CastSession {
   }
 
   void _onMessageReceived(CastMessage message) {
+    _lastPongTime = DateTime.now();
     if (message.payloadUtf8 == null) return;
 
     Map<String, dynamic> data;
@@ -351,13 +427,22 @@ class CastSession {
     final type = data['type'] as String?;
     if (message.namespace == CastNamespaces.heartbeat) {
       if (type == 'PING') {
+        final target = message.sourceId.isNotEmpty
+            ? message.sourceId
+            : CastNamespaces.defaultReceiverId;
         _sendJson(
           namespace: CastNamespaces.heartbeat,
-          destinationId: CastNamespaces.defaultReceiverId,
+          destinationId: target,
           json: {'type': 'PONG'},
         );
-      } else if (type == 'PONG') {
-        _lastPongTime = DateTime.now();
+      }
+      return;
+    }
+
+    if (message.namespace == CastNamespaces.connection && type == 'CLOSE') {
+      if (message.sourceId == _transportId ||
+          message.sourceId == CastNamespaces.defaultReceiverId) {
+        unawaited(disconnect());
       }
       return;
     }
@@ -369,10 +454,35 @@ class CastSession {
           ? data['status'] as Map<String, dynamic>
           : data;
       completer.complete(statusMap);
+    } else if (message.namespace == CastNamespaces.receiver &&
+        type == 'RECEIVER_STATUS' &&
+        isConnected &&
+        _sessionId != null) {
+      _handleUnsolicitedReceiverStatus(data);
     }
 
     if (message.namespace == CastNamespaces.media && type == 'MEDIA_STATUS') {
       _handleMediaStatusMessage(data);
+    }
+  }
+
+  void _handleUnsolicitedReceiverStatus(Map<String, dynamic> data) {
+    final statusMap = data['status'];
+    if (statusMap is! Map<String, dynamic>) return;
+    if (!statusMap.containsKey('applications')) return;
+    final apps = statusMap['applications'] as List<dynamic>?;
+    if (apps == null || apps.isEmpty) {
+      unawaited(disconnect());
+      return;
+    }
+    final stillRunning = apps.any(
+      (app) =>
+          app is Map<String, dynamic> &&
+          (app['sessionId'] == _sessionId ||
+              app['appId'] == configuration.receiverAppId),
+    );
+    if (!stillRunning) {
+      unawaited(disconnect());
     }
   }
 
@@ -382,9 +492,16 @@ class CastSession {
 
     final statusMap = statuses.first as Map<String, dynamic>;
     final status = CastMediaStatus.fromJson(statusMap);
+    _updateMediaStatus(status);
+  }
+
+  void _updateMediaStatus(CastMediaStatus status) {
     _mediaSessionId = status.mediaSessionId;
     _lastMediaStatus = status;
-    _mediaStatusController.add(status);
+    _lastMediaStatusTime = DateTime.now();
+    if (!_mediaStatusController.isClosed) {
+      _mediaStatusController.add(status);
+    }
   }
 
   void _onSocketError(Object error) {
@@ -417,7 +534,9 @@ class CastSession {
   void _setState(CastSessionState newState) {
     if (_state != newState) {
       _state = newState;
-      _stateController.add(newState);
+      if (!_stateController.isClosed) {
+        _stateController.add(newState);
+      }
     }
   }
 }

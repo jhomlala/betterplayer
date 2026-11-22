@@ -17,3 +17,4 @@ export 'src/ui/cast_connected_banner.dart';
 export 'src/ui/cast_device_picker_sheet.dart';
 export 'src/ui/cast_device_tile.dart';
 export 'src/ui/cast_empty_state.dart';
+export 'src/ui/cast_player_overlay.dart';

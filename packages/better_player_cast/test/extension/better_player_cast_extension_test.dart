@@ -54,6 +54,7 @@ void main() {
       expect(controller.isCasting, isFalse);
       expect(controller.isExternalPlaybackSupported, isTrue);
       expect(extension.targetDeviceName, isNull);
+      expect(extension.overlayWidget, isA<CastPlayerOverlay>());
     });
 
     testWidgets('shows cast picker bottom sheet and starts discovery', (
@@ -103,8 +104,10 @@ void main() {
       testController.dispose();
     });
 
-    test('forwards player events to CastSession when connected', () async {
-      // Connect to fake socket
+    test('routes controller play, pause, seek, and volume to CastSession without recursive pause', () async {
+      // Wait for MockBetterPlayerPlatform to emit initialized event
+      await Future<void>.delayed(const Duration(milliseconds: 20));
+
       final connectFuture = extension.session.connect(testDevice);
       await Future<void>.delayed(const Duration(milliseconds: 10));
 
@@ -125,7 +128,7 @@ void main() {
           sourceId: 't1',
           destinationId: 'sender-0',
           namespace: CastNamespaces.media,
-          payloadUtf8: '{"type":"MEDIA_STATUS","status":[{"mediaSessionId":1,"playerState":"PLAYING","currentTime":5.0}]}',
+          payloadUtf8: '{"type":"MEDIA_STATUS","status":[{"mediaSessionId":1,"playerState":"PLAYING","currentTime":5.0,"media":{"duration":120.0}}]}',
         ),
       );
       await Future<void>.delayed(const Duration(milliseconds: 10));
@@ -133,54 +136,56 @@ void main() {
       expect(extension.isCasting, isTrue);
       expect(controller.isCasting, isTrue);
       expect(extension.targetDeviceName, equals('Living Room TV'));
+      expect(controller.isPlaying(), isTrue);
+      expect(
+        controller.videoPlayerValue?.duration,
+        equals(const Duration(seconds: 120)),
+      );
 
       fakeSocket.sentMessages.clear();
 
-      // Trigger play
-      controller.postEvent(PlayerEvent(PlayerEventType.play));
-      await Future<void>.delayed(const Duration(milliseconds: 10));
-
-      // Trigger pause
-      controller.postEvent(PlayerEvent(PlayerEventType.pause));
-      await Future<void>.delayed(const Duration(milliseconds: 10));
-
-      // Trigger seek
-      controller.postEvent(
-        PlayerEvent(
-          PlayerEventType.seekTo,
-          parameters: {'duration': const Duration(seconds: 30)},
-        ),
-      );
-      await Future<void>.delayed(const Duration(milliseconds: 10));
-
-      // Trigger volume
-      controller.postEvent(
-        PlayerEvent(
-          PlayerEventType.setVolume,
-          parameters: {'volume': 0.75},
-        ),
-      );
-      await Future<void>.delayed(const Duration(milliseconds: 10));
-
-      final sentPayloads = fakeSocket.sentMessages
-          .map((m) => m.payloadUtf8 ?? '')
-          .toList();
-      expect(sentPayloads.any((p) => p.contains('"type":"PLAY"')), isTrue);
-      expect(sentPayloads.any((p) => p.contains('"type":"PAUSE"')), isTrue);
+      // Trigger pause via controller
+      await controller.pause();
+      expect(controller.isPlaying(), isFalse);
+      expect(fakeSocket.sentMessages.length, equals(1));
       expect(
-        sentPayloads.any(
-          (p) =>
-              p.contains('"type":"SEEK"') && p.contains('"currentTime":30.0'),
-        ),
-        isTrue,
+        fakeSocket.sentMessages.single.payloadUtf8,
+        contains('"type":"PAUSE"'),
+      );
+
+      fakeSocket.sentMessages.clear();
+
+      // Trigger play via controller and verify no recursive PAUSE is sent
+      await controller.play();
+      expect(controller.isPlaying(), isTrue);
+      expect(fakeSocket.sentMessages.length, equals(1));
+      expect(
+        fakeSocket.sentMessages.single.payloadUtf8,
+        contains('"type":"PLAY"'),
+      );
+
+      fakeSocket.sentMessages.clear();
+
+      // Trigger seek via controller
+      await controller.seekTo(const Duration(seconds: 30));
+      expect(
+        fakeSocket.sentMessages.single.payloadUtf8,
+        allOf(contains('"type":"SEEK"'), contains('"currentTime":30.0')),
       );
       expect(
-        sentPayloads.any(
-          (p) =>
-              p.contains('"type":"SET_VOLUME"') && p.contains('"level":0.75'),
-        ),
-        isTrue,
+        controller.videoPlayerValue?.position.inSeconds,
+        closeTo(30, 1),
       );
+
+      fakeSocket.sentMessages.clear();
+
+      // Trigger volume via controller
+      await controller.setVolume(0.75);
+      expect(
+        fakeSocket.sentMessages.single.payloadUtf8,
+        allOf(contains('"type":"SET_VOLUME"'), contains('"level":0.75')),
+      );
+      expect(controller.videoPlayerValue?.volume, equals(0.75));
     });
 
     test('ignores file data sources gracefully without throwing', () async {
@@ -192,7 +197,6 @@ void main() {
         ),
       );
 
-      // Trigger setupDataSource event
       fileController.postEvent(PlayerEvent(PlayerEventType.setupDataSource));
       await Future<void>.delayed(const Duration(milliseconds: 10));
 

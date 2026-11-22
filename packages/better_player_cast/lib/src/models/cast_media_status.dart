@@ -75,6 +75,27 @@ class CastMediaStatus {
   /// Content identifier (URL) of the active media.
   final String? contentId;
 
+  /// Creates a copy of this status with the specified fields updated.
+  CastMediaStatus copyWith({
+    int? mediaSessionId,
+    CastPlayerState? playerState,
+    Duration? currentTime,
+    Duration? duration,
+    double? volume,
+    bool? muted,
+    String? contentId,
+  }) {
+    return CastMediaStatus(
+      mediaSessionId: mediaSessionId ?? this.mediaSessionId,
+      playerState: playerState ?? this.playerState,
+      currentTime: currentTime ?? this.currentTime,
+      duration: duration ?? this.duration,
+      volume: volume ?? this.volume,
+      muted: muted ?? this.muted,
+      contentId: contentId ?? this.contentId,
+    );
+  }
+
   static CastPlayerState _parsePlayerState(String state) {
     switch (state.toUpperCase()) {
       case 'PLAYING':

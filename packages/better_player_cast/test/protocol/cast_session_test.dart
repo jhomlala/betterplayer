@@ -255,5 +255,36 @@ void main() {
       expect(session.state, equals(CastSessionState.disconnected));
       expect(fakeSocket.isClosed, isTrue);
     });
+
+    test(
+      'automatically disconnects when receiver sends transport CLOSE',
+      () async {
+        final connectFuture = session.connect(testDevice);
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+        fakeSocket.simulateIncoming(
+          const CastMessage(
+            sourceId: 'receiver-0',
+            destinationId: 'sender-0',
+            namespace: CastNamespaces.receiver,
+            payloadUtf8: '{"type":"RECEIVER_STATUS","requestId":1,"status":{"applications":[{"appId":"CC1AD845","sessionId":"sess-1","transportId":"transport-1"}]}}',
+          ),
+        );
+        await connectFuture;
+        expect(session.isConnected, isTrue);
+
+        fakeSocket.simulateIncoming(
+          const CastMessage(
+            sourceId: 'transport-1',
+            destinationId: 'sender-0',
+            namespace: CastNamespaces.connection,
+            payloadUtf8: '{"type":"CLOSE"}',
+          ),
+        );
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+
+        expect(session.isConnected, isFalse);
+        expect(session.state, equals(CastSessionState.disconnected));
+      },
+    );
   });
 }

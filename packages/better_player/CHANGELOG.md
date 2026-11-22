@@ -1,5 +1,6 @@
 ## Unreleased
 
+- Added: Remote playback delegation hooks (`play`, `pause`, `seekTo`, `setVolume`, and remote state getters) on `PlayerCastExtension` and `BetterPlayerController`.
 - Updated: Exported `PlayerLogger` to enable custom extensions and companion packages to integrate with Better Player logging.
 
 ## 1.39.0
