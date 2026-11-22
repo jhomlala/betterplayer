@@ -6,7 +6,6 @@
 import 'dart:async';
 
 import 'package:better_player/better_player.dart';
-import 'package:better_player/src/logging/player_logger.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 

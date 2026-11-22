@@ -5,7 +5,6 @@ import 'package:better_player/src/hls/hls_parser/hls_playlist_parser.dart';
 import 'package:better_player/src/hls/hls_parser/mime_types.dart';
 import 'package:better_player/src/hls/hls_parser/rendition.dart';
 import 'package:better_player/src/hls/hls_parser/util.dart';
-import 'package:better_player/src/logging/player_logger.dart';
 import 'package:http/http.dart' as http;
 
 ///HLS helper class

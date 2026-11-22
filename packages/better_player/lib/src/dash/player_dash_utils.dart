@@ -1,6 +1,5 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/hls/hls_parser/mime_types.dart';
-import 'package:better_player/src/logging/player_logger.dart';
 import 'package:xml/xml.dart';
 
 ///DASH helper class

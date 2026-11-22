@@ -6,7 +6,6 @@ import 'package:better_player/src/configuration/player_controller_event.dart';
 import 'package:better_player/src/core/state/player_playback_state.dart';
 import 'package:better_player/src/core/state/player_track_state.dart';
 import 'package:better_player/src/core/state/player_view_state.dart';
-import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player/src/subtitles/player_subtitle.dart';
 import 'package:better_player/src/subtitles/player_subtitles_factory.dart';
 import 'package:better_player/src/utils/player_io_utils.dart';

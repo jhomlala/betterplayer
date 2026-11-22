@@ -94,3 +94,51 @@ Register your extension in `PlayerConfiguration(extensions: [myCastExtension])` 
 - The top bar switches from the AirPlay icon to `castIcon` (and `castConnectedIcon` when active).
 - Tapping the button calls `showCastPicker()`.
 - Emissions on `castingStream` update the control bar and dispatch `PlayerEventType.externalPlaybackChanged`.
+
+## Chromecast (`better_player_cast`)
+
+Use the official `better_player_cast` companion package to cast video to Chromecast and Google TV devices over CastV2.
+
+### 1. Install
+
+```bash
+flutter pub add better_player_cast
+```
+
+### 2. Configure Permissions
+
+On iOS, add the local network usage description and Bonjour service to `ios/Runner/Info.plist`:
+
+```xml
+<key>NSLocalNetworkUsageDescription</key>
+<string>Required to discover and connect to Chromecast devices on your network.</string>
+<key>NSBonjourServices</key>
+<array>
+  <string>_googlecast._tcp</string>
+</array>
+```
+
+On Android, ensure `android.permission.INTERNET` and `android.permission.ACCESS_NETWORK_STATE` are present in `AndroidManifest.xml`.
+
+### 3. Register the Extension
+
+Pass `BetterPlayerCastExtension` to your `PlayerConfiguration`:
+
+```dart
+import 'package:better_player/better_player.dart';
+import 'package:better_player_cast/better_player_cast.dart';
+
+final castExtension = BetterPlayerCastExtension(
+  contextProvider: () => navigatorKey.currentContext,
+);
+
+final controller = BetterPlayerController(
+  PlayerConfiguration(
+    extensions: [castExtension],
+  ),
+  betterPlayerDataSource: PlayerDataSource(
+    DataSourceType.network,
+    'https://example.com/video.mp4',
+  ),
+);
+```

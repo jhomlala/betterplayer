@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:better_player/better_player.dart';
-import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player/src/subtitles/player_subtitle.dart';
 import 'package:better_player/src/subtitles/player_ttml_parser.dart';
 import 'package:better_player/src/utils/player_io_utils.dart';
