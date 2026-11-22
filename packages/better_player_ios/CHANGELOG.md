@@ -1,4 +1,4 @@
-## Unreleased
+## 1.16.0
 - Fixed: Dispatched `URLSession` delegate callbacks to `.main` in `CachingPlayerItem` to eliminate race conditions between `AVAssetResourceLoader` and background download delegates.
 - Fixed: Cleaned up stuck `AVPlayerLayer` on Picture in Picture start failure, and added audio session interruption and route change observers to pause playback on disconnect or incoming calls.
 - Fixed: Safely handled content-info-only probe requests in `CachingPlayerItem` to prevent nil force-unwrap crashes, rejected non-2xx HTTP responses from disk cache, bounded `CacheManager` memory cache, and forwarded HTTP headers in `preCache`.

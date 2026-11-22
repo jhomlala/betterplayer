@@ -1,4 +1,4 @@
-## Unreleased
+## 1.8.1
 - Updated: Relaxed `meta` dependency constraint to `^1.18.0` for Flutter SDK compatibility.
 
 ## 1.8.0
