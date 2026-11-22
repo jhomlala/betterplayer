@@ -132,10 +132,16 @@ class BetterPlayerCastExtension extends PlayerCastExtension {
   }
 
   /// Disconnects from the current Cast receiver and resumes local playback.
-  Future<void> disconnect() async {
+  Future<void> disconnect({bool stopReceiver = true}) async {
     if (!isCasting) return;
 
     final lastPosition = _session.mediaStatus?.currentTime;
+    if (stopReceiver) {
+      try {
+        await _session.stop();
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      } on Object catch (_) {}
+    }
     await _session.disconnect();
 
     final controller = _controller;
