@@ -74,7 +74,7 @@ PlayerDataSource dataSource = PlayerDataSource(
 ## Development Workflow
 - **Commit/Push Policy**: NEVER commit or push changes automatically. ALWAYS wait for explicit user approval before performing any Git commit or push operations.
 - **Git Hygiene**:
-  - NEVER create or change branches automatically. ALWAYS wait for explicit user instruction on which branch to use.
+  - When starting a task, use the branch specified by the user or create a new branch using standard naming conventions (`feat/`, `fix/`, `chore/`, `refactor/`, `docs/`, `test/`).
   - ALWAYS `git fetch origin master` and `git rebase origin/master` before starting any new task to ensure you are working on the latest code.
   - Ensure your branch history is clean and only contains commits relevant to the current task.
   - Use standard branch naming conventions based on the task type:

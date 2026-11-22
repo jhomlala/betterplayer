@@ -33,6 +33,8 @@ class BetterPlayerWebPlayer {
   @visibleForTesting
   Duration? overriddenDuration;
 
+  final List<web.HTMLElement> _containers = [];
+
   final StreamController<bool> _externalPlaybackController =
       StreamController<bool>.broadcast();
   bool _isExternalPlaybackActive = false;
@@ -47,6 +49,26 @@ class BetterPlayerWebPlayer {
     _eventController.add(event);
   }
 
+  void attachToContainer(web.HTMLElement container) {
+    _containers.removeWhere((c) => !c.isConnected);
+    _containers.add(container);
+    final jsNode = videoElement as JSObject;
+    if (jsNode.has('nodeType')) {
+      container.appendChild(videoElement);
+    }
+  }
+
+  void onViewDisposed() {
+    if (_containers.length > 1) {
+      _containers.removeLast();
+      final active = _containers.last;
+      final jsNode = videoElement as JSObject;
+      if (jsNode.has('nodeType')) {
+        active.appendChild(videoElement);
+      }
+    }
+  }
+
   Future<void> initialize({web.HTMLVideoElement? videoElement}) async {
     _eventController = StreamController<VideoEvent>.broadcast();
 
@@ -56,21 +78,31 @@ class BetterPlayerWebPlayer {
     this.videoElement.setAttribute('playsinline', '');
     this.videoElement.setAttribute('webkit-playsinline', '');
 
-    shaka.polyfill.installAll();
+    final shakaNamespace = shaka;
+    if (shakaNamespace != null) {
+      shakaNamespace.polyfill.installAll();
 
-    if (_shakaPlayer == null) {
-      final player = ShakaPlayer();
-      _shakaPlayer = player;
-      await player.attach(this.videoElement).toDart;
-      _applyDefaultConfiguration();
-    } else {
-      final jsPlayer = _shakaPlayer! as JSObject;
-      if (jsPlayer.has('attach')) {
-        await _shakaPlayer!.attach(this.videoElement).toDart;
-      }
-      if (jsPlayer.has('configure')) {
+      if (_shakaPlayer == null) {
+        final player = ShakaPlayer();
+        _shakaPlayer = player;
+        await player.attach(this.videoElement).toDart;
         _applyDefaultConfiguration();
+      } else {
+        final jsPlayer = _shakaPlayer! as JSObject;
+        if (jsPlayer.has('attach')) {
+          await _shakaPlayer!.attach(this.videoElement).toDart;
+        }
+        if (jsPlayer.has('configure')) {
+          _applyDefaultConfiguration();
+        }
       }
+    } else {
+      onLog(
+        message:
+            'Shaka Player script not found in DOM. '
+            'Falling back to native HTML5 <video> playback.',
+        levelIndex: 2,
+      );
     }
 
     _attachListeners();
@@ -508,25 +540,45 @@ class BetterPlayerWebPlayer {
     final uri =
         dataSource.uri ??
         (dataSource.asset != null ? 'assets/${dataSource.asset}' : '');
-    try {
-      await _shakaPlayer!.load(uri.toJS).toDart;
-      onLog(
-        message: 'BetterPlayerWebPlayer: data source loaded',
-        levelIndex: 1,
-      );
-    } on Object catch (e) {
-      onLog(
-        message: 'BetterPlayerWebPlayer: failed to load data source: $e',
-        levelIndex: 3,
-      );
-      if (!_disposed && !_eventController.isClosed) {
-        _eventController.addError(
-          PlatformException(
-            code: 'SHAKA_LOAD_ERROR',
-            message: 'Failed to load video: $e',
-          ),
+    if (_shakaPlayer != null) {
+      try {
+        await _shakaPlayer!.load(uri.toJS).toDart;
+        onLog(
+          message: 'BetterPlayerWebPlayer: data source loaded',
+          levelIndex: 1,
+        );
+      } on Object catch (e) {
+        onLog(
+          message: 'BetterPlayerWebPlayer: failed to load data source: $e',
+          levelIndex: 3,
+        );
+        if (!_disposed && !_eventController.isClosed) {
+          _eventController.addError(
+            PlatformException(
+              code: 'SHAKA_LOAD_ERROR',
+              message: 'Failed to load video: $e',
+            ),
+          );
+        }
+      }
+    } else {
+      if (dataSource.drmConfiguration != null) {
+        throw StateError(
+          'DRM playback on Web requires Shaka Player. '
+          'Add the Shaka Player script tag to your web/index.html.',
         );
       }
+      final jsVideo = videoElement as JSObject;
+      if (jsVideo.has('src')) {
+        videoElement.src = uri;
+      }
+      if (jsVideo.has('load')) {
+        videoElement.load();
+      }
+      onLog(
+        message: 'BetterPlayerWebPlayer: data source loaded natively',
+        levelIndex: 1,
+      );
     }
   }
 
@@ -681,7 +733,12 @@ class BetterPlayerWebPlayer {
       }
     }).toJS;
     _activeRequestFilter = filter;
-    _shakaPlayer!.getNetworkingEngine().registerRequestFilter(filter);
+    if (_shakaPlayer != null) {
+      final jsPlayer = _shakaPlayer! as JSObject;
+      if (jsPlayer.has('getNetworkingEngine')) {
+        _shakaPlayer!.getNetworkingEngine().registerRequestFilter(filter);
+      }
+    }
   }
 
   bool? get _isPaused {
@@ -756,6 +813,9 @@ class BetterPlayerWebPlayer {
   }
 
   DateTime? getAbsolutePosition() {
+    if (_shakaPlayer == null) return null;
+    final jsPlayer = _shakaPlayer! as JSObject;
+    if (!jsPlayer.has('isLive')) return null;
     if (!_shakaPlayer!.isLive().toDart) return null;
     final dateObj = _shakaPlayer!.getPlayheadTimeAsDate();
     if (dateObj == null) return null;
@@ -771,6 +831,7 @@ class BetterPlayerWebPlayer {
   }
 
   void setTrackParameters({int? width, int? height, int? bitrate}) {
+    if (_shakaPlayer == null) return;
     if ((width == null || width == 0) &&
         (height == null || height == 0) &&
         (bitrate == null || bitrate == 0)) {
@@ -920,9 +981,10 @@ class BetterPlayerWebPlayer {
     }
   }
 
-  List<JSObject> getTextTracks() => _shakaPlayer!.getTextTracks().toDart;
+  List<JSObject> getTextTracks() =>
+      _shakaPlayer != null ? _shakaPlayer!.getTextTracks().toDart : const [];
 
-  void selectTextTrack(JSObject track) => _shakaPlayer!.selectTextTrack(track);
+  void selectTextTrack(JSObject track) => _shakaPlayer?.selectTextTrack(track);
 
   Future<void> enablePictureInPicture() async {
     if (!isPictureInPictureSupported()) return;
@@ -949,6 +1011,7 @@ class BetterPlayerWebPlayer {
     }
     _disposed = true;
     _clearRequestFilter();
+    _containers.clear();
     final jsVideo = videoElement as JSObject;
     if (jsVideo.has('pause')) {
       videoElement.pause();

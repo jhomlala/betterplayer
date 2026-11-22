@@ -4,6 +4,7 @@ import 'dart:js_interop';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:better_player_web/src/better_player_web.dart';
 import 'package:better_player_web/src/better_player_web_player.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:web/web.dart' as web;
@@ -13,6 +14,7 @@ class MockBetterPlayerWebPlayer extends Mock implements BetterPlayerWebPlayer {}
 void main() {
   setUpAll(() {
     registerFallbackValue(Duration.zero);
+    registerFallbackValue(web.HTMLDivElement());
   });
 
   group('BetterPlayerWeb', () {
@@ -35,6 +37,8 @@ void main() {
         () => mockPlayer.videoElement,
       ).thenReturn(JSObject() as web.HTMLVideoElement);
       when(() => mockPlayer.viewId).thenReturn('test_view_id');
+      when(() => mockPlayer.attachToContainer(any())).thenReturn(null);
+      when(() => mockPlayer.onViewDisposed()).thenReturn(null);
 
       plugin = BetterPlayerWeb(
         playerFactory: ({required viewId, required onLog}) => mockPlayer,
@@ -156,6 +160,9 @@ void main() {
       when(() => mockPlayer.isPictureInPictureSupported()).thenReturn(true);
       final pipSupported = await plugin.isPictureInPictureSupported(id);
       expect(pipSupported, true);
+
+      final viewWidget = plugin.buildView(id);
+      expect(viewWidget, isA<Widget>());
     });
 
     test('no-op methods log warnings', () async {

@@ -1,4 +1,6 @@
 ## Unreleased
+- Fixed: Wrapped video element in a persistent container so exiting fullscreen restores the element without leaving a black screen.
+- Fixed: Added native `<video>` fallback when Shaka Player is not loaded in DOM, and throw an explicit StateError if DRM playback is requested without Shaka.
 - Fixed: Attached DRM license headers via Shaka `NetworkingEngine` request filter for Widevine, ClearKey, and Token DRM, and reset DRM configuration between data sources.
 - Fixed: Replaced dynamic track property access with Dart JS interop in `addtrack` listener for Dart2Wasm compatibility.
 - Fixed: Guarded Picture-in-Picture checks against undefined `document.pictureInPictureEnabled` on Firefox Wasm.
