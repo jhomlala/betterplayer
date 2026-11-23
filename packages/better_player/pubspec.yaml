@@ -40,7 +40,7 @@ dependencies:
   better_player_web: ^1.7.0
   better_player_windows: ^1.5.1
   collection: ^1.19.1
-  cupertino_icons: ^2.0.0
+  cupertino_icons: ">=1.0.8 <3.0.0"
   cupertino_ui: ^1.0.1
   flutter:
     sdk: flutter
@@ -49,8 +49,8 @@ dependencies:
   meta: ^1.18.0
   path_provider: ^2.1.6
   visibility_detector: ^0.4.0+2
-  wakelock_plus: ^1.7.0
-  xml: ^7.0.1
+  wakelock_plus: ">=1.5.0 <2.0.0"
+  xml: ">=6.5.0 <8.0.0"
 
 dev_dependencies:
   flutter_localizations:
