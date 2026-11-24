@@ -1149,7 +1149,7 @@ private var externalPlaybackActiveContext = 0
         if mixWithOthers {
             try? AVAudioSession.sharedInstance().setCategory(.playback, options: [.mixWithOthers])
         } else {
-            try? AVAudioSession.sharedInstance().setCategory(.playback)
+            try? AVAudioSession.sharedInstance().setCategory(.playback, options: [])
         }
     }
 

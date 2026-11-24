@@ -1,3 +1,6 @@
+## Unreleased
+- Fixed: `setMixWithOthers(false)` left the audio session mixing with other audio when the category was already `.playback` with the `.mixWithOthers` option, which kept the player off the Lock Screen and Control Center. The category options are now cleared explicitly.
+
 ## 1.16.0
 - Fixed: Dispatched `URLSession` delegate callbacks to `.main` in `CachingPlayerItem` to eliminate race conditions between `AVAssetResourceLoader` and background download delegates.
 - Fixed: Cleaned up stuck `AVPlayerLayer` on Picture in Picture start failure, and added audio session interruption and route change observers to pause playback on disconnect or incoming calls.
