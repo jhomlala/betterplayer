@@ -1,3 +1,6 @@
+## Unreleased
+- Updated: Relaxed the `wakelock_plus`, `xml`, and `cupertino_icons` dependency constraints to `>=1.5.0 <2.0.0`, `>=6.5.0 <8.0.0`, and `>=1.0.8 <3.0.0`, so apps that still depend on `win32` 5, `xml` 6, or `cupertino_icons` 1 can resolve `better_player` (by @SuperWes).
+
 ## 1.39.0
 - Fixed: Forwarded `drmType` and `token` to platform DRM configuration for Web and Token DRM compatibility, and copied headers to prevent `UnsupportedError` on unmodifiable header maps.
 - Fixed: Wrapped fullscreen route, overflow bottom sheets, and about dialog in `Localizations.override` for `MaterialLocalizations` and `CupertinoLocalizations` to prevent crashes in apps using `package:flutter/material.dart`.
