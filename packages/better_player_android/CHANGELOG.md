@@ -1,3 +1,6 @@
+## Unreleased
+- Updated: Lowered the Java and Kotlin JVM target from 21 to 17, so apps that build with JDK 17 can compile the plugin (by @SuperWes).
+
 ## 1.14.0
 - Fixed: Added ProGuard/R8 consumer rules (`proguard-rules.pro`) and `@Keep` annotations on JNI-accessed `BetterPlayer` members so release builds do not strip JNI bindings.
 - Fixed: Synchronized `BetterPlayerCache` operations, stopped deleting the cache directory while `SimpleCache` is open, and guarded `preCache` against 0-byte `SimpleCache` initialization when cache sizes are omitted or non-positive.
